@@ -30,14 +30,10 @@ class ServerInstances:
 
     @classmethod
     def run_api(cls):
-        import controllers
-
         cls.api.start()
 
     @classmethod
     async def run_migrate(cls, drop_all: bool = False):
-        import models
-
         database: Database = cls.databases.select(DATABASE_INSTANCE_NAME)
 
         if drop_all:
