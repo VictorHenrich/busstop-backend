@@ -12,12 +12,25 @@ from sqlalchemy.ext.asyncio import (
 
 
 class DatabaseDialects(Enum):
-    POSTGRESQL = {"name": "postgresql", "default": "psycopg2", "async": "asyncpg"}
+    POSTGRESQL = "postgresql"
 
-    MYSQL = {"name": "mysql", "default": "PyMySQL", "async": "aiomysql"}
+    MYSQL = "mysql"
 
 
 class Database:
+    _mapped_dialects = {
+        DatabaseDialects.POSTGRESQL: {
+            "name": "postgresql",
+            "default": "psycopg2",
+            "async": "asyncpg",
+        },
+        DatabaseDialects.MYSQL: {
+            "name": "mysql",
+            "default": "PyMySQL",
+            "async": "aiomysql",
+        },
+    }
+
     def __create_url(
         self,
         host: str,
@@ -27,7 +40,7 @@ class Database:
         password: str,
         dialect: DatabaseDialects,
     ) -> Tuple[str, str]:
-        dialect_data: Mapping[str, str] = dialect.value
+        dialect_data: Mapping[str, str] = Database._mapped_dialects[dialect]
 
         url: str = f"://{username}:{password}@{host}:{port}/{dbname}"
 

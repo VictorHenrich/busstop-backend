@@ -14,4 +14,4 @@ class Api(FastAPI):
         super().__init__(*args, **kwargs)
 
     def start(self) -> None:
-        uvicorn.run(self, host=self.__host, port=int(self.__port), reload=True)
+        uvicorn.run(self, host=self.__host, port=int(self.__port))
