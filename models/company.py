@@ -30,6 +30,8 @@ class Company(database.Base):
     def __repr__(self) -> str:
         return (
             "<Company "
+            + f"id='{self.id}' "
+            + f"uuid='{self.uuid}' "
             + f"company_name='{self.company_name}' "
             + f"fantasy_name='{self.fantasy_name}' "
             + f"document_cnpj='{self.document_cnpj}' "

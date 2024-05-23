@@ -74,7 +74,7 @@ class CompanyRepositoryCase(TestCase):
 
         asyncio.run(main())
 
-    def test_get_many(self) -> None:
+    def test_find_many(self) -> None:
         async def main() -> Sequence[Company]:
             filters: Mock = Mock()
 
@@ -84,7 +84,7 @@ class CompanyRepositoryCase(TestCase):
                 CompanyExclusionRepositoryProps, None
             ] = CompanyRepository(session)
 
-            companies: Sequence[Company] = await company_repository.get_many(filters)
+            companies: Sequence[Company] = await company_repository.find_many(filters)
 
             await session.close()
 

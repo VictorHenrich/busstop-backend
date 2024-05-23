@@ -1,6 +1,7 @@
 from typing import (
     Generic,
     Any,
+    Optional,
     TypeVar,
     Awaitable,
     Union,
@@ -18,7 +19,7 @@ ST = TypeVar("ST", bound=Union[Any, None], covariant=True)
 
 RTP = TypeVar("RTP", bound=Any, contravariant=True)
 
-RTR = TypeVar("RTR", bound=Union[Any, None], covariant=True)
+RTR = TypeVar("RTR", bound=Any, covariant=True)
 
 BRT = TypeVar("BRT", bound=Union[Session, AsyncSession])
 
@@ -52,8 +53,8 @@ class DeleteRepository(Protocol, Generic[RTP, RTR]):
         ...
 
 
-class GetRepository(Protocol, Generic[RTP, RTR]):
-    def get(self, props: RTP) -> Union[Awaitable[RTR], RTR]:
+class FindRepository(Protocol, Generic[RTP, RTR]):
+    def find(self, props: RTP) -> Union[Awaitable[Optional[RTR]], Optional[RTR]]:
         ...
 
 
@@ -72,6 +73,6 @@ class DeleteManyRepository(Protocol, Generic[RTP, RTR]):
         ...
 
 
-class GetManyRepository(Protocol, Generic[RTP, RTR]):
-    def get_many(self, props: RTP) -> Union[Awaitable[Sequence[RTR]], Sequence[RTR]]:
+class FindManyRepository(Protocol, Generic[RTP, RTR]):
+    def find_many(self, props: RTP) -> Union[Awaitable[Sequence[RTR]], Sequence[RTR]]:
         ...

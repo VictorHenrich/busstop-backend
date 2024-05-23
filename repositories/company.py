@@ -8,7 +8,7 @@ from utils.patterns import (
     CreateRepository,
     UpdateRepository,
     DeleteRepository,
-    GetManyRepository,
+    FindManyRepository,
 )
 
 
@@ -47,7 +47,7 @@ class CompanyRepository(
     CreateRepository[CompanyCreationRepositoryProps, None],
     UpdateRepository[CompanyUpdateRepositoryProps, None],
     DeleteRepository[CompanyExclusionRepositoryProps, None],
-    GetManyRepository[CompanyListingRepositoryProps, Company],
+    FindManyRepository[CompanyListingRepositoryProps, Company],
 ):
     async def create(self, props: CompanyCreationRepositoryProps) -> None:
         query: Insert = insert(Company).values(
@@ -78,7 +78,9 @@ class CompanyRepository(
 
         await self.session.execute(query)
 
-    async def get_many(self, props: CompanyListingRepositoryProps) -> Sequence[Company]:
+    async def find_many(
+        self, props: CompanyListingRepositoryProps
+    ) -> Sequence[Company]:
         query_filter: Mapping[str, Any] = {}
 
         query: Select = select(Company).where(**query_filter)

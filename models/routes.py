@@ -6,7 +6,6 @@ from uuid import uuid4
 from server.instances import ServerInstances
 from server.database import Database
 from utils.constants import DATABASE_INSTANCE_NAME
-from models import Company
 
 
 database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
@@ -28,13 +27,23 @@ class Route(database.Base):
         Uuid(as_uuid=False, native_uuid=True), default=uuid4
     )
 
-    company_id: Mapped[int] = mapped_column(ForeignKey(f"{Company.__tablename__}.id"))
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"))
 
     description: Mapped[str]
 
-    points: Mapped[Set["Point"]] = relationship(secondary=RoutePointRelationship)
+    points: Mapped[Set["Point"]] = relationship(
+        secondary=RoutePointRelationship, back_populates="routes"
+    )
 
-    company: Mapped[Company] = relationship()
+    def __repr__(self) -> str:
+        return (
+            "<Route "
+            + f"id='{self.id}' "
+            + f"uuid='{self.uuid}' "
+            + f"company_id='{self.company_id}' "
+            + f"description='{self.description}' "
+            + "/>"
+        )
 
 
 class Point(database.Base):
@@ -45,6 +54,8 @@ class Point(database.Base):
     uuid: Mapped[str] = mapped_column(
         Uuid(as_uuid=False, native_uuid=True), default=uuid4
     )
+
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"))
 
     address_state: Mapped[str] = mapped_column(String(2), nullable=False)
 
@@ -60,4 +71,22 @@ class Point(database.Base):
 
     longitude: Mapped[str] = mapped_column(nullable=False)
 
-    routers: Mapped[Set[Route]] = relationship(secondary=RoutePointRelationship)
+    routes: Mapped[Set[Route]] = relationship(
+        secondary=RoutePointRelationship, back_populates="points"
+    )
+
+    def __repr__(self) -> str:
+        return (
+            "<Point "
+            + f"id='{self.id}' "
+            + f"uuid='{self.uuid}' "
+            + f"company_id='{self.company_id}' "
+            + f"address_state='{self.address_state}' "
+            + f"address_city='{self.address_city}' "
+            + f"address_neighborhood='{self.address_neighborhood}' "
+            + f"address_street='{self.address_street}' "
+            + f"address_number='{self.address_number}' "
+            + f"latitude='{self.latitude}' "
+            + f"longitude='{self.latitude}' "
+            + "/>"
+        )
