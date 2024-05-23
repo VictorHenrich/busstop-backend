@@ -83,4 +83,4 @@ class CompanyRepository(
 
         query: Select = select(Company).where(**query_filter)
 
-        return await self.session.scalars(query)
+        return list(await self.session.scalars(query))

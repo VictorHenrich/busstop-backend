@@ -26,3 +26,13 @@ class Company(database.Base):
     document_cnpj: Mapped[str] = mapped_column(nullable=False)
 
     email: Mapped[str]
+
+    def __repr__(self) -> str:
+        return (
+            "<Company "
+            + f"company_name='{self.company_name}' "
+            + f"fantasy_name='{self.fantasy_name}' "
+            + f"document_cnpj='{self.document_cnpj}' "
+            + f"email='{self.email}' "
+            + "/>"
+        )

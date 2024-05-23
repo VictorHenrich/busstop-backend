@@ -7,4 +7,4 @@ if __name__ == "__main__":
 
     from server.instances import ServerInstances
 
-    asyncio.run(ServerInstances.run_migrate())
+    asyncio.run(ServerInstances.run_migrate(drop_all=True))
