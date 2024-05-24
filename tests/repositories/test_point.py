@@ -1,7 +1,6 @@
 from typing import Optional, Sequence
 from unittest import TestCase
 from unittest.mock import Mock
-from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 import logging
 
@@ -34,6 +33,10 @@ class PointRepositoryCase(TestCase):
 
         self.__point_data: Mock = Mock()
 
+        self.__point_data.company = Mock(
+            id=1, uuid="48a78ba8-d113-4801-8c50-0d0ab1f3197e"
+        )
+
         self.__point_data.address_state = "SC"
         self.__point_data.address_city = "Capivari de Baixo Alterado"
         self.__point_data.address_neighborhood = "Centro"
@@ -41,21 +44,25 @@ class PointRepositoryCase(TestCase):
         self.__point_data.address_number = "400 ALTERADO"
         self.__point_data.latitude = "-28.4759466"
         self.__point_data.longitude = "-49.0059852"
-        self.__point_data.company_id = 1
-        self.__point_data.uuid = "8f45263e-66b7-499c-bcb6-05c21deb6e6a"
+        self.__point_data.uuid = "4932d9e1-c715-4b97-890a-ab2f678d3d11"
+        self.__point_data.point_instance = None
 
     def test_create(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                session: AsyncSession = self.__database.create_async_session()
-
                 point_repository: CreateRepository[
-                    PointCreationRepositoryProps, None
+                    PointCreationRepositoryProps, Optional[Point]
                 ] = PointRepository(session)
 
-                await point_repository.create(self.__point_data)
+                point: Optional[Point] = await point_repository.create(
+                    self.__point_data
+                )
 
                 await session.commit()
+
+                await session.refresh(point)
+
+                logging.info(f"Point Created: {point}")
 
         asyncio.run(main())
 
@@ -63,12 +70,18 @@ class PointRepositoryCase(TestCase):
         async def main() -> None:
             async with self.__database.create_async_session() as session:
                 point_repository: UpdateRepository[
-                    PointUpdateRepositoryProps, None
+                    PointUpdateRepositoryProps, Optional[Point]
                 ] = PointRepository(session)
 
-                await point_repository.update(self.__point_data)
+                point: Optional[Point] = await point_repository.update(
+                    self.__point_data
+                )
 
                 await session.commit()
+
+                await session.refresh(point)
+
+                logging.info(f"Point Updated: {point}")
 
         asyncio.run(main())
 
@@ -76,10 +89,14 @@ class PointRepositoryCase(TestCase):
         async def main() -> None:
             async with self.__database.create_async_session() as session:
                 point_repository: DeleteRepository[
-                    PointExclusionRepositoryProps, None
+                    PointExclusionRepositoryProps, Optional[Point]
                 ] = PointRepository(session)
 
-                await point_repository.delete(self.__point_data)
+                point: Optional[Point] = await point_repository.delete(
+                    self.__point_data
+                )
+
+                logging.info(f"Point Deleted: {point}")
 
                 await session.commit()
 

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
 
 from models import Point, Company, RoutePointRelationship
+from utils.several import SeveralUtils
 from utils.patterns import (
     BaseRepository,
     CreateRepository,
@@ -88,20 +89,22 @@ class PointRepository(
 
             self.session.add(point)
 
-            await self.session.refresh(point)
-
             return point
 
         else:
-            query: Insert = insert(Point).values(
-                company_id=props.company.id,
-                address_state=props.address_state,
-                address_city=props.address_city,
-                address_neighborhood=props.address_neighborhood,
-                address_street=props.address_street,
-                address_number=props.address_number,
-                latitude=props.latitude,
-                longitude=props.longitude,
+            query: Insert = (
+                insert(Point)
+                .values(
+                    company_id=props.company.id,
+                    address_state=props.address_state,
+                    address_city=props.address_city,
+                    address_neighborhood=props.address_neighborhood,
+                    address_street=props.address_street,
+                    address_number=props.address_number,
+                    latitude=props.latitude,
+                    longitude=props.longitude,
+                )
+                .returning(Point)
             )
 
             return await self.session.scalar(query)
@@ -120,14 +123,11 @@ class PointRepository(
         data = {name: value for name, value in data.items() if value is not None}
 
         if props.point_instance:
-            for point_prop_name in dir(props.point_instance):
-                for data_prop_name, data_value in data.items():
-                    if data_prop_name == point_prop_name:
-                        setattr(props.point_instance, point_prop_name, data_value)
+            SeveralUtils.set_objet_properties(
+                props.point_instance, data, case_sensitive=True
+            )
 
             self.session.add(props.point_instance)
-
-            await self.session.refresh(props.point_instance)
 
             return props.point_instance
 

@@ -1,6 +1,6 @@
 from typing import Set
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Uuid, ForeignKey, Column, Table, String
+from sqlalchemy import Uuid, ForeignKey, Column, Table, String, Integer
 from uuid import uuid4
 
 from server.instances import ServerInstances
@@ -13,8 +13,9 @@ database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
 RoutePointRelationship: Table = Table(
     "route_point",
     database.Base.metadata,
-    Column("route_id", ForeignKey("route.id"), primary_key=True, nullable=False),
-    Column("point_id", ForeignKey("point.id"), primary_key=True, nullable=False),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("route_id", ForeignKey("route.id"), nullable=False),
+    Column("point_id", ForeignKey("point.id"), nullable=False),
 )
 
 

@@ -95,10 +95,10 @@ class Database:
         return self.__instance_name
 
     def create_session(self, **kwargs: Any) -> Session:
-        return sessionmaker(self.__engine, class_=Session, autoflush=True, **kwargs)()
+        return sessionmaker(self.__engine, class_=Session, **kwargs)()
 
     def create_async_session(self, **kwargs: Any) -> AsyncSession:
-        return async_sessionmaker(self.__async_engine, autoflush=True, **kwargs)()
+        return async_sessionmaker(self.__async_engine, **kwargs)()
 
     def create_all(self) -> None:
         self.__Base.metadata.create_all(self.__engine)

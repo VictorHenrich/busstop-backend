@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Optional, Protocol, Sequence, Tuple
+from typing import Any, Mapping, Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import (
     Update,
@@ -12,6 +12,7 @@ from sqlalchemy import (
 )
 
 from models import Point, Company, Route, RoutePointRelationship
+from utils.several import SeveralUtils
 from utils.patterns import (
     BaseRepository,
     CreateRepository,
@@ -28,8 +29,6 @@ class RouteCreationRepositoryProps(Protocol):
     description: str
 
     points: Sequence[Point]
-
-    capture_instance: bool = True
 
 
 class RouteUpdateRepositoryProps(Protocol):
@@ -60,63 +59,56 @@ class RouteRepository(
     CreateRepository[RouteCreationRepositoryProps, Optional[Route]],
     UpdateRepository[RouteUpdateRepositoryProps, Optional[Route]],
     DeleteRepository[RouteExclusionRepositoryProps, Optional[Route]],
-    FindRepository[RouteCaptureRepositoryProps, Point],
-    FindManyRepository[RouteListingRepositoryProps, Point],
+    FindRepository[RouteCaptureRepositoryProps, Route],
+    FindManyRepository[RouteListingRepositoryProps, Route],
 ):
     async def create(self, props: RouteCreationRepositoryProps) -> Optional[Route]:
-        if props.capture_instance:
-            route: Route = Route()
+        route: Route = Route()
 
-            route.company_id = props.company.id
-            route.description = props.description
+        route.company_id = props.company.id
+        route.description = props.description
 
-            for point in props.points:
-                route.points.add(point)
+        for point in props.points:
+            route.points.add(point)
 
-            self.session.add(route)
+        self.session.add(route)
 
-            await self.session.refresh(route)
+        return route
 
-            return route
+        # query_route: Insert = (
+        #     insert(Route)
+        #     .values(company_id=props.company.id, description=props.description)
+        #     .returning(Route)
+        # )
 
-        else:
-            query_route: Insert = (
-                insert(Route)
-                .values(company_id=props.company.id, description=props.description)
-                .returning(Route)
-            )
+        # new_route: Optional[Route] = await self.session.scalar(query_route)
 
-            new_route: Optional[Route] = await self.session.scalar(query_route)
+        # if not new_route:
+        #     return
 
-            if not new_route:
-                return
+        # query_route_point: Insert = insert(RoutePointRelationship).values(
+        #     [
+        #         {"route_id": new_route.id, "point_id": point.id}
+        #         for point in props.points
+        #     ]
+        # )
 
-            query_route_point: Insert = insert(RoutePointRelationship).values(
-                [
-                    {"route_id": new_route.id, "point_id": point.id}
-                    for point in props.points
-                ]
-            )
+        # await self.session.execute(query_route_point)
 
-            await self.session.execute(query_route_point)
-
-            return new_route
+        # return new_route
 
     async def update(self, props: RouteUpdateRepositoryProps) -> Optional[Route]:
         data: Mapping[str, Any] = {"description": props.description}
 
         if props.route_instance:
-            for point_prop_name in dir(props.route_instance):
-                for data_prop_name, data_value in data.items():
-                    if point_prop_name == data_prop_name:
-                        setattr(props.route_instance, data_prop_name, data_value)
+            SeveralUtils.set_objet_properties(
+                props.route_instance, data, case_sensitive=True
+            )
 
             for point in props.points:
                 props.route_instance.points.add(point)
 
             self.session.add(props.route_instance)
-
-            await self.session.refresh(props.route_instance)
 
             return props.route_instance
 
@@ -159,12 +151,12 @@ class RouteRepository(
 
             return await self.session.scalar(query_route)
 
-    async def find(self, props: RouteCaptureRepositoryProps) -> Optional[Point]:
+    async def find(self, props: RouteCaptureRepositoryProps) -> Optional[Route]:
         query: Select = select(Route).where(Route.uuid == props.uuid)
 
         return await self.session.scalar(query)
 
-    async def find_many(self, props: RouteListingRepositoryProps) -> Sequence[Point]:
+    async def find_many(self, props: RouteListingRepositoryProps) -> Sequence[Route]:
         query: Select = (
             select(Route)
             .join(Company, Route.company_id == Company.id)
