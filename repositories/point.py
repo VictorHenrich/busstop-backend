@@ -63,31 +63,27 @@ class PointListingRepositoryProps(Protocol):
 
 class PointRepository(
     BaseRepository[AsyncSession],
-    CreateRepository[PointCreationRepositoryProps, Optional[Point]],
-    UpdateRepository[PointUpdateRepositoryProps, Optional[Point]],
+    CreateRepository[PointCreationRepositoryProps, None],
+    UpdateRepository[PointUpdateRepositoryProps, None],
     DeleteRepository[PointExclusionRepositoryProps, None],
     FindRepository[PointCaptureRepositoryProps, Point],
     FindManyRepository[PointListingRepositoryProps, Point],
 ):
-    async def create(self, props: PointCreationRepositoryProps) -> Optional[Point]:
-        query: Insert = (
-            insert(Point)
-            .values(
-                company_id=props.company_id,
-                address_state=props.address_state,
-                address_city=props.address_city,
-                address_neighborhood=props.address_neighborhood,
-                address_street=props.address_street,
-                address_number=props.address_number,
-                latitude=props.latitude,
-                longitude=props.longitude,
-            )
-            .returning()
+    async def create(self, props: PointCreationRepositoryProps) -> None:
+        query: Insert = insert(Point).values(
+            company_id=props.company_id,
+            address_state=props.address_state,
+            address_city=props.address_city,
+            address_neighborhood=props.address_neighborhood,
+            address_street=props.address_street,
+            address_number=props.address_number,
+            latitude=props.latitude,
+            longitude=props.longitude,
         )
 
-        return await self.session.scalar(query)
+        await self.session.scalar(query)
 
-    async def update(self, props: PointUpdateRepositoryProps) -> Optional[Point]:
+    async def update(self, props: PointUpdateRepositoryProps) -> None:
         data: Mapping[str, Any] = {
             "address_state": props.address_state,
             "address_city": props.address_city,
@@ -107,7 +103,7 @@ class PointRepository(
             .returning()
         )
 
-        return await self.session.scalar(query)
+        await self.session.execute(query)
 
     async def delete(self, props: PointExclusionRepositoryProps) -> None:
         query: Delete = delete(Point).where(Point.uuid == props.uuid)
