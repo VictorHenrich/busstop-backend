@@ -15,11 +15,11 @@ from models import Point, Company, Route, RoutePointRelationship
 from utils.several import SeveralUtils
 from utils.patterns import (
     BaseRepository,
-    CreateRepository,
-    UpdateRepository,
-    DeleteRepository,
-    FindRepository,
-    FindManyRepository,
+    ICreateRepository,
+    IUpdateRepository,
+    IDeleteRepository,
+    IFindRepository,
+    IFindManyRepository,
 )
 
 
@@ -56,11 +56,11 @@ class RouteListingRepositoryProps(Protocol):
 
 class RouteRepository(
     BaseRepository[AsyncSession],
-    CreateRepository[RouteCreationRepositoryProps, Optional[Route]],
-    UpdateRepository[RouteUpdateRepositoryProps, Optional[Route]],
-    DeleteRepository[RouteExclusionRepositoryProps, Optional[Route]],
-    FindRepository[RouteCaptureRepositoryProps, Route],
-    FindManyRepository[RouteListingRepositoryProps, Route],
+    ICreateRepository[RouteCreationRepositoryProps, Optional[Route]],
+    IUpdateRepository[RouteUpdateRepositoryProps, Optional[Route]],
+    IDeleteRepository[RouteExclusionRepositoryProps, Optional[Route]],
+    IFindRepository[RouteCaptureRepositoryProps, Route],
+    IFindManyRepository[RouteListingRepositoryProps, Route],
 ):
     async def create(self, props: RouteCreationRepositoryProps) -> Optional[Route]:
         route: Route = Route()

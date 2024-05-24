@@ -16,11 +16,11 @@ from repositories.point import (
     PointListingRepositoryProps,
 )
 from utils.patterns import (
-    CreateRepository,
-    FindManyRepository,
-    FindRepository,
-    UpdateRepository,
-    DeleteRepository,
+    ICreateRepository,
+    IFindManyRepository,
+    IFindRepository,
+    IUpdateRepository,
+    IDeleteRepository,
 )
 from utils.constants import DATABASE_INSTANCE_NAME
 
@@ -50,7 +50,7 @@ class PointRepositoryCase(TestCase):
     def test_create(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                point_repository: CreateRepository[
+                point_repository: ICreateRepository[
                     PointCreationRepositoryProps, Optional[Point]
                 ] = PointRepository(session)
 
@@ -69,7 +69,7 @@ class PointRepositoryCase(TestCase):
     def test_update(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                point_repository: UpdateRepository[
+                point_repository: IUpdateRepository[
                     PointUpdateRepositoryProps, Optional[Point]
                 ] = PointRepository(session)
 
@@ -88,7 +88,7 @@ class PointRepositoryCase(TestCase):
     def test_delete(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                point_repository: DeleteRepository[
+                point_repository: IDeleteRepository[
                     PointExclusionRepositoryProps, Optional[Point]
                 ] = PointRepository(session)
 
@@ -105,7 +105,7 @@ class PointRepositoryCase(TestCase):
     def test_find(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                point_repository: FindRepository[
+                point_repository: IFindRepository[
                     PointCaptureRepositoryProps, Point
                 ] = PointRepository(session)
 
@@ -124,7 +124,7 @@ class PointRepositoryCase(TestCase):
             filters.company_uuid = "48a78ba8-d113-4801-8c50-0d0ab1f3197e"
 
             async with self.__database.create_async_session() as session:
-                point_repository: FindManyRepository[
+                point_repository: IFindManyRepository[
                     PointListingRepositoryProps, Point
                 ] = PointRepository(session)
 

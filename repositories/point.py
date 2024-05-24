@@ -6,11 +6,11 @@ from models import Point, Company, RoutePointRelationship
 from utils.several import SeveralUtils
 from utils.patterns import (
     BaseRepository,
-    CreateRepository,
-    UpdateRepository,
-    DeleteRepository,
-    FindRepository,
-    FindManyRepository,
+    ICreateRepository,
+    IUpdateRepository,
+    IDeleteRepository,
+    IFindRepository,
+    IFindManyRepository,
 )
 
 
@@ -68,11 +68,11 @@ class PointListingRepositoryProps(Protocol):
 
 class PointRepository(
     BaseRepository[AsyncSession],
-    CreateRepository[PointCreationRepositoryProps, Optional[Point]],
-    UpdateRepository[PointUpdateRepositoryProps, Optional[Point]],
-    DeleteRepository[PointExclusionRepositoryProps, Optional[Point]],
-    FindRepository[PointCaptureRepositoryProps, Point],
-    FindManyRepository[PointListingRepositoryProps, Point],
+    ICreateRepository[PointCreationRepositoryProps, Optional[Point]],
+    IUpdateRepository[PointUpdateRepositoryProps, Optional[Point]],
+    IDeleteRepository[PointExclusionRepositoryProps, Optional[Point]],
+    IFindRepository[PointCaptureRepositoryProps, Point],
+    IFindManyRepository[PointListingRepositoryProps, Point],
 ):
     async def create(self, props: PointCreationRepositoryProps) -> Optional[Point]:
         if props.capture_instance:

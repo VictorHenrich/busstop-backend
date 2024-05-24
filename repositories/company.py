@@ -5,10 +5,10 @@ from sqlalchemy import Update, update, Delete, delete, Select, select, insert, I
 from models import Company
 from utils.patterns import (
     BaseRepository,
-    CreateRepository,
-    UpdateRepository,
-    DeleteRepository,
-    FindManyRepository,
+    ICreateRepository,
+    IUpdateRepository,
+    IDeleteRepository,
+    IFindManyRepository,
 )
 
 
@@ -44,10 +44,10 @@ class CompanyListingRepositoryProps(Protocol):
 
 class CompanyRepository(
     BaseRepository[AsyncSession],
-    CreateRepository[CompanyCreationRepositoryProps, None],
-    UpdateRepository[CompanyUpdateRepositoryProps, None],
-    DeleteRepository[CompanyExclusionRepositoryProps, None],
-    FindManyRepository[CompanyListingRepositoryProps, Company],
+    ICreateRepository[CompanyCreationRepositoryProps, None],
+    IUpdateRepository[CompanyUpdateRepositoryProps, None],
+    IDeleteRepository[CompanyExclusionRepositoryProps, None],
+    IFindManyRepository[CompanyListingRepositoryProps, Company],
 ):
     async def create(self, props: CompanyCreationRepositoryProps) -> None:
         query: Insert = insert(Company).values(
@@ -85,4 +85,4 @@ class CompanyRepository(
 
         query: Select = select(Company).where(**query_filter)
 
-        return list(await self.session.scalars(query))
+        return (await self.session.scalars(query)).all()

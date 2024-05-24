@@ -14,7 +14,7 @@ from repositories.company import (
     CompanyUpdateRepositoryProps,
     CompanyExclusionRepositoryProps,
 )
-from utils.patterns import CreateRepository, UpdateRepository, DeleteRepository
+from utils.patterns import ICreateRepository, IUpdateRepository, IDeleteRepository
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
@@ -36,7 +36,7 @@ class CompanyRepositoryCase(TestCase):
         async def main() -> None:
             session: AsyncSession = self.__database.create_async_session()
 
-            company_repository: CreateRepository[
+            company_repository: ICreateRepository[
                 CompanyCreationRepositoryProps, None
             ] = CompanyRepository(session)
 
@@ -50,7 +50,7 @@ class CompanyRepositoryCase(TestCase):
         async def main() -> None:
             session: AsyncSession = self.__database.create_async_session()
 
-            company_repository: UpdateRepository[
+            company_repository: IUpdateRepository[
                 CompanyUpdateRepositoryProps, None
             ] = CompanyRepository(session)
 
@@ -64,7 +64,7 @@ class CompanyRepositoryCase(TestCase):
         async def main() -> None:
             session: AsyncSession = self.__database.create_async_session()
 
-            company_repository: DeleteRepository[
+            company_repository: IDeleteRepository[
                 CompanyExclusionRepositoryProps, None
             ] = CompanyRepository(session)
 
@@ -80,7 +80,7 @@ class CompanyRepositoryCase(TestCase):
 
             session: AsyncSession = self.__database.create_async_session()
 
-            company_repository: DeleteRepository[
+            company_repository: IDeleteRepository[
                 CompanyExclusionRepositoryProps, None
             ] = CompanyRepository(session)
 

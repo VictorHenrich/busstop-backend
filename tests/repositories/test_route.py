@@ -16,11 +16,11 @@ from repositories.route import (
     RouteListingRepositoryProps,
 )
 from utils.patterns import (
-    CreateRepository,
-    FindManyRepository,
-    FindRepository,
-    UpdateRepository,
-    DeleteRepository,
+    ICreateRepository,
+    IFindManyRepository,
+    IFindRepository,
+    IUpdateRepository,
+    IDeleteRepository,
 )
 from utils.constants import DATABASE_INSTANCE_NAME
 
@@ -58,7 +58,7 @@ class RouteRepositoryCase(TestCase):
     def test_create(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                route_repository: CreateRepository[
+                route_repository: ICreateRepository[
                     RouteCreationRepositoryProps, Optional[Route]
                 ] = RouteRepository(session)
 
@@ -77,7 +77,7 @@ class RouteRepositoryCase(TestCase):
     def test_update(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                route_repository: UpdateRepository[
+                route_repository: IUpdateRepository[
                     RouteUpdateRepositoryProps, Optional[Route]
                 ] = RouteRepository(session)
 
@@ -96,7 +96,7 @@ class RouteRepositoryCase(TestCase):
     def test_delete(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                route_repository: DeleteRepository[
+                route_repository: IDeleteRepository[
                     RouteExclusionRepositoryProps, Optional[Route]
                 ] = RouteRepository(session)
 
@@ -113,7 +113,7 @@ class RouteRepositoryCase(TestCase):
     def test_find(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                route_repository: FindRepository[
+                route_repository: IFindRepository[
                     RouteCaptureRepositoryProps, Route
                 ] = RouteRepository(session)
 
@@ -128,7 +128,7 @@ class RouteRepositoryCase(TestCase):
     def test_find_many(self) -> None:
         async def main() -> None:
             async with self.__database.create_async_session() as session:
-                route_repository: FindManyRepository[
+                route_repository: IFindManyRepository[
                     RouteListingRepositoryProps, Route
                 ] = RouteRepository(session)
 

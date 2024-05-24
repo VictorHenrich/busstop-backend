@@ -1,6 +1,5 @@
 from typing import (
     Generic,
-    Any,
     Optional,
     TypeVar,
     Awaitable,
@@ -8,71 +7,76 @@ from typing import (
     Protocol,
     Union,
     Sequence,
-    Coroutine,
 )
 from abc import ABC
+from pydantic import BaseModel
 from sqlalchemy.orm.session import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-ST = TypeVar("ST", bound=Union[Any, None], covariant=True)
+SPT = TypeVar("SPT", bound=BaseModel, covariant=True)
 
-RTP = TypeVar("RTP", bound=Any, contravariant=True)
+SRT = TypeVar("SRT", covariant=True)
 
-RTR = TypeVar("RTR", bound=Any, covariant=True)
+RPT = TypeVar("RPT", contravariant=True)
 
-BRT = TypeVar("BRT", bound=Union[Session, AsyncSession])
+RRT = TypeVar("RRT", covariant=True)
+
+BST = TypeVar("BST", bound=Union[Session, AsyncSession])
 
 
-class IService(Protocol, Generic[ST]):
-    def execute(self) -> Union[Awaitable[ST], ST]:
+class IService(Protocol, Generic[SPT, SRT]):
+    def __init__(self, props: SPT) -> None:
+        ...
+
+    def execute(self) -> Union[Awaitable[Optional[SRT]], Optional[SRT]]:
         ...
 
 
-class BaseRepository(ABC, Generic[BRT]):
-    def __init__(self, session: BRT) -> None:
-        self.__session: BRT = session
+class BaseRepository(ABC, Generic[BST]):
+    def __init__(self, session: BST) -> None:
+        self.__session: BST = session
 
     @property
-    def session(self) -> BRT:
+    def session(self) -> BST:
         return self.__session
 
 
-class CreateRepository(Protocol, Generic[RTP, RTR]):
-    def create(self, props: RTP) -> Union[Awaitable[RTR], RTR]:
+class ICreateRepository(Protocol, Generic[RPT, RRT]):
+    def create(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
         ...
 
 
-class UpdateRepository(Protocol, Generic[RTP, RTR]):
-    def update(self, props: RTP) -> Union[Awaitable[RTR], RTR]:
+class IUpdateRepository(Protocol, Generic[RPT, RRT]):
+    def update(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
         ...
 
 
-class DeleteRepository(Protocol, Generic[RTP, RTR]):
-    def delete(self, props: RTP) -> Union[Awaitable[RTR], RTR]:
+class IDeleteRepository(Protocol, Generic[RPT, RRT]):
+    def delete(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
         ...
 
 
-class FindRepository(Protocol, Generic[RTP, RTR]):
-    def find(self, props: RTP) -> Union[Awaitable[Optional[RTR]], Optional[RTR]]:
+class IFindRepository(Protocol, Generic[RPT, RRT]):
+    def find(self, props: RPT) -> Union[Awaitable[Optional[RRT]], Optional[RRT]]:
         ...
 
 
-class CreateManyRepository(Protocol, Generic[RTP, RTR]):
-    def create_many(self, props: RTP) -> Union[Awaitable[RTR], RTR]:
+class ICreateManyRepository(Protocol, Generic[RPT, RRT]):
+    def create_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
         ...
 
 
-class UpdateManyRepository(Protocol, Generic[RTP, RTR]):
-    def update_many(self, props: RTP) -> Union[Awaitable[RTR], RTR]:
+class IUpdateManyRepository(Protocol, Generic[RPT, RRT]):
+    def update_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
         ...
 
 
-class DeleteManyRepository(Protocol, Generic[RTP, RTR]):
-    def delete_many(self, props: RTP) -> Union[Awaitable[RTR], RTR]:
+class IDeleteManyRepository(Protocol, Generic[RPT, RRT]):
+    def delete_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
         ...
 
 
-class FindManyRepository(Protocol, Generic[RTP, RTR]):
-    def find_many(self, props: RTP) -> Union[Awaitable[Sequence[RTR]], Sequence[RTR]]:
+class IFindManyRepository(Protocol, Generic[RPT, RRT]):
+    def find_many(self, props: RPT) -> Union[Awaitable[Sequence[RRT]], Sequence[RRT]]:
         ...
