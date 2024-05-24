@@ -24,3 +24,5 @@ class CompanyExclusionService(IService[CompanyExclusionServiceProps, None]):
             ] = CompanyRepository(session)
 
             await company_repository.delete(self.__props)
+
+            await session.commit()

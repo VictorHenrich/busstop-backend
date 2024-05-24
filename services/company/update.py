@@ -32,3 +32,5 @@ class CompanyUpdateService(IService[CompanyUpdateServiceProps, None]):
             ] = CompanyRepository(session)
 
             await company_repository.update(self.__props)
+
+            await session.commit()

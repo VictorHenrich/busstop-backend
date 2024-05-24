@@ -30,3 +30,5 @@ class CompanyCreationService(IService[CompanyCreationServiceProps, None]):
             ] = CompanyRepository(session)
 
             await company_repository.create(self.__company)
+
+            await session.commit()

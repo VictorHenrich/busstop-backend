@@ -1,6 +1,7 @@
 from typing import Sequence
 from unittest import TestCase
 import asyncio
+import logging
 
 from utils.patterns import IService
 from models import Company
@@ -20,7 +21,10 @@ class CompanyServiceCase(TestCase):
     def test_creation(self) -> None:
         async def main():
             creation_props: CompanyCreationServiceProps = CompanyCreationServiceProps(
-                company_name="", fantasy_name="", document_cnpj="", email=""
+                company_name="Empresa teste",
+                fantasy_name="Nome Fantasia teste",
+                document_cnpj="029999999",
+                email="vcitorhenrich993@gmail.com",
             )
 
             company_creation_service: IService[
@@ -34,7 +38,11 @@ class CompanyServiceCase(TestCase):
     def test_update(self) -> None:
         async def main():
             update_props: CompanyUpdateServiceProps = CompanyUpdateServiceProps(
-                uuid="", company_name="", fantasy_name="", document_cnpj="", email=""
+                uuid="ec6812e5-7bdb-4c89-a71b-b9f07fe56ccd",
+                company_name="ALTERADO",
+                fantasy_name="ALTERADO",
+                document_cnpj="000000000",
+                email="teste@gmail.com",
             )
 
             company_creation_service: IService[
@@ -48,7 +56,9 @@ class CompanyServiceCase(TestCase):
     def test_exclusion(self) -> None:
         async def main():
             exclusion_props: CompanyExclusionServiceProps = (
-                CompanyExclusionServiceProps(uuid="")
+                CompanyExclusionServiceProps(
+                    uuid="ec6812e5-7bdb-4c89-a71b-b9f07fe56ccd"
+                )
             )
 
             company_creation_service: IService[
@@ -69,6 +79,10 @@ class CompanyServiceCase(TestCase):
                 CompanyListingServiceProps, Sequence[Company]
             ] = CompanyListingService(exclusion_props)
 
-            await company_creation_service.execute()
+            companies: Sequence[Company] = await company_creation_service.execute()
+
+            self.assertTrue(companies)
+
+            logging.info(f"Companies: {companies}")
 
         asyncio.run(main())
