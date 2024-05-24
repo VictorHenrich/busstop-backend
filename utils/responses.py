@@ -1,9 +1,9 @@
 from typing import Any, Mapping, Optional
-from fastapi import Response
+from fastapi.responses import JSONResponse
 import json
 
 
-class BaseResponseJSON(Response):
+class BaseResponseJSON(JSONResponse):
     def __init__(
         self,
         content: Any,
@@ -13,7 +13,7 @@ class BaseResponseJSON(Response):
     ) -> None:
         data: Mapping[str, Any] = {"info": info, "content": content}
 
-        super().__init__(json.dumps(data), status, headers, "application/json")
+        super().__init__(json.dumps(data), status, headers)
 
 
 class ResponseSuccess(BaseResponseJSON):
