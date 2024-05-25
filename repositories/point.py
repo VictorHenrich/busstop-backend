@@ -31,8 +31,6 @@ class PointCreationRepositoryProps(Protocol):
 
     longitude: str
 
-    capture_instance: bool = True
-
 
 class PointUpdateRepositoryProps(Protocol):
     uuid: str
@@ -63,7 +61,8 @@ class PointCaptureRepositoryProps(Protocol):
 
 
 class PointListingRepositoryProps(Protocol):
-    company_uuid: str
+    company: Company
+    uuids: Sequence[str] = []
 
 
 class PointRepository(
@@ -75,39 +74,38 @@ class PointRepository(
     IFindManyRepository[PointListingRepositoryProps, Point],
 ):
     async def create(self, props: PointCreationRepositoryProps) -> Optional[Point]:
-        if props.capture_instance:
-            point: Point = Point()
+        point: Point = Point()
 
-            point.company_id = props.company.id
-            point.address_state = props.address_state
-            point.address_city = props.address_city
-            point.address_neighborhood = props.address_neighborhood
-            point.address_street = props.address_street
-            point.address_number = props.address_number
-            point.latitude = props.latitude
-            point.longitude = props.longitude
+        point.company_id = props.company.id
+        point.address_state = props.address_state
+        point.address_city = props.address_city
+        point.address_neighborhood = props.address_neighborhood
+        point.address_street = props.address_street
+        point.address_number = props.address_number
+        point.latitude = props.latitude
+        point.longitude = props.longitude
 
-            self.session.add(point)
+        self.session.add(point)
 
-            return point
+        return point
 
-        else:
-            query: Insert = (
-                insert(Point)
-                .values(
-                    company_id=props.company.id,
-                    address_state=props.address_state,
-                    address_city=props.address_city,
-                    address_neighborhood=props.address_neighborhood,
-                    address_street=props.address_street,
-                    address_number=props.address_number,
-                    latitude=props.latitude,
-                    longitude=props.longitude,
-                )
-                .returning(Point)
-            )
+        # else:
+        #     query: Insert = (
+        #         insert(Point)
+        #         .values(
+        #             company_id=props.company.id,
+        #             address_state=props.address_state,
+        #             address_city=props.address_city,
+        #             address_neighborhood=props.address_neighborhood,
+        #             address_street=props.address_street,
+        #             address_number=props.address_number,
+        #             latitude=props.latitude,
+        #             longitude=props.longitude,
+        #         )
+        #         .returning(Point)
+        #     )
 
-            return await self.session.scalar(query)
+        #     return await self.session.scalar(query)
 
     async def update(self, props: PointUpdateRepositoryProps) -> Optional[Point]:
         data: Mapping[str, Any] = {
@@ -158,6 +156,9 @@ class PointRepository(
         return await self.session.scalar(query)
 
     async def find_many(self, props: PointListingRepositoryProps) -> Sequence[Point]:
-        query: Select = select(Point).where(Company.uuid == props.company_uuid)
+        query: Select = select(Point).where(Point.company_id == props.company.id)
+
+        if props.uuids:
+            query.where(Point.uuid.in_(props.uuids))
 
         return (await self.session.scalars(query)).all()

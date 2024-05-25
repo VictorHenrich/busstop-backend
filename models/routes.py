@@ -6,6 +6,7 @@ from uuid import uuid4
 from server.instances import ServerInstances
 from server.database import Database
 from utils.constants import DATABASE_INSTANCE_NAME
+import models.company as company
 
 
 database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
@@ -31,6 +32,8 @@ class Route(database.Base):
     company_id: Mapped[int] = mapped_column(ForeignKey("company.id"))
 
     description: Mapped[str]
+
+    company: Mapped["company.Company"] = relationship(back_populates="routes")
 
     points: Mapped[Set["Point"]] = relationship(
         secondary=RoutePointRelationship, back_populates="routes"
@@ -71,6 +74,8 @@ class Point(database.Base):
     latitude: Mapped[str] = mapped_column(nullable=False)
 
     longitude: Mapped[str] = mapped_column(nullable=False)
+
+    company: Mapped["company.Company"] = relationship(back_populates="points")
 
     routes: Mapped[Set[Route]] = relationship(
         secondary=RoutePointRelationship, back_populates="points"

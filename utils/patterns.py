@@ -25,10 +25,7 @@ RRT = TypeVar("RRT", covariant=True)
 BST = TypeVar("BST", bound=Union[Session, AsyncSession])
 
 
-class IService(Protocol, Generic[SPT, SRT]):
-    def __init__(self, props: SPT) -> None:
-        ...
-
+class IService(Protocol, Generic[SRT]):
     def execute(self) -> Union[Awaitable[Optional[SRT]], Optional[SRT]]:
         ...
 

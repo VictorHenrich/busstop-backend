@@ -1,11 +1,11 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Uuid
 from uuid import uuid4
 
 from server.instances import ServerInstances
 from server.database import Database
 from utils.constants import DATABASE_INSTANCE_NAME
-
+import models.routes as routes
 
 database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
 
@@ -26,6 +26,10 @@ class Company(database.Base):
     document_cnpj: Mapped[str] = mapped_column(nullable=False)
 
     email: Mapped[str]
+
+    routes: Mapped["routes.Route"] = relationship(back_populates="company")
+
+    points: Mapped["routes.Point"] = relationship(back_populates="company")
 
     def __repr__(self) -> str:
         return (

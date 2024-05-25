@@ -8,6 +8,7 @@ from utils.patterns import (
     ICreateRepository,
     IUpdateRepository,
     IDeleteRepository,
+    IFindRepository,
     IFindManyRepository,
 )
 
@@ -38,6 +39,10 @@ class CompanyExclusionRepositoryProps(Protocol):
     uuid: str
 
 
+class CompanyCaptureRepositoryProps(Protocol):
+    uuid: str
+
+
 class CompanyListingRepositoryProps(Protocol):
     company_name: Optional[str]
 
@@ -48,6 +53,7 @@ class CompanyRepository(
     IUpdateRepository[CompanyUpdateRepositoryProps, None],
     IDeleteRepository[CompanyExclusionRepositoryProps, None],
     IFindManyRepository[CompanyListingRepositoryProps, Company],
+    IFindRepository[CompanyCaptureRepositoryProps, Company],
 ):
     async def create(self, props: CompanyCreationRepositoryProps) -> None:
         query: Insert = insert(Company).values(
@@ -77,6 +83,11 @@ class CompanyRepository(
         query: Delete = delete(Company).where(Company.uuid == props.uuid)
 
         await self.session.execute(query)
+
+    async def find(self, props: CompanyCaptureRepositoryProps) -> Optional[Company]:
+        query: Select = select(Company).where(Company.uuid == props.uuid)
+
+        return await self.session.scalar(query)
 
     async def find_many(
         self, props: CompanyListingRepositoryProps

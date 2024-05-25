@@ -10,12 +10,14 @@ from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class CompanyListingServiceProps(BaseModel):
-    company_name: Optional[str] = None
+    company_name: Optional[str]
 
 
-class CompanyListingService(IService[CompanyListingServiceProps, Sequence[Company]]):
-    def __init__(self, props: CompanyListingServiceProps) -> None:
-        self.__props: CompanyListingServiceProps = props
+class CompanyListingService(IService[Sequence[Company]]):
+    def __init__(self, company_name: Optional[str] = None) -> None:
+        self.__props: CompanyListingServiceProps = CompanyListingServiceProps(
+            company_name=company_name
+        )
 
     async def execute(self) -> Sequence[Company]:
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)

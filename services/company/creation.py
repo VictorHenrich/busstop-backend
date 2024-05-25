@@ -17,9 +17,16 @@ class CompanyCreationServiceProps(BaseModel):
     email: str
 
 
-class CompanyCreationService(IService[CompanyCreationServiceProps, None]):
-    def __init__(self, props: CompanyCreationServiceProps) -> None:
-        self.__company: CompanyCreationServiceProps = props
+class CompanyCreationService(IService[None]):
+    def __init__(
+        self, company_name: str, fantasy_name: str, document_cnpj: str, email: str
+    ) -> None:
+        self.__company_data: CompanyCreationServiceProps = CompanyCreationServiceProps(
+            company_name=company_name,
+            fantasy_name=fantasy_name,
+            document_cnpj=document_cnpj,
+            email=email,
+        )
 
     async def execute(self) -> None:
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
@@ -29,6 +36,6 @@ class CompanyCreationService(IService[CompanyCreationServiceProps, None]):
                 CompanyCreationRepositoryProps, None
             ] = CompanyRepository(session)
 
-            await company_repository.create(self.__company)
+            await company_repository.create(self.__company_data)
 
             await session.commit()

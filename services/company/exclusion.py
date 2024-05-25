@@ -11,9 +11,11 @@ class CompanyExclusionServiceProps(BaseModel):
     uuid: str
 
 
-class CompanyExclusionService(IService[CompanyExclusionServiceProps, None]):
-    def __init__(self, props: CompanyExclusionServiceProps) -> None:
-        self.__props: CompanyExclusionServiceProps = props
+class CompanyExclusionService(IService[None]):
+    def __init__(self, uuid: str) -> None:
+        self.__props: CompanyExclusionServiceProps = CompanyExclusionServiceProps(
+            uuid=uuid
+        )
 
     async def execute(self) -> None:
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
