@@ -28,11 +28,11 @@ class CompanyServiceCase(TestCase):
     def test_update(self) -> None:
         async def main():
             company_service: IService[None] = CompanyUpdateService(
-                company_name="TCL",
-                fantasy_name="Transportes Capivari LTDA",
+                company_name="TCL ALTERADO",
+                fantasy_name="Transportes Capivari LTDA ALTERADO",
                 document_cnpj="000000000",
                 email="transportescapivari@gmail.com",
-                uuid="",
+                uuid="e95d2a92-a5a2-4cb8-aa0f-bbea29be9afa",
             )
 
             await company_service.execute()
@@ -41,7 +41,9 @@ class CompanyServiceCase(TestCase):
 
     def test_exclusion(self) -> None:
         async def main():
-            company_service: IService[None] = CompanyExclusionService(uuid="")
+            company_service: IService[None] = CompanyExclusionService(
+                uuid="e95d2a92-a5a2-4cb8-aa0f-bbea29be9afa"
+            )
 
             await company_service.execute()
 
