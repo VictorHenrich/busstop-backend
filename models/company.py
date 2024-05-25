@@ -1,16 +1,16 @@
+from typing import Set, TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Uuid
 from uuid import uuid4
 
-from server.instances import ServerInstances
-from server.database import Database
-from utils.constants import DATABASE_INSTANCE_NAME
-import models.routes as routes
+from . import common
 
-database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
+if TYPE_CHECKING:
+    from models.point import Point
+    from models.route import Route
 
 
-class Company(database.Base):
+class Company(common.database.Base):
     __tablename__ = "company"
 
     id: Mapped[int] = mapped_column(primary_key=True, unique=True, autoincrement=True)
@@ -27,9 +27,9 @@ class Company(database.Base):
 
     email: Mapped[str]
 
-    routes: Mapped["routes.Route"] = relationship(back_populates="company")
+    routes: Mapped[Set["Route"]] = relationship(back_populates="company")
 
-    points: Mapped["routes.Point"] = relationship(back_populates="company")
+    points: Mapped[Set["Point"]] = relationship(back_populates="company")
 
     def __repr__(self) -> str:
         return (

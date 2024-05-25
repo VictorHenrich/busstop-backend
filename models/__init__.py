@@ -1,2 +1,3 @@
 from models.company import Company
-from models.routes import Route, Point, RoutePointRelationship
+from models.route import Route
+from models.point import Point
