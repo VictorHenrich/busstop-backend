@@ -15,7 +15,7 @@ from utils.patterns import (
     IFindRepository,
     IFindManyRepository,
 )
-from utils.exceptions import CompanyNotFound
+from utils.exceptions import ModelNotFound
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
@@ -56,7 +56,7 @@ class RouteCreationService(IService[Optional[Route]]):
         company: Optional[Company] = await company_repository.find(company_props)
 
         if not company:
-            raise CompanyNotFound(self.__company_uuid)
+            raise ModelNotFound(Company, self.__company_uuid)
 
         return company
 
