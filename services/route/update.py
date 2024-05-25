@@ -84,14 +84,17 @@ class RouteUpdateService(IService[Optional[Route]]):
         return await point_repository.find_many(point_props)
 
     async def __update_route(
-        self, session: AsyncSession, points: Sequence[Point]
+        self, session: AsyncSession, route: Route, points: Sequence[Point]
     ) -> Optional[Route]:
         route_repository: IUpdateRepository[
             RouteUpdateRepositoryProps, Optional[Route]
         ] = RouteRepository(session)
 
         route_props: RouteUpdateRepositoryProps = RouteUpdateProps(
-            uuid=self.__route_uuid, points=points, description=self.__description
+            uuid=self.__route_uuid,
+            points=points,
+            description=self.__description,
+            route_instance=route,
         )
 
         return await route_repository.update(route_props)
@@ -104,4 +107,9 @@ class RouteUpdateService(IService[Optional[Route]]):
 
             points: Sequence[Point] = await self.__find_points(session, route.company)
 
-            return await self.__update_route(session, points)
+            await self.__update_route(session, route, points)
+
+            await session.commit()
+            await session.refresh(route)
+
+            return route

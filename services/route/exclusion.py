@@ -38,4 +38,8 @@ class RouteExclusionService(IService[Optional[Route]]):
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
 
         async with database.create_async_session() as session:
-            return await self.__delete_route(session)
+            route: Optional[Route] = await self.__delete_route(session)
+
+            await session.commit()
+
+            return route

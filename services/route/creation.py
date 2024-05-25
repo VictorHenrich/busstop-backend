@@ -84,7 +84,7 @@ class RouteCreationService(IService[Optional[Route]]):
             company=company, points=points, description=self.__description
         )
 
-        return await route_repository.create(route_props)
+        await route_repository.create(route_props)
 
     async def execute(self) -> Optional[Route]:
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
@@ -94,4 +94,9 @@ class RouteCreationService(IService[Optional[Route]]):
 
             points: Sequence[Point] = await self.__find_points(session, company)
 
-            return await self.__create_route(session, company, points)
+            route: Optional[Route] = await self.__create_route(session, company, points)
+
+            await session.commit()
+            await session.refresh(route)
+
+            return route
