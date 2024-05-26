@@ -77,6 +77,8 @@ class PointUpdateService(IService[Optional[Point]]):
 
         await session.commit()
 
+        await session.refresh(point)
+
         return point
 
     async def execute(self) -> Optional[Point]:

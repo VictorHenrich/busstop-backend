@@ -1,5 +1,6 @@
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
+from copy import copy
 
 from server.instances import ServerInstances
 from server.database import Database
@@ -26,9 +27,14 @@ class PointExclusionService(IService[Optional[Point]]):
 
         point: Optional[Point] = await company_repository.delete(data)
 
+        point_copy: Optional[Point] = None
+
+        if point:
+            point_copy = copy(point)
+
         await session.commit()
 
-        return point
+        return point_copy
 
     async def execute(self) -> Optional[Point]:
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)

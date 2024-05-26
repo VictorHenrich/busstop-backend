@@ -56,11 +56,7 @@ class PointListingService(IService[Sequence[Point]]):
             PointListingRepositoryProps, Point
         ] = PointRepository(session)
 
-        points: Sequence[Point] = await company_repository.find_many(data)
-
-        await session.commit()
-
-        return points
+        return await company_repository.find_many(data)
 
     async def execute(self) -> Sequence[Point]:
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
