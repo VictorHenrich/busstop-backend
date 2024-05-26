@@ -1,13 +1,9 @@
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
-from server.database import Database
-from server.instances import ServerInstances
-from models import Route
+from models import Route, database
 from repositories.route import RouteRepository, RouteCaptureRepositoryProps
 from utils.patterns import IService, IFindRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class RouteCaptureProps(AbstractBaseEntity):
@@ -30,7 +26,5 @@ class RouteCaptureService(IService[Optional[Route]]):
         return await route_repository.find(route_props)
 
     async def execute(self) -> Optional[Route]:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             return await self.__find_route(session)

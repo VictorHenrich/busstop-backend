@@ -1,12 +1,9 @@
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.instances import ServerInstances
-from server.database import Database
-from models import Point
+from models import Point, database
 from repositories.point import PointRepository, PointCaptureRepositoryProps
 from utils.patterns import IService, IFindRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class PointCaptureProps(AbstractBaseEntity):
@@ -27,7 +24,5 @@ class PointCaptureService(IService[Optional[Point]]):
         return await company_repository.find(data)
 
     async def execute(self) -> Optional[Point]:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             return await self.__find_point(session)

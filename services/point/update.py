@@ -1,30 +1,27 @@
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.instances import ServerInstances
-from server.database import Database
-from models import Point
+from models import Point, database
 from repositories.point import PointRepository, PointUpdateRepositoryProps
 from utils.patterns import IService, IUpdateRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class PointUpdateProps(AbstractBaseEntity):
     uuid: str
 
-    address_state: Optional[str]
+    address_state: str
 
-    address_city: Optional[str]
+    address_city: str
 
-    address_neighborhood: Optional[str]
+    address_neighborhood: str
 
-    address_street: Optional[str]
+    address_street: str
 
-    address_number: Optional[str]
+    address_number: str
 
-    latitude: Optional[str]
+    latitude: str
 
-    longitude: Optional[str]
+    longitude: str
 
     point_instance: Optional[Point] = None
 
@@ -33,32 +30,32 @@ class PointUpdateService(IService[Optional[Point]]):
     def __init__(
         self,
         point_uuid: str,
-        address_state: Optional[str],
-        address_city: Optional[str],
-        address_neighborhood: Optional[str],
-        address_street: Optional[str],
-        address_number: Optional[str],
-        latitude: Optional[str],
-        longitude: Optional[str],
+        address_state: str,
+        address_city: str,
+        address_neighborhood: str,
+        address_street: str,
+        address_number: str,
+        latitude: str,
+        longitude: str,
     ) -> None:
         self.__point_uuid: str = point_uuid
 
-        self.__address_state: Optional[str] = address_state
+        self.__address_state: str = address_state
 
-        self.__address_city: Optional[str] = address_city
+        self.__address_city: str = address_city
 
-        self.__address_neighborhood: Optional[str] = address_neighborhood
+        self.__address_neighborhood: str = address_neighborhood
 
-        self.__address_street: Optional[str] = address_street
+        self.__address_street: str = address_street
 
-        self.__address_number: Optional[str] = address_number
+        self.__address_number: str = address_number
 
-        self.__latitude: Optional[str] = latitude
+        self.__latitude: str = latitude
 
-        self.__longitude: Optional[str] = longitude
+        self.__longitude: str = longitude
 
     async def __update_point(self, session: AsyncSession) -> Optional[Point]:
-        data: PointUpdateProps = PointUpdateProps(
+        data: PointUpdateRepositoryProps = PointUpdateProps(
             address_state=self.__address_state,
             address_city=self.__address_city,
             address_neighborhood=self.__address_neighborhood,
@@ -82,7 +79,5 @@ class PointUpdateService(IService[Optional[Point]]):
         return point
 
     async def execute(self) -> Optional[Point]:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             return await self.__update_point(session)

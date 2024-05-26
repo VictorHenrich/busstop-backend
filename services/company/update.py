@@ -1,8 +1,6 @@
-from server.instances import ServerInstances
-from server.database import Database
+from models import database
 from repositories.company import CompanyRepository, CompanyUpdateRepositoryProps
 from utils.patterns import IService, IUpdateRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class CompanyUpdateServiceProps(AbstractBaseEntity):
@@ -35,8 +33,6 @@ class CompanyUpdateService(IService[None]):
         )
 
     async def execute(self) -> None:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             company_repository: IUpdateRepository[
                 CompanyUpdateRepositoryProps, None

@@ -1,8 +1,6 @@
-from server.instances import ServerInstances
-from server.database import Database
+from models import database
 from repositories.company import CompanyRepository, CompanyExclusionRepositoryProps
 from utils.patterns import IService, IDeleteRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class CompanyExclusionServiceProps(AbstractBaseEntity):
@@ -16,8 +14,6 @@ class CompanyExclusionService(IService[None]):
         )
 
     async def execute(self) -> None:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             company_repository: IDeleteRepository[
                 CompanyExclusionRepositoryProps, None

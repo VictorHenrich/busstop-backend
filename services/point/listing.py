@@ -1,9 +1,7 @@
 from typing import Optional, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.instances import ServerInstances
-from server.database import Database
-from models import Company, Point
+from models import Company, Point, database
 from repositories.point import PointRepository, PointListingRepositoryProps
 from repositories.company import CompanyRepository, CompanyCaptureRepositoryProps
 from utils.patterns import (
@@ -12,7 +10,6 @@ from utils.patterns import (
     IFindManyRepository,
     AbstractBaseEntity,
 )
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class CompanyCaptureProps(AbstractBaseEntity):
@@ -59,8 +56,6 @@ class PointListingService(IService[Sequence[Point]]):
         return await company_repository.find_many(data)
 
     async def execute(self) -> Sequence[Point]:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             company: Company = await self.__find_company(session)
 

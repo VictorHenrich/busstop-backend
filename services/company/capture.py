@@ -1,11 +1,8 @@
 from typing import Optional
 
-from server.instances import ServerInstances
-from server.database import Database
-from models.company import Company
+from models import Company, database
 from repositories.company import CompanyRepository, CompanyCaptureRepositoryProps
 from utils.patterns import IService, IFindRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 from utils.exceptions import ModelNotFound
 
 
@@ -18,8 +15,6 @@ class CompanyCaptureService(IService[Company]):
         self.__company_uuid: str = company_uuid
 
     async def execute(self) -> Company:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             company_repository: IFindRepository[
                 CompanyCaptureRepositoryProps, Company

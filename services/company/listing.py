@@ -1,11 +1,8 @@
 from typing import Optional, Sequence
 
-from server.instances import ServerInstances
-from server.database import Database
-from models.company import Company
+from models import Company, database
 from repositories.company import CompanyRepository, CompanyListingRepositoryProps
 from utils.patterns import IService, IFindManyRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class CompanyListingServiceProps(AbstractBaseEntity):
@@ -19,8 +16,6 @@ class CompanyListingService(IService[Sequence[Company]]):
         )
 
     async def execute(self) -> Sequence[Company]:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             company_repository: IFindManyRepository[
                 CompanyListingRepositoryProps, Company

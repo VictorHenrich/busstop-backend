@@ -2,13 +2,9 @@ from typing import Optional
 from copy import copy
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
-from server.database import Database
-from server.instances import ServerInstances
-from models import Route
+from models import Route, database
 from repositories.route import RouteRepository, RouteExclusionRepositoryProps
 from utils.patterns import IService, IDeleteRepository, AbstractBaseEntity
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class RouteExclusionProps(AbstractBaseEntity):
@@ -33,8 +29,6 @@ class RouteExclusionService(IService[Optional[Route]]):
         return await route_repository.delete(route_props)
 
     async def execute(self) -> Optional[Route]:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             route: Optional[Route] = await self.__delete_route(session)
 
