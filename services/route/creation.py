@@ -1,5 +1,5 @@
-from typing import Optional, Sequence
-from pydantic import BaseModel
+from typing import Optional, Sequence, List
+from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -19,18 +19,21 @@ from utils.exceptions import ModelNotFound
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class RouteCreationProps(BaseModel):
+@dataclass
+class RouteCreationProps:
     company: Company
     description: str
     points: Sequence[Point]
 
 
-class PointListingProps(BaseModel):
+@dataclass
+class PointListingProps:
     company: Company
-    uuids: Sequence[str] = []
+    uuids: Sequence[str]
 
 
-class CompanyCaptureProps(BaseModel):
+@dataclass
+class CompanyCaptureProps:
     uuid: str
 
 

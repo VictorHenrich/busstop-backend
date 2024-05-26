@@ -1,6 +1,6 @@
 from typing import Optional
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import BaseModel, ConfigDict
 
 from server.instances import ServerInstances
 from server.database import Database
@@ -16,6 +16,8 @@ class CompanyCaptureProps(BaseModel):
 
 
 class PointCreationProps(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     address_state: str
 
     address_city: str
@@ -33,7 +35,7 @@ class PointCreationProps(BaseModel):
     company: Company
 
 
-class CompanyCreationService(IService[Optional[Point]]):
+class PointCreationService(IService[Optional[Point]]):
     def __init__(
         self,
         company_uuid: str,

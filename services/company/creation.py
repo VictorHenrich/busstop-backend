@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 from server.instances import ServerInstances
 from server.database import Database
@@ -7,7 +7,8 @@ from utils.patterns import IService, ICreateRepository
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class CompanyCreationServiceProps(BaseModel):
+@dataclass
+class CompanyCreationServiceProps:
     company_name: str
 
     fantasy_name: str

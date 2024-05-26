@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -14,7 +14,8 @@ from utils.patterns import (
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class RouteCaptureProps(BaseModel):
+@dataclass
+class RouteCaptureProps:
     uuid: str
 
 

@@ -1,5 +1,5 @@
 from typing import Optional, Sequence
-from pydantic import BaseModel
+from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -22,7 +22,8 @@ from utils.exceptions import ModelNotFound
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class RouteUpdateProps(BaseModel):
+@dataclass
+class RouteUpdateProps:
     uuid: str
 
     description: str
@@ -32,12 +33,14 @@ class RouteUpdateProps(BaseModel):
     route_instance: Optional[Route] = None
 
 
-class PointListingProps(BaseModel):
+@dataclass
+class PointListingProps:
     company: Company
-    uuids: Sequence[str] = []
+    uuids: Sequence[str]
 
 
-class RouteCaptureProps(BaseModel):
+@dataclass
+class RouteCaptureProps:
     uuid: str
 
 

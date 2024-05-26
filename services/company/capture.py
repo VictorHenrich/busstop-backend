@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 from server.instances import ServerInstances
 from server.database import Database
@@ -10,7 +10,8 @@ from utils.constants import DATABASE_INSTANCE_NAME
 from utils.exceptions import ModelNotFound
 
 
-class CompanyCaptureProps(BaseModel):
+@dataclass
+class CompanyCaptureProps:
     uuid: str
 
 

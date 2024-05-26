@@ -1,5 +1,5 @@
 from typing import Optional, Sequence
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 from server.instances import ServerInstances
 from server.database import Database
@@ -9,7 +9,8 @@ from utils.patterns import IService, IFindManyRepository
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class CompanyListingServiceProps(BaseModel):
+@dataclass
+class CompanyListingServiceProps:
     company_name: Optional[str]
 
 

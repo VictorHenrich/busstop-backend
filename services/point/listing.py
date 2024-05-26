@@ -1,5 +1,5 @@
 from typing import Optional, Sequence
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.instances import ServerInstances
@@ -16,11 +16,14 @@ class CompanyCaptureProps(BaseModel):
 
 
 class PointListingProps(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     company: Company
-    uuids: Sequence[str] = []
+
+    uuids: Sequence[str]
 
 
-class PointService(IService[Sequence[Point]]):
+class PointListingService(IService[Sequence[Point]]):
     def __init__(self, company_uuid: str, uuids: Sequence[str] = []) -> None:
         self.__company_uuid: str = company_uuid
 

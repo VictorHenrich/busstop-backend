@@ -1,6 +1,6 @@
 from typing import Optional
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import BaseModel, ConfigDict
 
 from server.instances import ServerInstances
 from server.database import Database
@@ -11,6 +11,8 @@ from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class PointUpdateProps(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     uuid: str
 
     address_state: Optional[str]
