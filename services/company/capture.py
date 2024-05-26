@@ -1,17 +1,15 @@
 from typing import Optional
-from dataclasses import dataclass
 
 from server.instances import ServerInstances
 from server.database import Database
 from models.company import Company
 from repositories.company import CompanyRepository, CompanyCaptureRepositoryProps
-from utils.patterns import IService, IFindRepository
+from utils.patterns import IService, IFindRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 from utils.exceptions import ModelNotFound
 
 
-@dataclass
-class CompanyCaptureProps:
+class CompanyCaptureProps(AbstractBaseEntity):
     uuid: str
 
 

@@ -1,14 +1,11 @@
-from dataclasses import dataclass
-
 from server.instances import ServerInstances
 from server.database import Database
 from repositories.company import CompanyRepository, CompanyCreationRepositoryProps
-from utils.patterns import IService, ICreateRepository
+from utils.patterns import IService, ICreateRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-@dataclass
-class CompanyCreationServiceProps:
+class CompanyCreationServiceProps(AbstractBaseEntity):
     company_name: str
 
     fantasy_name: str

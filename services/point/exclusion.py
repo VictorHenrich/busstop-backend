@@ -1,16 +1,15 @@
 from typing import Optional
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.instances import ServerInstances
 from server.database import Database
 from models import Point
 from repositories.point import PointRepository, PointExclusionRepositoryProps
-from utils.patterns import IService, IDeleteRepository
+from utils.patterns import IService, IDeleteRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class PointExclusionProps(BaseModel):
+class PointExclusionProps(AbstractBaseEntity):
     uuid: str
 
 

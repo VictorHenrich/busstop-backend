@@ -1,16 +1,14 @@
 from typing import Optional, Sequence
-from dataclasses import dataclass
 
 from server.instances import ServerInstances
 from server.database import Database
 from models.company import Company
 from repositories.company import CompanyRepository, CompanyListingRepositoryProps
-from utils.patterns import IService, IFindManyRepository
+from utils.patterns import IService, IFindManyRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-@dataclass
-class CompanyListingServiceProps:
+class CompanyListingServiceProps(AbstractBaseEntity):
     company_name: Optional[str]
 
 

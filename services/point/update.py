@@ -1,18 +1,15 @@
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel, ConfigDict
 
 from server.instances import ServerInstances
 from server.database import Database
 from models import Point
 from repositories.point import PointRepository, PointUpdateRepositoryProps
-from utils.patterns import IService, IUpdateRepository
+from utils.patterns import IService, IUpdateRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class PointUpdateProps(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
+class PointUpdateProps(AbstractBaseEntity):
     uuid: str
 
     address_state: Optional[str]

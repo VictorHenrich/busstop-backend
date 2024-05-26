@@ -1,5 +1,4 @@
 from typing import Optional
-from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -7,15 +6,11 @@ from server.database import Database
 from server.instances import ServerInstances
 from models import Route
 from repositories.route import RouteRepository, RouteCaptureRepositoryProps
-from utils.patterns import (
-    IService,
-    IFindRepository,
-)
+from utils.patterns import IService, IFindRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-@dataclass
-class RouteCaptureProps:
+class RouteCaptureProps(AbstractBaseEntity):
     uuid: str
 
 

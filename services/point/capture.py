@@ -1,16 +1,15 @@
 from typing import Optional
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.instances import ServerInstances
 from server.database import Database
 from models import Point
 from repositories.point import PointRepository, PointCaptureRepositoryProps
-from utils.patterns import IService, IFindRepository
+from utils.patterns import IService, IFindRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class PointCaptureProps(BaseModel):
+class PointCaptureProps(AbstractBaseEntity):
     uuid: str
 
 

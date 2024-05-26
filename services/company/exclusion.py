@@ -1,14 +1,11 @@
-from dataclasses import dataclass
-
 from server.instances import ServerInstances
 from server.database import Database
 from repositories.company import CompanyRepository, CompanyExclusionRepositoryProps
-from utils.patterns import IService, IDeleteRepository
+from utils.patterns import IService, IDeleteRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-@dataclass
-class CompanyExclusionServiceProps:
+class CompanyExclusionServiceProps(AbstractBaseEntity):
     uuid: str
 
 

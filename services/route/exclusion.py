@@ -1,5 +1,4 @@
 from typing import Optional
-from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -7,16 +6,13 @@ from server.database import Database
 from server.instances import ServerInstances
 from models import Route
 from repositories.route import RouteRepository, RouteExclusionRepositoryProps
-from utils.patterns import (
-    IService,
-    IDeleteRepository,
-)
+from utils.patterns import IService, IDeleteRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-@dataclass
-class RouteExclusionProps:
+class RouteExclusionProps(AbstractBaseEntity):
     uuid: str
+
     route_instance: Optional[Route] = None
 
 

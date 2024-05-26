@@ -1,5 +1,4 @@
 from typing import Optional, Sequence
-from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.instances import ServerInstances
@@ -7,17 +6,20 @@ from server.database import Database
 from models import Company, Point
 from repositories.point import PointRepository, PointListingRepositoryProps
 from repositories.company import CompanyRepository, CompanyCaptureRepositoryProps
-from utils.patterns import IFindRepository, IService, IFindManyRepository
+from utils.patterns import (
+    IFindRepository,
+    IService,
+    IFindManyRepository,
+    AbstractBaseEntity,
+)
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class CompanyCaptureProps(BaseModel):
+class CompanyCaptureProps(AbstractBaseEntity):
     uuid: str
 
 
-class PointListingProps(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
+class PointListingProps(AbstractBaseEntity):
     company: Company
 
     uuids: Sequence[str]

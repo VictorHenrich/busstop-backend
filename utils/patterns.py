@@ -9,7 +9,7 @@ from typing import (
     Sequence,
 )
 from abc import ABC
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm.session import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -77,3 +77,7 @@ class IDeleteManyRepository(Protocol, Generic[RPT, RRT]):
 class IFindManyRepository(Protocol, Generic[RPT, RRT]):
     def find_many(self, props: RPT) -> Union[Awaitable[Sequence[RRT]], Sequence[RRT]]:
         ...
+
+
+class AbstractBaseEntity(BaseModel, ABC):
+    model_config = ConfigDict(arbitrary_types_allowed=True)

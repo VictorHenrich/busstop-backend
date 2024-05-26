@@ -1,14 +1,11 @@
-from dataclasses import dataclass
-
 from server.instances import ServerInstances
 from server.database import Database
 from repositories.company import CompanyRepository, CompanyUpdateRepositoryProps
-from utils.patterns import IService, IUpdateRepository
+from utils.patterns import IService, IUpdateRepository, AbstractBaseEntity
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-@dataclass
-class CompanyUpdateServiceProps:
+class CompanyUpdateServiceProps(AbstractBaseEntity):
     uuid: str
 
     company_name: str

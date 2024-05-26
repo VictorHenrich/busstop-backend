@@ -1,5 +1,4 @@
 from typing import Optional, Sequence
-from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -8,18 +7,21 @@ from server.instances import ServerInstances
 from models import Route, Company
 from repositories.route import RouteRepository, RouteListingRepositoryProps
 from repositories.company import CompanyRepository, CompanyCaptureRepositoryProps
-from utils.patterns import IService, IFindManyRepository, IFindRepository
+from utils.patterns import (
+    IService,
+    IFindManyRepository,
+    IFindRepository,
+    AbstractBaseEntity,
+)
 from utils.constants import DATABASE_INSTANCE_NAME
 from utils.exceptions import ModelNotFound
 
 
-@dataclass
-class RouteListingProps:
+class RouteListingProps(AbstractBaseEntity):
     company: Company
 
 
-@dataclass
-class CompanyCaptureProps:
+class CompanyCaptureProps(AbstractBaseEntity):
     uuid: str
 
 

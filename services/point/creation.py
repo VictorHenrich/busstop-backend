@@ -1,23 +1,25 @@
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel, ConfigDict
 
 from server.instances import ServerInstances
 from server.database import Database
 from models import Company, Point
 from repositories.point import PointRepository, PointCreationRepositoryProps
 from repositories.company import CompanyRepository, CompanyCaptureRepositoryProps
-from utils.patterns import IFindRepository, IService, ICreateRepository
+from utils.patterns import (
+    IFindRepository,
+    IService,
+    ICreateRepository,
+    AbstractBaseEntity,
+)
 from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class CompanyCaptureProps(BaseModel):
+class CompanyCaptureProps(AbstractBaseEntity):
     uuid: str
 
 
-class PointCreationProps(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
+class PointCreationProps(AbstractBaseEntity):
     address_state: str
 
     address_city: str
