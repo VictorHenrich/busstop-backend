@@ -1,4 +1,4 @@
-from typing import Set, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Uuid, ForeignKey, String
 from uuid import uuid4
@@ -37,7 +37,7 @@ class Point(common.database.Base):
 
     company: Mapped["Company"] = relationship(back_populates="points")
 
-    routes: Mapped[Set["Route"]] = relationship(
+    routes: Mapped[List["Route"]] = relationship(
         secondary=common.RoutePointRelationship, back_populates="points"
     )
 

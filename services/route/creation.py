@@ -87,7 +87,7 @@ class RouteCreationService(IService[Optional[Route]]):
             company=company, points=points, description=self.__description
         )
 
-        await route_repository.create(route_props)
+        return await route_repository.create(route_props)
 
     async def execute(self) -> Optional[Route]:
         database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)

@@ -2,9 +2,7 @@ from typing import Optional, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-from server.database import Database
-from server.instances import ServerInstances
-from models import Route, Company, Point
+from models import Route, Company, Point, database
 from repositories.route import (
     RouteRepository,
     RouteUpdateRepositoryProps,
@@ -19,7 +17,6 @@ from utils.patterns import (
     AbstractBaseEntity,
 )
 from utils.exceptions import ModelNotFound
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
 class RouteUpdateProps(AbstractBaseEntity):
@@ -100,8 +97,6 @@ class RouteUpdateService(IService[Optional[Route]]):
         return await route_repository.update(route_props)
 
     async def execute(self) -> Optional[Route]:
-        database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
         async with database.create_async_session() as session:
             route: Route = await self.__find_route(session)
 

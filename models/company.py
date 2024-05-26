@@ -1,4 +1,4 @@
-from typing import Set, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Uuid
 from uuid import uuid4
@@ -27,9 +27,9 @@ class Company(common.database.Base):
 
     email: Mapped[str]
 
-    routes: Mapped[Set["Route"]] = relationship(back_populates="company")
+    routes: Mapped[List["Route"]] = relationship(back_populates="company")
 
-    points: Mapped[Set["Point"]] = relationship(back_populates="company")
+    points: Mapped[List["Point"]] = relationship(back_populates="company")
 
     def __repr__(self) -> str:
         return (

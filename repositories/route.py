@@ -1,18 +1,9 @@
 from typing import Any, Mapping, Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import (
-    Update,
-    update,
-    Delete,
-    delete,
-    Select,
-    select,
-    insert,
-    Insert,
-)
+from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
+from sqlalchemy.orm import joinedload
 
 from models import Point, Company, Route, RoutePointRelationship
-from utils.several import SeveralUtils
 from utils.patterns import (
     BaseRepository,
     ICreateRepository,
@@ -101,9 +92,7 @@ class RouteRepository(
         data: Mapping[str, Any] = {"description": props.description}
 
         if props.route_instance:
-            SeveralUtils.set_objet_properties(
-                props.route_instance, data, case_sensitive=True
-            )
+            props.route_instance.description = props.description
 
             for point in props.points:
                 props.route_instance.points.add(point)
@@ -152,7 +141,11 @@ class RouteRepository(
             return await self.session.scalar(query_route)
 
     async def find(self, props: RouteCaptureRepositoryProps) -> Optional[Route]:
-        query: Select = select(Route).where(Route.uuid == props.uuid)
+        query: Select = (
+            select(Route)
+            .options(joinedload(Route.company))
+            .where(Route.uuid == props.uuid)
+        )
 
         return await self.session.scalar(query)
 
