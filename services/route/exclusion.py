@@ -1,4 +1,5 @@
 from typing import Optional
+from copy import copy
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -37,6 +38,11 @@ class RouteExclusionService(IService[Optional[Route]]):
         async with database.create_async_session() as session:
             route: Optional[Route] = await self.__delete_route(session)
 
+            route_copy: Optional[Route] = None
+
+            if route:
+                route_copy = copy(route)
+
             await session.commit()
 
-            return route
+            return route_copy

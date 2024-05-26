@@ -45,7 +45,7 @@ class RouteServiceCase(TestCase):
     def test_exclusion(self) -> None:
         async def main() -> None:
             point_exclusion_service: IService = RouteExclusionService(
-                route_uuid="ffca0064-04d3-4da3-8332-885ac82b1ab2",
+                route_uuid="68fa075f-074f-44d2-9160-f59aad4abcbf",
             )
 
             route: Optional[Route] = await point_exclusion_service.execute()
