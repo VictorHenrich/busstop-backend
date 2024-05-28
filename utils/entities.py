@@ -1,21 +1,4 @@
-from typing import Optional, Union, Sequence, TypeVar, Generic
-from abc import ABC
 from pydantic import BaseModel
-from enum import Enum
-
-
-M = TypeVar("M", bound=Union[BaseModel, Sequence[BaseModel], None])
-
-
-class JSONDataTypes(Enum):
-    SUCCESS = "success"
-    ERROR = "error"
-    UNAUTHORIZED = "unauthorized"
-
-
-class JSONDataEntity(BaseModel, ABC, Generic[M]):
-    info: JSONDataTypes
-    content: Optional[M]
 
 
 class UUIDEntity(BaseModel):
@@ -39,4 +22,24 @@ class CompanyBodyEntity(BaseModel):
 
 
 class CompanyEntity(CompanyBodyEntity, UUIDEntity):
+    pass
+
+
+class PointBodyEntity(BaseModel):
+    address_state: str
+
+    address_city: str
+
+    address_neighborhood: str
+
+    address_street: str
+
+    address_number: str
+
+    latitude: str
+
+    longitude: str
+
+
+class PointEntity(PointBodyEntity, UUIDEntity):
     pass

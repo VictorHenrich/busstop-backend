@@ -17,3 +17,6 @@ DATABASE_PASSWORD: str = os.environ.get("DATABASE_PASSWORD", "")
 API_HOST: str = os.environ.get("API_HOST", "")
 
 API_PORT: str = os.environ.get("API_PORT", "")
+
+COMPANY_ENPOINT_NAME: str = os.environ.get("COMPANY_ENPOINT_NAME", "")
+POINT_ENPOINT_NAME: str = os.environ.get("POINT_ENPOINT_NAME", "")

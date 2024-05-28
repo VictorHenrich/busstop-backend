@@ -1,8 +1,8 @@
 from server.instances import ServerInstances
-from utils.responses import SuccessJSONResponse
-from utils.entities import JSONDataEntity, IndexEntity
+from utils.responses import SuccessJSONResponse, JSONBaseResponse
+from utils.entities import IndexEntity
 
 
 @ServerInstances.api.get("/")
-def index() -> JSONDataEntity[IndexEntity]:
+def index() -> JSONBaseResponse[IndexEntity]:
     return SuccessJSONResponse(content=IndexEntity())

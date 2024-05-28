@@ -1,22 +1,33 @@
-from typing import Optional, Sequence, TypeVar, Union
+from typing import Optional, Sequence, TypeVar, Union, Generic
 from pydantic import BaseModel
-
-from utils.entities import JSONDataEntity, JSONDataTypes
+from enum import Enum
+from abc import ABC
 
 
 T = TypeVar("T", bound=Union[BaseModel, Sequence[BaseModel], None])
 
 
-class SuccessJSONResponse(JSONDataEntity[T]):
-    info: JSONDataTypes = JSONDataTypes.SUCCESS
+class JSONBaseResponseTypes(Enum):
+    SUCCESS = "success"
+    ERROR = "error"
+    UNAUTHORIZED = "unauthorized"
+
+
+class JSONBaseResponse(BaseModel, ABC, Generic[T]):
+    info: JSONBaseResponseTypes
+    content: Optional[T]
+
+
+class SuccessJSONResponse(JSONBaseResponse[T]):
+    info: JSONBaseResponseTypes = JSONBaseResponseTypes.SUCCESS
     content: Optional[T] = None
 
 
-class ErrorJSONResponse(JSONDataEntity[T]):
-    info: JSONDataTypes = JSONDataTypes.ERROR
+class ErrorJSONResponse(JSONBaseResponse[T]):
+    info: JSONBaseResponseTypes = JSONBaseResponseTypes.ERROR
     content: Optional[T] = None
 
 
-class UnauthorizedJSONResponse(JSONDataEntity[T]):
-    info: JSONDataTypes = JSONDataTypes.UNAUTHORIZED
+class UnauthorizedJSONResponse(JSONBaseResponse[T]):
+    info: JSONBaseResponseTypes = JSONBaseResponseTypes.UNAUTHORIZED
     content: Optional[T] = None

@@ -3,7 +3,8 @@ from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock
 import logging
 
-from utils.entities import CompanyEntity, JSONDataEntity, JSONDataTypes
+from utils.responses import JSONBaseResponse, JSONBaseResponseTypes
+from utils.entities import CompanyEntity
 from controllers.company import (
     create_company,
     update_company,
@@ -34,11 +35,11 @@ class CompanyControllerTestCase(IsolatedAsyncioTestCase):
         company_body.fantasy_name = "TCL"
         company_body.document_cnpj = "000000"
         company_body.email = "teste@gmail.com"
-        response: JSONDataEntity = await create_company(company_body)
+        response: JSONBaseResponse = await create_company(company_body)
 
         logging.info(f"Response Create: {response}")
 
-        self.assertEqual(response.info, JSONDataTypes.SUCCESS)
+        self.assertEqual(response.info, JSONBaseResponseTypes.SUCCESS)
 
     async def test_update(self) -> None:
         logging.info("...RUNNING UPDATE...")
@@ -52,36 +53,38 @@ class CompanyControllerTestCase(IsolatedAsyncioTestCase):
 
         company_uuid: str = self.__get_company_uuid()
 
-        response: JSONDataEntity[None] = await update_company(
+        response: JSONBaseResponse[None] = await update_company(
             company_uuid, company_body
         )
 
         logging.info(f"Response Update: {response}")
 
-        self.assertEqual(response.info, JSONDataTypes.SUCCESS)
+        self.assertEqual(response.info, JSONBaseResponseTypes.SUCCESS)
 
     async def test_delete(self) -> None:
         logging.info("...RUNNING DELETE...")
         company_uuid: str = self.__get_company_uuid()
 
-        response: JSONDataEntity[None] = await delete_company(company_uuid=company_uuid)
+        response: JSONBaseResponse[None] = await delete_company(
+            company_uuid=company_uuid
+        )
 
         logging.info(f"Response Delete: {response}")
 
-        self.assertEqual(response.info, JSONDataTypes.SUCCESS)
+        self.assertEqual(response.info, JSONBaseResponseTypes.SUCCESS)
 
     async def test_get(self) -> None:
         logging.info("...RUNNING GET...")
 
         company_uuid: str = self.__get_company_uuid()
 
-        response: JSONDataEntity[Optional[CompanyEntity]] = await get_company(
+        response: JSONBaseResponse[Optional[CompanyEntity]] = await get_company(
             company_uuid=company_uuid
         )
 
         logging.info(f"Response Get: {response}")
 
-        self.assertEqual(response.info, JSONDataTypes.SUCCESS)
+        self.assertEqual(response.info, JSONBaseResponseTypes.SUCCESS)
         self.assertIsNotNone(response.content)
 
         self.__company = response.content
@@ -89,13 +92,13 @@ class CompanyControllerTestCase(IsolatedAsyncioTestCase):
     async def test_list(self) -> None:
         logging.info("...RUNNING LIST...")
 
-        response: JSONDataEntity[List[CompanyEntity]] = await list_companies(
+        response: JSONBaseResponse[List[CompanyEntity]] = await list_companies(
             page=0, limit=10, company_name=None
         )
 
         logging.info(f"Response List: {response}")
 
-        self.assertEqual(response.info, JSONDataTypes.SUCCESS)
+        self.assertEqual(response.info, JSONBaseResponseTypes.SUCCESS)
         self.assertIsNotNone(response.content)
         self.assertEqual(type(response.content), list)
         self.assertNotEqual(response.content, [])
