@@ -1,4 +1,5 @@
 from typing import Optional, Union, Sequence, TypeVar, Generic
+from abc import ABC
 from pydantic import BaseModel
 from enum import Enum
 
@@ -12,13 +13,19 @@ class JSONDataTypes(Enum):
     UNAUTHORIZED = "unauthorized"
 
 
-class JSONDataEntity(BaseModel, Generic[M]):
+class JSONDataEntity(BaseModel, ABC, Generic[M]):
     info: JSONDataTypes
     content: Optional[M]
 
 
 class UUIDEntity(BaseModel):
     uuid: str
+
+
+class IndexEntity(BaseModel):
+    version: str = "1.0"
+    name: str = "APPLICATION"
+    description: str = "APLICATION RUNNING"
 
 
 class CompanyBodyEntity(BaseModel):
