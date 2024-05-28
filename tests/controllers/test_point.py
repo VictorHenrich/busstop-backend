@@ -18,9 +18,9 @@ class PointControllerTestCase(IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
         self.__point: Optional[PointEntity] = None
 
-        self.__company_uuid: str = ""
+        self.__company_uuid: str = "e85f0743-1892-478e-83a2-3abe426c6e90"
 
-        self.__point_uuid: str = ""
+        self.__point_uuid: str = "32f148df-a2a8-4add-990c-407fe80ee5d1"
 
     def __get_point_uuid(self) -> str:
         if self.__point:
@@ -61,7 +61,7 @@ class PointControllerTestCase(IsolatedAsyncioTestCase):
         if self.__point:
             point_body = self.__point
 
-        point_body.address_state = "ALTERADO"
+        point_body.address_state = "SC"
         point_body.address_city = "ALTERADO"
         point_body.address_neighborhood = "ALTERADO"
         point_body.address_street = "ALTERADO"
@@ -121,7 +121,7 @@ class PointControllerTestCase(IsolatedAsyncioTestCase):
         self.assertIsNotNone(response.content)
         self.assertNotEqual(response.content, [])
 
-    async def test_point_automation_crud(self) -> None:
+    async def test_crud_automation(self) -> None:
         await self.test_create()
         await self.test_update()
         await self.test_get()
