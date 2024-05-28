@@ -1,13 +1,9 @@
 from typing import Sequence
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock
-from sqlalchemy.ext.asyncio import AsyncSession
-import asyncio
 import logging
 
-from server.instances import ServerInstances
-from server.database import Database
-from models import Company
+from models import Company, database
 from repositories.company import (
     CompanyRepository,
     CompanyCreationRepositoryProps,
@@ -15,15 +11,10 @@ from repositories.company import (
     CompanyExclusionRepositoryProps,
 )
 from utils.patterns import ICreateRepository, IUpdateRepository, IDeleteRepository
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class CompanyRepositoryCase(TestCase):
+class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.__database: Database = ServerInstances.databases.select(
-            DATABASE_INSTANCE_NAME
-        )
-
         self.__company_data: Mock = Mock()
 
         self.__company_data.company_name = "Empresa teste alterado"
@@ -32,10 +23,8 @@ class CompanyRepositoryCase(TestCase):
         self.__company_data.email = "victorhenrich993@gmail.com"
         self.__company_data.uuid = "6df97b7d-2beb-4d60-ae75-b742ac3df68a"
 
-    def test_create(self) -> None:
-        async def main() -> None:
-            session: AsyncSession = self.__database.create_async_session()
-
+    async def test_create(self) -> None:
+        async with database.create_async_session() as session:
             company_repository: ICreateRepository[
                 CompanyCreationRepositoryProps, None
             ] = CompanyRepository(session)
@@ -44,12 +33,8 @@ class CompanyRepositoryCase(TestCase):
 
             await session.commit()
 
-        asyncio.run(main())
-
-    def test_update(self) -> None:
-        async def main() -> None:
-            session: AsyncSession = self.__database.create_async_session()
-
+    async def test_update(self) -> None:
+        async with database.create_async_session() as session:
             company_repository: IUpdateRepository[
                 CompanyUpdateRepositoryProps, None
             ] = CompanyRepository(session)
@@ -58,12 +43,8 @@ class CompanyRepositoryCase(TestCase):
 
             await session.commit()
 
-        asyncio.run(main())
-
-    def test_delete(self) -> None:
-        async def main() -> None:
-            session: AsyncSession = self.__database.create_async_session()
-
+    async def test_delete(self) -> None:
+        async with database.create_async_session() as session:
             company_repository: IDeleteRepository[
                 CompanyExclusionRepositoryProps, None
             ] = CompanyRepository(session)
@@ -72,13 +53,9 @@ class CompanyRepositoryCase(TestCase):
 
             await session.commit()
 
-        asyncio.run(main())
-
-    def test_find_many(self) -> None:
-        async def main() -> Sequence[Company]:
+    async def test_find_many(self) -> None:
+        async with database.create_async_session() as session:
             filters: Mock = Mock()
-
-            session: AsyncSession = self.__database.create_async_session()
 
             company_repository: IDeleteRepository[
                 CompanyExclusionRepositoryProps, None
@@ -86,10 +63,4 @@ class CompanyRepositoryCase(TestCase):
 
             companies: Sequence[Company] = await company_repository.find_many(filters)
 
-            await session.close()
-
-            return companies
-
-        companies: Sequence[Company] = asyncio.run(main())
-
-        logging.info(f"Companies: {companies}")
+            logging.info(f"Companies: {companies}")

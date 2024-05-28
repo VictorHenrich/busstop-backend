@@ -1,12 +1,9 @@
 from typing import Optional, Sequence
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock
-import asyncio
 import logging
 
-from server.instances import ServerInstances
-from server.database import Database
-from models import Point
+from models import Point, database
 from repositories.point import (
     PointRepository,
     PointCreationRepositoryProps,
@@ -22,15 +19,10 @@ from utils.patterns import (
     IUpdateRepository,
     IDeleteRepository,
 )
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class PointRepositoryCase(TestCase):
+class PointRepositoryTestCase(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.__database: Database = ServerInstances.databases.select(
-            DATABASE_INSTANCE_NAME
-        )
-
         self.__point_data: Mock = Mock()
 
         self.__point_data.company = Mock(
@@ -47,91 +39,70 @@ class PointRepositoryCase(TestCase):
         self.__point_data.uuid = "4932d9e1-c715-4b97-890a-ab2f678d3d11"
         self.__point_data.point_instance = None
 
-    def test_create(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                point_repository: ICreateRepository[
-                    PointCreationRepositoryProps, Optional[Point]
-                ] = PointRepository(session)
+    async def test_create(self) -> None:
+        async with database.create_async_session() as session:
+            point_repository: ICreateRepository[
+                PointCreationRepositoryProps, Optional[Point]
+            ] = PointRepository(session)
 
-                point: Optional[Point] = await point_repository.create(
-                    self.__point_data
-                )
+            point: Optional[Point] = await point_repository.create(self.__point_data)
 
-                await session.commit()
+            await session.commit()
 
-                await session.refresh(point)
+            await session.refresh(point)
 
-                logging.info(f"Point Created: {point}")
+            logging.info(f"Point Created: {point}")
 
-        asyncio.run(main())
+    async def test_update(self) -> None:
+        async with database.create_async_session() as session:
+            point_repository: IUpdateRepository[
+                PointUpdateRepositoryProps, Optional[Point]
+            ] = PointRepository(session)
 
-    def test_update(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                point_repository: IUpdateRepository[
-                    PointUpdateRepositoryProps, Optional[Point]
-                ] = PointRepository(session)
+            point: Optional[Point] = await point_repository.update(self.__point_data)
 
-                point: Optional[Point] = await point_repository.update(
-                    self.__point_data
-                )
+            await session.commit()
 
-                await session.commit()
+            await session.refresh(point)
 
-                await session.refresh(point)
+            logging.info(f"Point Updated: {point}")
 
-                logging.info(f"Point Updated: {point}")
+    async def test_delete(self) -> None:
+        async with database.create_async_session() as session:
+            point_repository: IDeleteRepository[
+                PointExclusionRepositoryProps, Optional[Point]
+            ] = PointRepository(session)
 
-        asyncio.run(main())
+            point: Optional[Point] = await point_repository.delete(self.__point_data)
 
-    def test_delete(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                point_repository: IDeleteRepository[
-                    PointExclusionRepositoryProps, Optional[Point]
-                ] = PointRepository(session)
+            logging.info(f"Point Deleted: {point}")
 
-                point: Optional[Point] = await point_repository.delete(
-                    self.__point_data
-                )
+            await session.commit()
 
-                logging.info(f"Point Deleted: {point}")
+    async def test_find(self) -> None:
+        async with database.create_async_session() as session:
+            point_repository: IFindRepository[
+                PointCaptureRepositoryProps, Point
+            ] = PointRepository(session)
 
-                await session.commit()
+            point: Optional[Point] = await point_repository.find(self.__point_data)
 
-        asyncio.run(main())
+            logging.info(f"Point: {point}")
 
-    def test_find(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                point_repository: IFindRepository[
-                    PointCaptureRepositoryProps, Point
-                ] = PointRepository(session)
+            self.assertIsNot(point, None)
 
-                point: Optional[Point] = await point_repository.find(self.__point_data)
+    async def test_find_many(self) -> None:
+        filters: Mock = Mock()
 
-                logging.info(f"Point: {point}")
+        filters.company_uuid = "48a78ba8-d113-4801-8c50-0d0ab1f3197e"
 
-                self.assertIsNot(point, None)
+        async with database.create_async_session() as session:
+            point_repository: IFindManyRepository[
+                PointListingRepositoryProps, Point
+            ] = PointRepository(session)
 
-        asyncio.run(main())
+            points: Sequence[Point] = await point_repository.find_many(filters)
 
-    def test_find_many(self) -> None:
-        async def main() -> None:
-            filters: Mock = Mock()
+            logging.info(f"Points: {points}")
 
-            filters.company_uuid = "48a78ba8-d113-4801-8c50-0d0ab1f3197e"
-
-            async with self.__database.create_async_session() as session:
-                point_repository: IFindManyRepository[
-                    PointListingRepositoryProps, Point
-                ] = PointRepository(session)
-
-                points: Sequence[Point] = await point_repository.find_many(filters)
-
-                logging.info(f"Points: {points}")
-
-                self.assertIsNot(points, None)
-
-        asyncio.run(main())
+            self.assertIsNot(points, None)

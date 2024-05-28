@@ -1,8 +1,6 @@
 from typing import Optional, Sequence
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 import logging
-import asyncio
-
 
 from utils.patterns import IService
 from services.route.creation import RouteCreationService
@@ -13,71 +11,56 @@ from services.route.listing import RouteListingService
 from models import Route
 
 
-class RouteServiceCase(TestCase):
-    def test_creation(self) -> None:
-        async def main() -> None:
-            point_creation_service: IService = RouteCreationService(
-                company_uuid="f309cbfa-472d-4b29-8cc4-5da7704823d9",
-                description="Rota de teste",
-                point_uuids=[],
-            )
+class RouteServiceTestCase(IsolatedAsyncioTestCase):
+    async def test_creation(self) -> None:
+        point_creation_service: IService = RouteCreationService(
+            company_uuid="f309cbfa-472d-4b29-8cc4-5da7704823d9",
+            description="Rota de teste",
+            point_uuids=[],
+        )
 
-            route: Optional[Route] = await point_creation_service.execute()
+        route: Optional[Route] = await point_creation_service.execute()
 
-            logging.info(f"Route Created: {route}")
+        logging.info(f"Route Created: {route}")
 
-        asyncio.run(main())
+    async def test_update(self) -> None:
+        point_update_service: IService = RouteUpdateService(
+            route_uuid="68fa075f-074f-44d2-9160-f59aad4abcbf",
+            description="Rota de teste alterada",
+            point_uuids=[],
+        )
 
-    def test_update(self) -> None:
-        async def main() -> None:
-            point_update_service: IService = RouteUpdateService(
-                route_uuid="68fa075f-074f-44d2-9160-f59aad4abcbf",
-                description="Rota de teste alterada",
-                point_uuids=[],
-            )
+        route: Optional[Route] = await point_update_service.execute()
 
-            route: Optional[Route] = await point_update_service.execute()
+        logging.info(f"Route Updated: {route}")
 
-            logging.info(f"Route Updated: {route}")
+    async def test_exclusion(self) -> None:
+        point_exclusion_service: IService = RouteExclusionService(
+            route_uuid="68fa075f-074f-44d2-9160-f59aad4abcbf",
+        )
 
-        asyncio.run(main())
+        route: Optional[Route] = await point_exclusion_service.execute()
 
-    def test_exclusion(self) -> None:
-        async def main() -> None:
-            point_exclusion_service: IService = RouteExclusionService(
-                route_uuid="68fa075f-074f-44d2-9160-f59aad4abcbf",
-            )
+        logging.info(f"Route Deleted: {route}")
 
-            route: Optional[Route] = await point_exclusion_service.execute()
+    async def test_listing(self) -> None:
+        point_listing_service: IService = RouteListingService(
+            company_uuid="f309cbfa-472d-4b29-8cc4-5da7704823d9",
+        )
 
-            logging.info(f"Route Deleted: {route}")
+        points: Sequence[Route] = await point_listing_service.execute()
 
-        asyncio.run(main())
+        logging.info(f"Routes: {points}")
 
-    def test_listing(self) -> None:
-        async def main() -> None:
-            point_listing_service: IService = RouteListingService(
-                company_uuid="f309cbfa-472d-4b29-8cc4-5da7704823d9",
-            )
+        self.assertNotEqual(points, [])
 
-            points: Sequence[Route] = await point_listing_service.execute()
+    async def test_capture(self) -> None:
+        point_capture_service: IService = RouteCaptureService(
+            route_uuid="68fa075f-074f-44d2-9160-f59aad4abcbf",
+        )
 
-            logging.info(f"Routes: {points}")
+        route: Optional[Route] = await point_capture_service.execute()
 
-            self.assertNotEqual(points, [])
+        logging.info(f"Route Captured: {route}")
 
-        asyncio.run(main())
-
-    def test_capture(self) -> None:
-        async def main() -> None:
-            point_capture_service: IService = RouteCaptureService(
-                route_uuid="68fa075f-074f-44d2-9160-f59aad4abcbf",
-            )
-
-            route: Optional[Route] = await point_capture_service.execute()
-
-            logging.info(f"Route Captured: {route}")
-
-            self.assertNotEqual(route, None)
-
-        asyncio.run(main())
+        self.assertNotEqual(route, None)

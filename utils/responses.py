@@ -1,37 +1,47 @@
-from typing import Any, Mapping, Optional
+from typing import Mapping, Optional, Sequence, TypeVar, Generic, Union
+from pydantic import BaseModel
 from fastapi.responses import JSONResponse
-import json
+from abc import ABC
+
+from utils.entities import JSONDataEntity, JSONDataTypes
 
 
-class BaseResponseJSON(JSONResponse):
+T = TypeVar("T", bound=Union[BaseModel, Sequence[BaseModel], None])
+
+
+class BaseJSONResponse(JSONResponse, ABC, Generic[T]):
     def __init__(
         self,
-        content: Any,
-        status: int,
-        info: str = "",
+        content: T,
+        info: JSONDataTypes,
+        status_code: int,
         headers: Optional[Mapping[str, str]] = None,
     ) -> None:
-        data: Mapping[str, Any] = {"info": info, "content": content}
+        self.__data: JSONDataEntity = JSONDataEntity(info=info, content=content)
 
-        super().__init__(json.dumps(data), status, headers)
+        super().__init__(self.__data, status_code, headers, None, None)
+
+    @property
+    def data(self) -> JSONDataEntity[T]:
+        return self.__data
 
 
-class ResponseSuccess(BaseResponseJSON):
+class SuccessJSONResponse(BaseJSONResponse[T]):
     def __init__(
-        self, content: Optional[Any] = None, headers: Mapping[str, str] | None = None
+        self, content: T = None, headers: Optional[Mapping[str, str]] = None
     ) -> None:
-        super().__init__(content, 200, "SUCCESS", headers)
+        super().__init__(content, JSONDataTypes.SUCCESS, 200, headers)
 
 
-class ResponseError(BaseResponseJSON):
+class ErrorJSONResponse(BaseJSONResponse[T]):
     def __init__(
-        self, content: Optional[Any] = None, headers: Mapping[str, str] | None = None
+        self, content: T = None, headers: Optional[Mapping[str, str]] = None
     ) -> None:
-        super().__init__(content, 500, "ERROR", headers)
+        super().__init__(content, JSONDataTypes.ERROR, 500, headers)
 
 
-class ResponseUnauthorized(BaseResponseJSON):
+class UnauthorizedJSONResponse(BaseJSONResponse[T]):
     def __init__(
-        self, content: Optional[Any] = None, headers: Mapping[str, str] | None = None
+        self, content: T = None, headers: Optional[Mapping[str, str]] = None
     ) -> None:
-        super().__init__(content, 404, "UNAUTHORIZED", headers)
+        super().__init__(content, JSONDataTypes.UNAUTHORIZED, 400, headers)

@@ -1,12 +1,9 @@
 from typing import Optional, Sequence
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock
-import asyncio
 import logging
 
-from server.instances import ServerInstances
-from server.database import Database
-from models import Route, Point
+from models import Route, Point, database
 from repositories.route import (
     RouteRepository,
     RouteCreationRepositoryProps,
@@ -22,15 +19,10 @@ from utils.patterns import (
     IUpdateRepository,
     IDeleteRepository,
 )
-from utils.constants import DATABASE_INSTANCE_NAME
 
 
-class RouteRepositoryCase(TestCase):
+class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.__database: Database = ServerInstances.databases.select(
-            DATABASE_INSTANCE_NAME
-        )
-
         self.__route_data: Mock = Mock()
 
         self.__route_data.company = Mock()
@@ -55,89 +47,68 @@ class RouteRepositoryCase(TestCase):
         ]
         self.__route_data.route_instance = None
 
-    def test_create(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                route_repository: ICreateRepository[
-                    RouteCreationRepositoryProps, Optional[Route]
-                ] = RouteRepository(session)
+    async def test_create(self) -> None:
+        async with database.create_async_session() as session:
+            route_repository: ICreateRepository[
+                RouteCreationRepositoryProps, Optional[Route]
+            ] = RouteRepository(session)
 
-                route: Optional[Route] = await route_repository.create(
-                    self.__route_data
-                )
+            route: Optional[Route] = await route_repository.create(self.__route_data)
 
-                await session.commit()
+            await session.commit()
 
-                await session.refresh(route)
+            await session.refresh(route)
 
-                logging.info(f"Route Created: {route}")
+            logging.info(f"Route Created: {route}")
 
-        asyncio.run(main())
+    async def test_update(self) -> None:
+        async with database.create_async_session() as session:
+            route_repository: IUpdateRepository[
+                RouteUpdateRepositoryProps, Optional[Route]
+            ] = RouteRepository(session)
 
-    def test_update(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                route_repository: IUpdateRepository[
-                    RouteUpdateRepositoryProps, Optional[Route]
-                ] = RouteRepository(session)
+            route: Optional[Route] = await route_repository.update(self.__route_data)
 
-                route: Optional[Route] = await route_repository.update(
-                    self.__route_data
-                )
+            await session.commit()
 
-                await session.commit()
+            await session.refresh(route)
 
-                await session.refresh(route)
+            logging.info(f"Route Updated: {route}")
 
-                logging.info(f"Route Updated: {route}")
+    async def test_delete(self) -> None:
+        async with database.create_async_session() as session:
+            route_repository: IDeleteRepository[
+                RouteExclusionRepositoryProps, Optional[Route]
+            ] = RouteRepository(session)
 
-        asyncio.run(main())
+            route: Optional[Route] = await route_repository.delete(self.__route_data)
 
-    def test_delete(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                route_repository: IDeleteRepository[
-                    RouteExclusionRepositoryProps, Optional[Route]
-                ] = RouteRepository(session)
+            logging.info(f"Route Deleted: {route}")
 
-                route: Optional[Route] = await route_repository.delete(
-                    self.__route_data
-                )
+            await session.commit()
 
-                logging.info(f"Route Deleted: {route}")
+    async def test_find(self) -> None:
+        async with database.create_async_session() as session:
+            route_repository: IFindRepository[
+                RouteCaptureRepositoryProps, Route
+            ] = RouteRepository(session)
 
-                await session.commit()
+            point: Optional[Route] = await route_repository.find(self.__route_data)
 
-        asyncio.run(main())
+            logging.info(f"Route: {point}")
 
-    def test_find(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                route_repository: IFindRepository[
-                    RouteCaptureRepositoryProps, Route
-                ] = RouteRepository(session)
+            self.assertIsNot(point, None)
 
-                point: Optional[Route] = await route_repository.find(self.__route_data)
+    async def test_find_many(self) -> None:
+        async with database.create_async_session() as session:
+            route_repository: IFindManyRepository[
+                RouteListingRepositoryProps, Route
+            ] = RouteRepository(session)
 
-                logging.info(f"Route: {point}")
+            points: Sequence[Route] = await route_repository.find_many(
+                self.__route_data
+            )
 
-                self.assertIsNot(point, None)
+            logging.info(f"Routes: {points}")
 
-        asyncio.run(main())
-
-    def test_find_many(self) -> None:
-        async def main() -> None:
-            async with self.__database.create_async_session() as session:
-                route_repository: IFindManyRepository[
-                    RouteListingRepositoryProps, Route
-                ] = RouteRepository(session)
-
-                points: Sequence[Route] = await route_repository.find_many(
-                    self.__route_data
-                )
-
-                logging.info(f"Routes: {points}")
-
-                self.assertIsNot(points, None)
-
-        asyncio.run(main())
+            self.assertIsNot(points, None)

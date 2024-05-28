@@ -46,6 +46,10 @@ class CompanyCaptureRepositoryProps(Protocol):
 class CompanyListingRepositoryProps(Protocol):
     company_name: Optional[str]
 
+    limit: int = 50
+
+    page: int = 0
+
 
 class CompanyRepository(
     BaseRepository[AsyncSession],
@@ -94,6 +98,8 @@ class CompanyRepository(
     ) -> Sequence[Company]:
         query_filter: Mapping[str, Any] = {}
 
-        query: Select = select(Company).where(**query_filter)
+        query: Select = (
+            select(Company).where(**query_filter).offset(props.page).limit(props.limit)
+        )
 
         return (await self.session.scalars(query)).all()
