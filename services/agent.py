@@ -52,12 +52,6 @@ class AgentListingProps(AbstractBaseEntity):
     company: Company
 
 
-class AgentAuthProps(AbstractBaseEntity):
-    email: str
-
-    password: str
-
-
 class AgentService:
     def __init__(self) -> None:
         self.__session: AsyncSession = database.create_async_session()
@@ -164,11 +158,3 @@ class AgentService:
             )
 
             return await self.__agent_repository.find_many(agent_props)
-
-    async def auth_agent(self, email: str, password: str) -> Agent:
-        async with self.__session:
-            agent_props: AgentAuthRepositoryProps = AgentAuthProps(
-                email=email, password=password
-            )
-
-            return await self.__agent_repository.auth(agent_props)
