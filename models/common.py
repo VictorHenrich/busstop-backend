@@ -1,4 +1,6 @@
-from sqlalchemy import ForeignKey, Column, Table, Integer
+from sqlalchemy import ForeignKey, Column, MetaData, Table, Integer, Uuid
+from sqlalchemy.orm import Mapped, mapped_column
+from uuid import uuid4
 
 from server.instances import ServerInstances
 from server.database import Database
@@ -14,3 +16,15 @@ RoutePointRelationship: Table = Table(
     Column("route_id", ForeignKey("route.id"), nullable=False),
     Column("point_id", ForeignKey("point.id"), nullable=False),
 )
+
+
+class BaseModel(database.Base):
+    __abstract__ = True
+
+    metadata = MetaData()
+
+    id: Mapped[int] = mapped_column(primary_key=True, unique=True, autoincrement=True)
+
+    uuid: Mapped[str] = mapped_column(
+        Uuid(as_uuid=False, native_uuid=True), default=uuid4
+    )

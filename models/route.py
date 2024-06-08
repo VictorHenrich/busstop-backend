@@ -1,7 +1,6 @@
 from typing import Set, TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Uuid, ForeignKey
-from uuid import uuid4
+from sqlalchemy import ForeignKey
 
 from . import common
 
@@ -11,14 +10,8 @@ if TYPE_CHECKING:
     from models.point import Point
 
 
-class Route(common.database.Base):
+class Route(common.BaseModel):
     __tablename__: str = "route"
-
-    id: Mapped[int] = mapped_column(primary_key=True, unique=True, autoincrement=True)
-
-    uuid: Mapped[str] = mapped_column(
-        Uuid(as_uuid=False, native_uuid=True), default=uuid4
-    )
 
     company_id: Mapped[int] = mapped_column(ForeignKey("company.id"))
 

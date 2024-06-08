@@ -1,23 +1,16 @@
 from typing import List, TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Uuid
-from uuid import uuid4
 
 from . import common
 
 if TYPE_CHECKING:
     from models.point import Point
     from models.route import Route
+    from models.agent import Agent
 
 
-class Company(common.database.Base):
+class Company(common.BaseModel):
     __tablename__ = "company"
-
-    id: Mapped[int] = mapped_column(primary_key=True, unique=True, autoincrement=True)
-
-    uuid: Mapped[str] = mapped_column(
-        Uuid(as_uuid=False, native_uuid=True), default=uuid4
-    )
 
     company_name: Mapped[str] = mapped_column(nullable=False)
 
@@ -30,6 +23,8 @@ class Company(common.database.Base):
     routes: Mapped[List["Route"]] = relationship(back_populates="company")
 
     points: Mapped[List["Point"]] = relationship(back_populates="company")
+
+    agents: Mapped[List["Agent"]] = relationship(back_populates="company")
 
     def __repr__(self) -> str:
         return (
