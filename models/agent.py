@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 
 from . import common
 
@@ -9,6 +10,8 @@ if TYPE_CHECKING:
 
 class Agent(common.BaseModel):
     __tablename__ = "agent"
+
+    company_id: Mapped[int] = mapped_column(ForeignKey("company.id"))
 
     name: Mapped[str] = mapped_column(nullable=False)
 
