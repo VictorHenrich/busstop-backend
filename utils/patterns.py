@@ -74,5 +74,10 @@ class IFindManyRepository(Protocol, Generic[RPT, RRT]):
         ...
 
 
+class IAuthRepository(Protocol, Generic[RPT, RRT]):
+    def auth(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
+        ...
+
+
 class AbstractBaseEntity(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)

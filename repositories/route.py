@@ -155,6 +155,7 @@ class RouteRepository(
         query: Select = (
             select(Route)
             .join(Company, Route.company_id == Company.id)
+            .options(joinedload(Route.company))
             .where(Company.uuid == props.company.uuid)
         )
 
