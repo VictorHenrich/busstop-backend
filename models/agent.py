@@ -19,4 +19,4 @@ class Agent(common.BaseModel):
 
     password: Mapped[str] = mapped_column(nullable=False)
 
-    company: Mapped[Company] = relationship(back_populates="agents")
+    company: Mapped["Company"] = relationship(back_populates="agents")
