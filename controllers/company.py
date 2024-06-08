@@ -1,27 +1,23 @@
 from typing import Sequence, Optional, List
 
 from server.instances import ServerInstances
-from services.company.creation import CompanyCreationService
-from services.company.update import CompanyUpdateService
-from services.company.exclusion import CompanyExclusionService
-from services.company.capture import CompanyCaptureService
-from services.company.listing import CompanyListingService
+from services.company import CompanyService
 from models import Company
 from utils.responses import SuccessJSONResponse, JSONBaseResponse
-from utils.patterns import IService
 from utils.entities import CompanyEntity, CompanyBodyEntity
 from utils.constants import COMPANY_ENPOINT_NAME
+from utils.functions import handle_company_body
 
 
 @ServerInstances.api.get(f"{COMPANY_ENPOINT_NAME}")
 async def list_companies(
     page: int = 0, limit: int = 10, company_name: Optional[str] = None
 ) -> JSONBaseResponse[List[CompanyEntity]]:
-    company_listing_service: IService[Sequence[Company]] = CompanyListingService(
+    company_service: CompanyService = CompanyService()
+
+    companies: Sequence[Company] = await company_service.find_companies(
         company_name=company_name, limit=limit, page=page
     )
-
-    companies: Sequence[Company] = await company_listing_service.execute()
 
     companies_handled: List[CompanyEntity] = [
         CompanyEntity(
@@ -39,61 +35,62 @@ async def list_companies(
 
 @ServerInstances.api.get(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
 async def get_company(company_uuid: str) -> JSONBaseResponse[Optional[CompanyEntity]]:
-    company_capture_service: IService[Optional[Company]] = CompanyCaptureService(
-        company_uuid
+    company_service: CompanyService = CompanyService()
+
+    company: Optional[Company] = await company_service.find_company(
+        company_uuid=company_uuid
     )
 
-    company: Optional[Company] = await company_capture_service.execute()
-
-    company_handled: Optional[CompanyEntity] = None
-
-    if company:
-        company_handled = CompanyEntity(
-            uuid=company.uuid,
-            company_name=company.company_name,
-            fantasy_name=company.fantasy_name,
-            document_cnpj=company.document_cnpj,
-            email=company.email,
-        )
+    company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
     return SuccessJSONResponse(content=company_handled)
 
 
 @ServerInstances.api.post(f"{COMPANY_ENPOINT_NAME}")
-async def create_company(company_body: CompanyBodyEntity) -> JSONBaseResponse[None]:
-    company_creation_service: IService[None] = CompanyCreationService(
+async def create_company(
+    company_body: CompanyBodyEntity,
+) -> JSONBaseResponse[Optional[CompanyEntity]]:
+    company_service: CompanyService = CompanyService()
+
+    company: Optional[Company] = await company_service.create_company(
         company_name=company_body.company_name,
         fantasy_name=company_body.fantasy_name,
         document_cnpj=company_body.document_cnpj,
         email=company_body.email,
     )
 
-    await company_creation_service.execute()
+    company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
-    return SuccessJSONResponse()
+    return SuccessJSONResponse(content=company_handled)
 
 
 @ServerInstances.api.put(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
 async def update_company(
     company_uuid: str, company_body: CompanyBodyEntity
-) -> JSONBaseResponse[None]:
-    company_update_service: IService[None] = CompanyUpdateService(
-        uuid=company_uuid,
+) -> JSONBaseResponse[Optional[CompanyEntity]]:
+    company_service: CompanyService = CompanyService()
+
+    company: Optional[Company] = await company_service.update_company(
+        company_uuid=company_uuid,
         company_name=company_body.company_name,
         fantasy_name=company_body.fantasy_name,
         document_cnpj=company_body.document_cnpj,
         email=company_body.email,
     )
 
-    await company_update_service.execute()
+    company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
-    return SuccessJSONResponse()
+    return SuccessJSONResponse(content=company_handled)
 
 
 @ServerInstances.api.delete(f"/{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
-async def delete_company(company_uuid: str) -> JSONBaseResponse[None]:
-    company_exclusion_service: IService[None] = CompanyExclusionService(company_uuid)
+async def delete_company(
+    company_uuid: str,
+) -> JSONBaseResponse[Optional[CompanyEntity]]:
+    company_service: CompanyService = CompanyService()
 
-    await company_exclusion_service.execute()
+    company: Optional[Company] = await company_service.delete_company(company_uuid)
 
-    return SuccessJSONResponse()
+    company_handled: Optional[CompanyEntity] = handle_company_body(company)
+
+    return SuccessJSONResponse(content=company_handled)

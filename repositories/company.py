@@ -53,13 +53,13 @@ class CompanyListingRepositoryProps(Protocol):
 
 class CompanyRepository(
     BaseRepository[AsyncSession],
-    ICreateRepository[CompanyCreationRepositoryProps, None],
-    IUpdateRepository[CompanyUpdateRepositoryProps, None],
-    IDeleteRepository[CompanyExclusionRepositoryProps, None],
+    ICreateRepository[CompanyCreationRepositoryProps, Optional[Company]],
+    IUpdateRepository[CompanyUpdateRepositoryProps, Optional[Company]],
+    IDeleteRepository[CompanyExclusionRepositoryProps, Optional[Company]],
     IFindManyRepository[CompanyListingRepositoryProps, Company],
     IFindRepository[CompanyCaptureRepositoryProps, Company],
 ):
-    async def create(self, props: CompanyCreationRepositoryProps) -> None:
+    async def create(self, props: CompanyCreationRepositoryProps) -> Optional[Company]:
         query: Insert = insert(Company).values(
             company_name=props.company_name,
             fantasy_name=props.fantasy_name,
@@ -67,9 +67,9 @@ class CompanyRepository(
             email=props.email,
         )
 
-        await self.session.execute(query)
+        return await self.session.scalar(query)
 
-    async def update(self, props: CompanyUpdateRepositoryProps) -> None:
+    async def update(self, props: CompanyUpdateRepositoryProps) -> Optional[Company]:
         query: Update = (
             update(Company)
             .where(Company.uuid == props.uuid)
@@ -81,12 +81,12 @@ class CompanyRepository(
             )
         )
 
-        await self.session.execute(query)
+        return await self.session.scalar(query)
 
-    async def delete(self, props: CompanyExclusionRepositoryProps) -> None:
+    async def delete(self, props: CompanyExclusionRepositoryProps) -> Optional[Company]:
         query: Delete = delete(Company).where(Company.uuid == props.uuid)
 
-        await self.session.execute(query)
+        return await self.session.scalar(query)
 
     async def find(self, props: CompanyCaptureRepositoryProps) -> Optional[Company]:
         query: Select = select(Company).where(Company.uuid == props.uuid)

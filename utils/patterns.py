@@ -25,11 +25,6 @@ RRT = TypeVar("RRT", covariant=True)
 BST = TypeVar("BST", bound=Union[Session, AsyncSession])
 
 
-class IService(Protocol, Generic[SRT]):
-    def execute(self) -> Union[Awaitable[Optional[SRT]], Optional[SRT]]:
-        ...
-
-
 class BaseRepository(ABC, Generic[BST]):
     def __init__(self, session: BST) -> None:
         self.__session: BST = session

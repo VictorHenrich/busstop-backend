@@ -1,7 +1,8 @@
-from typing import Any, Mapping, Optional, Protocol, Sequence
+from typing import Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
 from sqlalchemy.orm import joinedload
+from copy import copy
 
 from models import Point, Company, Route, RoutePointRelationship
 from utils.patterns import (
@@ -29,12 +30,12 @@ class RouteUpdateRepositoryProps(Protocol):
 
     points: Sequence[Point]
 
-    route_instance: Optional[Route] = None
+    instance: Optional[Route] = None
 
 
 class RouteExclusionRepositoryProps(Protocol):
     uuid: str
-    route_instance: Optional[Route] = None
+    instance: Optional[Route] = None
 
 
 class RouteCaptureRepositoryProps(Protocol):
@@ -89,17 +90,15 @@ class RouteRepository(
         # return new_route
 
     async def update(self, props: RouteUpdateRepositoryProps) -> Optional[Route]:
-        data: Mapping[str, Any] = {"description": props.description}
-
-        if props.route_instance:
-            props.route_instance.description = props.description
+        if props.instance:
+            props.instance.description = props.description
 
             for point in props.points:
-                props.route_instance.points.add(point)
+                props.instance.points.add(point)
 
-            self.session.add(props.route_instance)
+            self.session.add(props.instance)
 
-            return props.route_instance
+            return props.instance
 
         else:
             query_route: Update = (
@@ -123,11 +122,11 @@ class RouteRepository(
             return route
 
     async def delete(self, props: RouteExclusionRepositoryProps) -> Optional[Route]:
-        if props.route_instance:
-            for point in props.route_instance.points:
-                props.route_instance.points.remove(point)
+        if props.instance:
+            for point in props.instance.points:
+                props.instance.points.remove(point)
 
-            await self.session.delete(props.route_instance)
+            await self.session.delete(props.instance)
 
         else:
             query_route_point: Delete = delete(RoutePointRelationship).where(
@@ -138,7 +137,10 @@ class RouteRepository(
 
             query_route = delete(Route).where(Route.uuid == props.uuid).returning(Route)
 
-            return await self.session.scalar(query_route)
+            route: Optional[Route] = await self.session.scalar(query_route)
+
+            if route is not None:
+                return copy(route)
 
     async def find(self, props: RouteCaptureRepositoryProps) -> Optional[Route]:
         query: Select = (

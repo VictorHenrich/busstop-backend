@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 
@@ -43,3 +44,13 @@ class PointBodyEntity(BaseModel):
 
 class PointEntity(PointBodyEntity, UUIDEntity):
     pass
+
+
+class RouteBodyEntity(BaseModel):
+    description: str
+    point_uuids: List[str]
+
+
+class RouteEntity(UUIDEntity):
+    description: str
+    points: List[PointEntity]
