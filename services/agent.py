@@ -1,5 +1,4 @@
 from typing import Optional, Sequence
-from sqlalchemy.ext.asyncio import AsyncSession
 from copy import copy
 
 from models import Company, database, Agent
@@ -10,10 +9,16 @@ from repositories.agent import (
     AgentExclusionRepositoryProps,
     AgentCaptureRepositoryProps,
     AgentListingRepositoryProps,
-    AgentAuthRepositoryProps,
 )
 from services.company import CompanyService
-from utils.patterns import AbstractBaseEntity
+from utils.patterns import (
+    AbstractBaseEntity,
+    ICreateRepository,
+    IDeleteRepository,
+    IFindManyRepository,
+    IFindRepository,
+    IUpdateRepository,
+)
 from utils.exceptions import ModelNotFound
 
 
@@ -54,10 +59,6 @@ class AgentListingProps(AbstractBaseEntity):
 
 class AgentService:
     def __init__(self) -> None:
-        self.__session: AsyncSession = database.create_async_session()
-
-        self.__agent_repository: AgentRepository = AgentRepository(self.__session)
-
         self.__company_service: CompanyService = CompanyService()
 
     async def __get_company(
@@ -77,7 +78,11 @@ class AgentService:
         company_uuid: Optional[str] = None,
         company_instance: Optional[Company] = None,
     ) -> Optional[Agent]:
-        async with self.__session:
+        async with database.create_async_session() as session:
+            agent_repository: ICreateRepository[
+                AgentCreationRepositoryProps, Optional[Agent]
+            ] = AgentRepository(session)
+
             company: Company = await self.__get_company(company_uuid, company_instance)
 
             agent_props: AgentCreationRepositoryProps = AgentCreationProps(
@@ -87,9 +92,9 @@ class AgentService:
                 password=password,
             )
 
-            agent: Optional[Agent] = await self.__agent_repository.create(agent_props)
+            agent: Optional[Agent] = await agent_repository.create(agent_props)
 
-            await self.__session.commit()
+            await session.commit()
 
             return agent
 
@@ -101,7 +106,11 @@ class AgentService:
         password: str,
         agent_instance: Optional[Agent] = None,
     ) -> Optional[Agent]:
-        async with self.__session:
+        async with database.create_async_session() as session:
+            agent_repository: IUpdateRepository[
+                AgentUpdateRepositoryProps, Optional[Agent]
+            ] = AgentRepository(session)
+
             agent_props: AgentUpdateRepositoryProps = AgentUpdateProps(
                 uuid=agent_uuid,
                 name=name,
@@ -110,35 +119,45 @@ class AgentService:
                 instance=agent_instance,
             )
 
-            agent: Optional[Agent] = await self.__agent_repository.update(agent_props)
+            agent: Optional[Agent] = await agent_repository.update(agent_props)
 
-            await self.__session.commit()
+            await session.commit()
 
             if agent is not None:
-                await self.__session.refresh(agent)
+                await session.refresh(agent)
 
             return agent
 
     async def delete_agent(
         self, agent_uuid: str, agent_instance: Optional[Agent] = None
     ) -> Optional[Agent]:
-        async with self.__session:
+        async with database.create_async_session() as session:
+            agent_repository: IDeleteRepository[
+                AgentExclusionRepositoryProps, Optional[Agent]
+            ] = AgentRepository(session)
+
             agent_props: AgentExclusionRepositoryProps = AgentExclusionProps(
                 uuid=agent_uuid, instance=agent_instance
             )
 
-            agent: Optional[Agent] = await self.__agent_repository.delete(agent_props)
+            agent: Optional[Agent] = await agent_repository.delete(agent_props)
+
+            await session.commit()
 
             if agent is not None:
                 return copy(agent)
 
     async def find_agent(self, agent_uuid: str) -> Agent:
-        async with self.__session:
+        async with database.create_async_session() as session:
+            agent_repository: IFindRepository[
+                AgentCaptureRepositoryProps, Agent
+            ] = AgentRepository(session)
+
             agent_props: AgentCaptureRepositoryProps = AgentCaptureProps(
                 uuid=agent_uuid
             )
 
-            agent: Optional[Agent] = await self.__agent_repository.find(agent_props)
+            agent: Optional[Agent] = await agent_repository.find(agent_props)
 
             if agent is None:
                 raise ModelNotFound(Agent, agent_uuid)
@@ -150,11 +169,15 @@ class AgentService:
         company_uuid: Optional[str] = None,
         company_instance: Optional[Company] = None,
     ) -> Sequence[Agent]:
-        async with self.__session:
+        async with database.create_async_session() as session:
+            agent_repository: IFindManyRepository[
+                AgentListingRepositoryProps, Agent
+            ] = AgentRepository(session)
+
             company: Company = await self.__get_company(company_uuid, company_instance)
 
             agent_props: AgentListingRepositoryProps = AgentListingProps(
                 company=company
             )
 
-            return await self.__agent_repository.find_many(agent_props)
+            return await agent_repository.find_many(agent_props)

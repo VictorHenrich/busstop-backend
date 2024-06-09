@@ -74,7 +74,7 @@ class AgentRepository(
         agent.company = props.company
         agent.name = props.name
         agent.email = props.email
-        agent.password = CryptUtils.bcrypt_create_hash(props.password)
+        agent.password = CryptUtils.Bcrypt.create_hash(props.password)
 
         self.session.add(agent)
 
@@ -84,7 +84,7 @@ class AgentRepository(
         password: Optional[str] = props.password
 
         if password is not None:
-            password = CryptUtils.bcrypt_create_hash(password)
+            password = CryptUtils.Bcrypt.create_hash(password)
 
         data: Mapping[str, Any] = {
             "name": props.name,
@@ -162,7 +162,7 @@ class AgentRepository(
         if agent is None:
             raise UserNotFound(props.email)
 
-        if not CryptUtils.bcrypt_compare_password(props.password, agent.password):
+        if not CryptUtils.Bcrypt.compare_password(props.password, agent.password):
             raise InvalidUserPassword(agent)
 
         return agent

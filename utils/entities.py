@@ -1,5 +1,6 @@
 from typing import List
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class UUIDEntity(BaseModel):
@@ -54,3 +55,10 @@ class RouteBodyEntity(BaseModel):
 class RouteEntity(UUIDEntity):
     description: str
     points: List[PointEntity]
+
+
+class TokenDataEntity(BaseModel):
+    agent_uuid: str
+    company_uuid: str
+    exp: datetime
+    is_refresh: bool
