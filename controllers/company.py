@@ -9,7 +9,7 @@ from utils.constants import COMPANY_ENPOINT_NAME
 from utils.functions import handle_company_body
 
 
-@ServerInstances.api.get(f"{COMPANY_ENPOINT_NAME}")
+@ServerInstances.api.get(COMPANY_ENPOINT_NAME)
 async def list_companies(
     page: int = 0, limit: int = 10, company_name: Optional[str] = None
 ) -> JSONResponse[List[CompanyEntity]]:
@@ -46,7 +46,7 @@ async def get_company(company_uuid: str) -> JSONResponse[Optional[CompanyEntity]
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.api.post(f"{COMPANY_ENPOINT_NAME}")
+@ServerInstances.api.post(COMPANY_ENPOINT_NAME)
 async def create_company(
     company_body: CompanyBodyEntity,
 ) -> JSONResponse[Optional[CompanyEntity]]:
@@ -83,7 +83,7 @@ async def update_company(
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.api.delete(f"/{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.api.delete(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
 async def delete_company(
     company_uuid: str,
 ) -> JSONResponse[Optional[CompanyEntity]]:

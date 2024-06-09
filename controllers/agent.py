@@ -7,7 +7,6 @@ from utils.responses import JSONResponse
 from utils.entities import AgentBodyEntity, AgentEntity
 from utils.constants import AGENT_ENDPOINT_NAME
 from utils.functions import get_agent_entity, handle_agent_body
-import middlewares.auth
 
 
 @ServerInstances.api.get(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
