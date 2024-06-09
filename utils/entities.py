@@ -57,6 +57,35 @@ class RouteEntity(UUIDEntity):
     points: List[PointEntity]
 
 
+class AgentBodyEntity(BaseModel):
+    name: str
+    email: str
+    password: str
+
+
+class AgentEntity(AgentBodyEntity, UUIDEntity):
+    pass
+
+
+class AuthRefreshBodyEntity(BaseModel):
+    refresh_token: str
+
+
+class AuthRefreshResultEntity(BaseModel):
+    token: str
+
+
+class AuthResultEntity(BaseModel):
+    refresh_token: str
+    token: str
+
+
+class AuthBodyEntity(BaseModel):
+    email: str
+
+    password: str
+
+
 class TokenDataEntity(BaseModel):
     agent_uuid: str
     company_uuid: str

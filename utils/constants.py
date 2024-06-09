@@ -14,6 +14,8 @@ API_PORT: str = os.environ.get("API_PORT", "")
 COMPANY_ENPOINT_NAME: str = os.environ.get("COMPANY_ENPOINT_NAME", "")
 POINT_ENPOINT_NAME: str = os.environ.get("POINT_ENPOINT_NAME", "")
 ROUTE_ENDPOINT_NAME: str = os.environ.get("ROUTE_ENDPOINT_NAME", "")
+AGENT_ENDPOINT_NAME: str = os.environ.get("AGENT_ENDPOINT_NAME", "")
+AUTH_ENDPOINT_NAME: str = os.environ.get("AUTH_ENDPOINT_NAME", "")
 
 SECRET_KEY: str = os.environ.get("SECRET_KEY", "")
 TOKEN_EXPIRATION_MINUTE: int = int(os.environ.get("TOKEN_EXPIRATION_MINUTE", ""))

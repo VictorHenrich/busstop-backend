@@ -55,6 +55,13 @@ class AuthService:
 
             return {"token": token, "refresh_token": refresh_token}
 
+    async def get_user_data_in_token(self, token: str) -> Agent:
+        token_handled: str = token.replace("Bearer", "").strip()
+
+        token_data: TokenDataEntity = CryptUtils.Jwt.decode_token(token_handled)
+
+        return await self.__agent_service.find_agent(token_data.agent_uuid)
+
     async def refresh_token(self, token: str) -> str:
         token_data: TokenDataEntity = CryptUtils.Jwt.decode_token(token)
 
