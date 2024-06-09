@@ -1,5 +1,6 @@
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union
 from copy import copy
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Route, Company, Point, database
 from repositories.route import (
@@ -81,17 +82,20 @@ class RouteService:
             point_uuids=point_uuids, company_instance=company
         )
 
+    async def __find_route_by_uuid(
+        self, route_uuid: str, session: AsyncSession
+    ) -> Optional[Route]:
+        route_repository: IFindRepository[
+            RouteCaptureRepositoryProps, Route
+        ] = RouteRepository(session)
+
+        route_props: RouteCaptureRepositoryProps = RouteCaptureProps(uuid=route_uuid)
+
+        return await route_repository.find(route_props)
+
     async def find_route(self, route_uuid: str) -> Optional[Route]:
         async with database.create_async_session() as session:
-            route_repository: IFindRepository[
-                RouteCaptureRepositoryProps, Route
-            ] = RouteRepository(session)
-
-            route_props: RouteCaptureRepositoryProps = RouteCaptureProps(
-                uuid=route_uuid
-            )
-
-            return await route_repository.find(route_props)
+            await self.__find_route_by_uuid(route_uuid, session)
 
     async def find_routes(
         self,
@@ -149,7 +153,9 @@ class RouteService:
                 RouteUpdateRepositoryProps, Optional[Route]
             ] = RouteRepository(session)
 
-            route: Optional[Route] = route_instance or await self.find_route(route_uuid)
+            route: Optional[Route] = route_instance or await self.__find_route_by_uuid(
+                route_uuid, session
+            )
 
             if not route:
                 raise ModelNotFound(Route, route_uuid)
