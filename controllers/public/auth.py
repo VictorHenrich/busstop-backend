@@ -1,3 +1,5 @@
+from fastapi.routing import APIRouter
+
 from server.instances import ServerInstances
 from services.auth import AuthService
 from utils.responses import JSONResponse
@@ -10,7 +12,10 @@ from utils.entities import (
 from utils.constants import AUTH_ENDPOINT_NAME
 
 
-@ServerInstances.public_api.post(AUTH_ENDPOINT_NAME)
+router: APIRouter = APIRouter(prefix=AUTH_ENDPOINT_NAME)
+
+
+@router.post("")
 async def authenticate(body: AuthBodyEntity) -> JSONResponse[AuthResultEntity]:
     auth_service: AuthService = AuthService()
 
@@ -23,7 +28,7 @@ async def authenticate(body: AuthBodyEntity) -> JSONResponse[AuthResultEntity]:
     return JSONResponse(content=auth_body)
 
 
-@ServerInstances.public_api.put(f"{AUTH_ENDPOINT_NAME}/refresh")
+@router.put("/refresh")
 async def refresh_authencation(
     body: AuthRefreshBodyEntity,
 ) -> JSONResponse[AuthRefreshResultEntity]:
@@ -34,3 +39,6 @@ async def refresh_authencation(
     auth_body: AuthRefreshResultEntity = AuthRefreshResultEntity(token=token)
 
     return JSONResponse(content=auth_body)
+
+
+ServerInstances.public_api.include_router(router)

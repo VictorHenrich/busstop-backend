@@ -1,4 +1,5 @@
 from typing import Sequence, Optional, List
+from fastapi.routing import APIRouter
 
 from server.instances import ServerInstances
 from services.company import CompanyService
@@ -9,7 +10,10 @@ from utils.constants import COMPANY_ENPOINT_NAME
 from utils.functions import handle_company_body
 
 
-@ServerInstances.private_api.get(COMPANY_ENPOINT_NAME)
+router: APIRouter = APIRouter(prefix=COMPANY_ENPOINT_NAME)
+
+
+@router.get("")
 async def list_companies(
     page: int = 0, limit: int = 10, company_name: Optional[str] = None
 ) -> JSONResponse[List[CompanyEntity]]:
@@ -33,7 +37,7 @@ async def list_companies(
     return JSONResponse(content=companies_handled)
 
 
-@ServerInstances.private_api.get(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
+@router.get("/{{company_uuid}}")
 async def get_company(company_uuid: str) -> JSONResponse[Optional[CompanyEntity]]:
     company_service: CompanyService = CompanyService()
 
@@ -46,7 +50,7 @@ async def get_company(company_uuid: str) -> JSONResponse[Optional[CompanyEntity]
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.private_api.post(COMPANY_ENPOINT_NAME)
+@router.post("")
 async def create_company(
     company_body: CompanyBodyEntity,
 ) -> JSONResponse[Optional[CompanyEntity]]:
@@ -64,7 +68,7 @@ async def create_company(
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.private_api.put(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
+@router.put("/{{company_uuid}}")
 async def update_company(
     company_uuid: str, company_body: CompanyBodyEntity
 ) -> JSONResponse[Optional[CompanyEntity]]:
@@ -83,7 +87,7 @@ async def update_company(
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.private_api.delete(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
+@router.delete("/{{company_uuid}}")
 async def delete_company(
     company_uuid: str,
 ) -> JSONResponse[Optional[CompanyEntity]]:
@@ -94,3 +98,6 @@ async def delete_company(
     company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
     return JSONResponse(content=company_handled)
+
+
+ServerInstances.private_api.include_router(router)

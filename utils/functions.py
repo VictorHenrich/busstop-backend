@@ -1,4 +1,5 @@
-from typing import Optional, List
+from typing import Callable, Awaitable, Optional, List, AsyncGenerator, Union
+from fastapi import Request, Response
 
 from models import Point, Route, Company, Agent
 from utils.entities import (
@@ -63,3 +64,20 @@ def handle_company_body(company: Optional[Company]) -> Optional[CompanyEntity]:
 def handle_agent_body(agent: Optional[Agent]) -> Optional[AgentEntity]:
     if agent is not None:
         return get_agent_entity(agent)
+
+
+async def verify_and_check_request(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> AsyncGenerator[Union[bool, Response], None]:
+    validated: bool = True
+
+    if "/api" not in request.url.path:
+        validated = False
+
+    if request.url.path in ("/docs", "/redoc", "/openapi.json"):
+        validated = False
+
+    yield validated
+
+    if validated:
+        yield await call_next(request)

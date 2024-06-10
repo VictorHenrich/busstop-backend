@@ -1,4 +1,5 @@
 from typing import Sequence, Optional, List
+from fastapi.routing import APIRouter
 
 from server.instances import ServerInstances
 from services.point import PointService
@@ -9,7 +10,10 @@ from utils.constants import POINT_ENPOINT_NAME
 from utils.functions import handle_point_body
 
 
-@ServerInstances.private_api.get(f"{POINT_ENPOINT_NAME}/{{company_uuid}}")
+router: APIRouter = APIRouter(prefix=POINT_ENPOINT_NAME)
+
+
+@router.get("/{{company_uuid}}")
 async def list_points(
     company_uuid: str, uuids: List[str] = []
 ) -> JSONResponse[List[PointEntity]]:
@@ -36,7 +40,7 @@ async def list_points(
     return JSONResponse(content=points_handled)
 
 
-@ServerInstances.private_api.get(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
+@router.get("/{{point_uuid}}")
 async def get_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
@@ -47,7 +51,7 @@ async def get_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     return JSONResponse(content=point_handled)
 
 
-@ServerInstances.private_api.post(f"{POINT_ENPOINT_NAME}/{{company_uuid}}")
+@router.post("/{{company_uuid}}")
 async def create_point(
     company_uuid: str, point_body: PointBodyEntity
 ) -> JSONResponse[Optional[PointEntity]]:
@@ -69,7 +73,7 @@ async def create_point(
     return JSONResponse(content=point_handled)
 
 
-@ServerInstances.private_api.put(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
+@router.put("/{{point_uuid}}")
 async def update_point(
     point_uuid: str, point_body: PointBodyEntity
 ) -> JSONResponse[Optional[PointEntity]]:
@@ -91,7 +95,7 @@ async def update_point(
     return JSONResponse(content=point_handled)
 
 
-@ServerInstances.private_api.delete(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
+@router.delete("/{{point_uuid}}")
 async def delete_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
@@ -100,3 +104,6 @@ async def delete_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     point_handled: Optional[PointEntity] = handle_point_body(point)
 
     return JSONResponse(content=point_handled)
+
+
+ServerInstances.private_api.include_router(router)

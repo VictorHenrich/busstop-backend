@@ -1,4 +1,5 @@
 from typing import Sequence, Optional, List
+from fastapi.routing import APIRouter
 
 from server.instances import ServerInstances
 from services.agent import AgentService
@@ -9,7 +10,10 @@ from utils.constants import AGENT_ENDPOINT_NAME
 from utils.functions import get_agent_entity, handle_agent_body
 
 
-@ServerInstances.private_api.get(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
+router: APIRouter = APIRouter(prefix=AGENT_ENDPOINT_NAME)
+
+
+@router.get("/{{agent_uuid}}")
 async def find_agent(agent_uuid: str) -> JSONResponse[AgentEntity]:
     agent_service: AgentService = AgentService()
 
@@ -20,7 +24,7 @@ async def find_agent(agent_uuid: str) -> JSONResponse[AgentEntity]:
     return JSONResponse(content=agent_handled)
 
 
-@ServerInstances.private_api.get(AGENT_ENDPOINT_NAME)
+@router.get("")
 async def find_agents() -> JSONResponse[List[AgentEntity]]:
     agent_service: AgentService = AgentService()
 
@@ -31,7 +35,7 @@ async def find_agents() -> JSONResponse[List[AgentEntity]]:
     return JSONResponse(content=agents_handled)
 
 
-@ServerInstances.private_api.post(AGENT_ENDPOINT_NAME)
+@router.post("")
 async def create_agent(body: AgentBodyEntity) -> JSONResponse[Optional[AgentEntity]]:
     agent_service: AgentService = AgentService()
 
@@ -44,7 +48,7 @@ async def create_agent(body: AgentBodyEntity) -> JSONResponse[Optional[AgentEnti
     return JSONResponse(content=agent_handled)
 
 
-@ServerInstances.private_api.put(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
+@router.put("/{{agent_uuid}}")
 async def update_agent(
     agent_uuid: str, body: AgentBodyEntity
 ) -> JSONResponse[Optional[AgentEntity]]:
@@ -59,7 +63,7 @@ async def update_agent(
     return JSONResponse(content=agent_handled)
 
 
-@ServerInstances.private_api.delete(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
+@router.delete("/{{agent_uuid}}")
 async def delete_agent(agent_uuid: str) -> JSONResponse[Optional[AgentEntity]]:
     agent_service: AgentService = AgentService()
 
@@ -70,3 +74,6 @@ async def delete_agent(agent_uuid: str) -> JSONResponse[Optional[AgentEntity]]:
     agent_handled: Optional[AgentEntity] = handle_agent_body(agent)
 
     return JSONResponse(content=agent_handled)
+
+
+ServerInstances.private_api.include_router(router)
