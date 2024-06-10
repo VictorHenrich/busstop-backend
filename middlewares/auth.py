@@ -7,7 +7,7 @@ from services.auth import AuthService
 from utils.exceptions import HTTPUnauthorization
 
 
-@ServerInstances.api.middleware("http")
+@ServerInstances.private_api.middleware("http")
 async def verify_authentication(request: Request, call_next: Callable):
     auth_service: AuthService = AuthService()
 
