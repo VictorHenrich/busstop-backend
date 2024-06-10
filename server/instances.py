@@ -1,8 +1,10 @@
 from server.api import Api
 from server.database import Databases, Database, DatabaseDialects
 from utils.constants import (
-    API_HOST,
-    API_PORT,
+    PUBLIC_API_HOST,
+    PUBLIC_API_PORT,
+    PRIVATE_API_HOST,
+    PRIVATE_API_PORT,
     DATABASE_HOST,
     DATABASE_PORT,
     DATABASE_DBNAME,
@@ -26,21 +28,6 @@ class ServerInstances:
         )
     )
 
-    api: Api = Api(host=API_HOST, port=API_PORT)
+    public_api: Api = Api(host=PUBLIC_API_HOST, port=PUBLIC_API_PORT)
 
-    @classmethod
-    def run_api(cls):
-        import controllers
-
-        cls.api.start()
-
-    @classmethod
-    async def run_migrate(cls, drop_all: bool = False):
-        import models
-
-        database: Database = cls.databases.select(DATABASE_INSTANCE_NAME)
-
-        if drop_all:
-            await database.drop_all_async()
-
-        await database.create_all_async()
+    private_api: Api = Api(host=PRIVATE_API_HOST, port=PRIVATE_API_PORT)

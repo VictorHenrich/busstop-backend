@@ -5,7 +5,7 @@ import logging
 
 from utils.responses import JSONBaseResponse, JSONBaseResponseTypes
 from utils.entities import PointEntity
-from controllers.point import (
+from controllers.private.point import (
     create_point,
     update_point,
     delete_point,

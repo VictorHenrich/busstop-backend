@@ -5,7 +5,7 @@ import logging
 
 from utils.responses import JSONBaseResponse, JSONBaseResponseTypes
 from utils.entities import CompanyEntity
-from controllers.company import (
+from controllers.private.company import (
     create_company,
     update_company,
     delete_company,

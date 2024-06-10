@@ -9,7 +9,7 @@ from utils.constants import ROUTE_ENDPOINT_NAME
 from utils.functions import handle_route_body, get_route_entity
 
 
-@ServerInstances.api.get(f"{ROUTE_ENDPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.private_api.get(f"{ROUTE_ENDPOINT_NAME}/{{company_uuid}}")
 async def list_routes(company_uuid: str) -> JSONResponse[List[RouteEntity]]:
     route_service: RouteService = RouteService()
 
@@ -20,7 +20,7 @@ async def list_routes(company_uuid: str) -> JSONResponse[List[RouteEntity]]:
     return JSONResponse(content=routes_handled)
 
 
-@ServerInstances.api.get(f"{ROUTE_ENDPOINT_NAME}/{{route_uuid}}")
+@ServerInstances.private_api.get(f"{ROUTE_ENDPOINT_NAME}/{{route_uuid}}")
 async def get_route(route_uuid: str) -> JSONResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 
@@ -31,7 +31,7 @@ async def get_route(route_uuid: str) -> JSONResponse[Optional[RouteEntity]]:
     return JSONResponse(content=route_handled)
 
 
-@ServerInstances.api.post(f"{ROUTE_ENDPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.private_api.post(f"{ROUTE_ENDPOINT_NAME}/{{company_uuid}}")
 async def create_route(
     company_uuid: str, body: RouteBodyEntity
 ) -> JSONResponse[Optional[RouteEntity]]:
@@ -48,7 +48,7 @@ async def create_route(
     return JSONResponse(content=route_handled)
 
 
-@ServerInstances.api.put(f"{ROUTE_ENDPOINT_NAME}/{{route_uuid}}")
+@ServerInstances.private_api.put(f"{ROUTE_ENDPOINT_NAME}/{{route_uuid}}")
 async def update_route(
     route_uuid: str, body: RouteBodyEntity
 ) -> JSONResponse[Optional[RouteEntity]]:
@@ -65,7 +65,7 @@ async def update_route(
     return JSONResponse(content=route_handled)
 
 
-@ServerInstances.api.delete(f"{ROUTE_ENDPOINT_NAME}/{{route_uuid}}")
+@ServerInstances.private_api.delete(f"{ROUTE_ENDPOINT_NAME}/{{route_uuid}}")
 async def delete_route(route_uuid: str) -> JSONResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 

@@ -5,5 +5,6 @@ if __name__ == "__main__":
     load_dotenv()
 
     from server.instances import ServerInstances
+    import controllers.public
 
-    ServerInstances.run_api()
+    ServerInstances.api.start()

@@ -9,7 +9,7 @@ from utils.constants import POINT_ENPOINT_NAME
 from utils.functions import handle_point_body
 
 
-@ServerInstances.api.get(f"{POINT_ENPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.private_api.get(f"{POINT_ENPOINT_NAME}/{{company_uuid}}")
 async def list_points(
     company_uuid: str, uuids: List[str] = []
 ) -> JSONResponse[List[PointEntity]]:
@@ -36,7 +36,7 @@ async def list_points(
     return JSONResponse(content=points_handled)
 
 
-@ServerInstances.api.get(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
+@ServerInstances.private_api.get(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
 async def get_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
@@ -47,7 +47,7 @@ async def get_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     return JSONResponse(content=point_handled)
 
 
-@ServerInstances.api.post(f"{POINT_ENPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.private_api.post(f"{POINT_ENPOINT_NAME}/{{company_uuid}}")
 async def create_point(
     company_uuid: str, point_body: PointBodyEntity
 ) -> JSONResponse[Optional[PointEntity]]:
@@ -69,7 +69,7 @@ async def create_point(
     return JSONResponse(content=point_handled)
 
 
-@ServerInstances.api.put(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
+@ServerInstances.private_api.put(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
 async def update_point(
     point_uuid: str, point_body: PointBodyEntity
 ) -> JSONResponse[Optional[PointEntity]]:
@@ -91,7 +91,7 @@ async def update_point(
     return JSONResponse(content=point_handled)
 
 
-@ServerInstances.api.delete(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
+@ServerInstances.private_api.delete(f"{POINT_ENPOINT_NAME}/{{point_uuid}}")
 async def delete_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 

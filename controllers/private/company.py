@@ -9,7 +9,7 @@ from utils.constants import COMPANY_ENPOINT_NAME
 from utils.functions import handle_company_body
 
 
-@ServerInstances.api.get(COMPANY_ENPOINT_NAME)
+@ServerInstances.private_api.get(COMPANY_ENPOINT_NAME)
 async def list_companies(
     page: int = 0, limit: int = 10, company_name: Optional[str] = None
 ) -> JSONResponse[List[CompanyEntity]]:
@@ -33,7 +33,7 @@ async def list_companies(
     return JSONResponse(content=companies_handled)
 
 
-@ServerInstances.api.get(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.private_api.get(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
 async def get_company(company_uuid: str) -> JSONResponse[Optional[CompanyEntity]]:
     company_service: CompanyService = CompanyService()
 
@@ -46,7 +46,7 @@ async def get_company(company_uuid: str) -> JSONResponse[Optional[CompanyEntity]
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.api.post(COMPANY_ENPOINT_NAME)
+@ServerInstances.private_api.post(COMPANY_ENPOINT_NAME)
 async def create_company(
     company_body: CompanyBodyEntity,
 ) -> JSONResponse[Optional[CompanyEntity]]:
@@ -64,7 +64,7 @@ async def create_company(
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.api.put(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.private_api.put(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
 async def update_company(
     company_uuid: str, company_body: CompanyBodyEntity
 ) -> JSONResponse[Optional[CompanyEntity]]:
@@ -83,7 +83,7 @@ async def update_company(
     return JSONResponse(content=company_handled)
 
 
-@ServerInstances.api.delete(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
+@ServerInstances.private_api.delete(f"{COMPANY_ENPOINT_NAME}/{{company_uuid}}")
 async def delete_company(
     company_uuid: str,
 ) -> JSONResponse[Optional[CompanyEntity]]:

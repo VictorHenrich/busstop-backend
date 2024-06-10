@@ -10,7 +10,7 @@ from utils.entities import (
 from utils.constants import AUTH_ENDPOINT_NAME
 
 
-@ServerInstances.api.post(AUTH_ENDPOINT_NAME)
+@ServerInstances.public_api.post(AUTH_ENDPOINT_NAME)
 async def authenticate(body: AuthBodyEntity) -> JSONResponse[AuthResultEntity]:
     auth_service: AuthService = AuthService()
 
@@ -23,7 +23,7 @@ async def authenticate(body: AuthBodyEntity) -> JSONResponse[AuthResultEntity]:
     return JSONResponse(content=auth_body)
 
 
-@ServerInstances.api.put(f"{AUTH_ENDPOINT_NAME}/refresh")
+@ServerInstances.public_api.put(f"{AUTH_ENDPOINT_NAME}/refresh")
 async def refresh_authencation(
     body: AuthRefreshBodyEntity,
 ) -> JSONResponse[AuthRefreshResultEntity]:

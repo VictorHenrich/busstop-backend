@@ -1,10 +1,23 @@
 from dotenv import load_dotenv
 import asyncio
 
+from server.instances import ServerInstances
+from server.database import Database
+from utils.constants import DATABASE_INSTANCE_NAME
+
+
+async def main(drop_all: bool = False) -> None:
+    import models
+
+    database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
+
+    if drop_all:
+        await database.drop_all_async()
+
+    await database.create_all_async()
+
 
 if __name__ == "__main__":
     load_dotenv()
 
-    from server.instances import ServerInstances
-
-    asyncio.run(ServerInstances.run_migrate(drop_all=True))
+    asyncio.run(main())

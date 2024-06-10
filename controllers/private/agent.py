@@ -9,7 +9,7 @@ from utils.constants import AGENT_ENDPOINT_NAME
 from utils.functions import get_agent_entity, handle_agent_body
 
 
-@ServerInstances.api.get(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
+@ServerInstances.private_api.get(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
 async def find_agent(agent_uuid: str) -> JSONResponse[AgentEntity]:
     agent_service: AgentService = AgentService()
 
@@ -20,7 +20,7 @@ async def find_agent(agent_uuid: str) -> JSONResponse[AgentEntity]:
     return JSONResponse(content=agent_handled)
 
 
-@ServerInstances.api.get(AGENT_ENDPOINT_NAME)
+@ServerInstances.private_api.get(AGENT_ENDPOINT_NAME)
 async def find_agents() -> JSONResponse[List[AgentEntity]]:
     agent_service: AgentService = AgentService()
 
@@ -31,7 +31,7 @@ async def find_agents() -> JSONResponse[List[AgentEntity]]:
     return JSONResponse(content=agents_handled)
 
 
-@ServerInstances.api.post(AGENT_ENDPOINT_NAME)
+@ServerInstances.private_api.post(AGENT_ENDPOINT_NAME)
 async def create_agent(body: AgentBodyEntity) -> JSONResponse[Optional[AgentEntity]]:
     agent_service: AgentService = AgentService()
 
@@ -44,7 +44,7 @@ async def create_agent(body: AgentBodyEntity) -> JSONResponse[Optional[AgentEnti
     return JSONResponse(content=agent_handled)
 
 
-@ServerInstances.api.put(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
+@ServerInstances.private_api.put(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
 async def update_agent(
     agent_uuid: str, body: AgentBodyEntity
 ) -> JSONResponse[Optional[AgentEntity]]:
@@ -59,7 +59,7 @@ async def update_agent(
     return JSONResponse(content=agent_handled)
 
 
-@ServerInstances.api.delete(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
+@ServerInstances.private_api.delete(f"{AGENT_ENDPOINT_NAME}/{{agent_uuid}}")
 async def delete_agent(agent_uuid: str) -> JSONResponse[Optional[AgentEntity]]:
     agent_service: AgentService = AgentService()
 
