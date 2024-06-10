@@ -14,7 +14,5 @@ class Api(FastAPI):
 
         self.__port: Union[int, str] = port
 
-        self.router = APIRouter(prefix="/api")
-
     def start(self) -> None:
         uvicorn.run(self, host=self.__host, port=int(self.__port))

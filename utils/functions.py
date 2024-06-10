@@ -66,16 +66,10 @@ def handle_agent_body(agent: Optional[Agent]) -> Optional[AgentEntity]:
         return get_agent_entity(agent)
 
 
-async def verify_and_check_request(
+async def validate_middleware_request(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ) -> AsyncGenerator[Union[bool, Response], None]:
-    validated: bool = True
-
-    if "/api" not in request.url.path:
-        validated = False
-
-    if request.url.path in ("/docs", "/redoc", "/openapi.json"):
-        validated = False
+    validated: bool = request.url.path in ("/docs", "/redoc", "/openapi.json")
 
     yield validated
 

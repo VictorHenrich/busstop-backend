@@ -5,16 +5,16 @@ from server.instances import ServerInstances
 from models import Agent
 from services.auth import AuthService
 from utils.exceptions import HTTPUnauthorization
-from utils.functions import verify_and_check_request
+from utils.functions import validate_middleware_request
 
 
 @ServerInstances.private_api.middleware("http")
 async def verify_authentication(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ):
-    verify_request = verify_and_check_request(request, call_next)
+    verify_request = validate_middleware_request(request, call_next)
 
-    if not anext(verify_request):
+    if await anext(verify_request):
         return await anext(verify_request)
 
     auth_service: AuthService = AuthService()
