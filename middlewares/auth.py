@@ -11,7 +11,7 @@ from utils.exceptions import HTTPUnauthorization
 async def verify_authentication(request: Request, call_next: Callable):
     auth_service: AuthService = AuthService()
 
-    token: str = request.headers["Authorization"]
+    token: str = request.headers.get("Authorization", "")
 
     try:
         agent: Agent = await auth_service.get_user_data_in_token(token)
