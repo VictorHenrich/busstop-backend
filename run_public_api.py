@@ -7,4 +7,4 @@ if __name__ == "__main__":
     from server.instances import ServerInstances
     import controllers.public
 
-    ServerInstances.api.start()
+    ServerInstances.public_api.start()

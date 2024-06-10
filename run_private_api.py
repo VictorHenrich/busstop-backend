@@ -8,4 +8,4 @@ if __name__ == "__main__":
     import controllers.private
     import middlewares.auth
 
-    ServerInstances.api.start()
+    ServerInstances.private_api.start()
