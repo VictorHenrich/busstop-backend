@@ -12,6 +12,9 @@ from utils.constants import (
     DATABASE_USERNAME,
     DOCS_ENDPOINT_NAME,
     REDOC_ENDPOINT_NAME,
+    SWAGGER_API_DESCRIPTION,
+    SWAGGER_API_TITLE,
+    SWAGGER_API_VERSION,
 )
 
 
@@ -33,5 +36,7 @@ class ServerInstances:
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,
         redoc_url=REDOC_ENDPOINT_NAME,
-        title="API BUSSTOP",
+        title=SWAGGER_API_TITLE,
+        description=SWAGGER_API_DESCRIPTION,
+        version=SWAGGER_API_VERSION,
     )

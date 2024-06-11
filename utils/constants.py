@@ -19,9 +19,11 @@ AGENT_ENDPOINT_NAME: str = os.environ.get("AGENT_ENDPOINT_NAME", "")
 AUTH_ENDPOINT_NAME: str = os.environ.get("AUTH_ENDPOINT_NAME", "")
 DOCS_ENDPOINT_NAME: str = os.environ.get("DOCS_ENDPOINT_NAME", "")
 REDOC_ENDPOINT_NAME: str = os.environ.get("REDOC_ENDPOINT_NAME", "")
+INDEX_ENDPOINT_NAME: str = os.environ.get("INDEX_ENDPOINT_NAME", "")
+
 
 PUBLIC_ROUTES: Sequence[str] = (
-    "/",
+    INDEX_ENDPOINT_NAME,
     DOCS_ENDPOINT_NAME,
     REDOC_ENDPOINT_NAME,
     AUTH_ENDPOINT_NAME,
@@ -32,3 +34,7 @@ TOKEN_EXPIRATION_MINUTE: int = int(os.environ.get("TOKEN_EXPIRATION_MINUTE", "")
 REFRESH_TOKEN_EXPIRATION_MINUTE: int = int(
     os.environ.get("REFRESH_TOKEN_EXPIRATION_MINUTE", "")
 )
+
+SWAGGER_API_TITLE: str = os.environ.get("SWAGGER_API_TITLE", "")
+SWAGGER_API_DESCRIPTION: str = os.environ.get("SWAGGER_API_DESCRIPTION", "")
+SWAGGER_API_VERSION: str = os.environ.get("SWAGGER_API_VERSION", "")
