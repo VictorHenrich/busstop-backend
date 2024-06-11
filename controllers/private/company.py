@@ -100,4 +100,4 @@ async def delete_company(
     return JSONResponse(content=company_handled)
 
 
-ServerInstances.private_api.include_router(router)
+ServerInstances.api.include_router(router)

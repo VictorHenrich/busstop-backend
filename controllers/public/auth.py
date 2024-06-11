@@ -41,4 +41,4 @@ async def refresh_authencation(
     return JSONResponse(content=auth_body)
 
 
-ServerInstances.public_api.include_router(router)
+ServerInstances.api.include_router(router)

@@ -106,4 +106,4 @@ async def delete_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
     return JSONResponse(content=point_handled)
 
 
-ServerInstances.private_api.include_router(router)
+ServerInstances.api.include_router(router)

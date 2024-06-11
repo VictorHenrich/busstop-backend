@@ -7,8 +7,8 @@ from utils.entities import (
     RouteEntity,
     CompanyEntity,
     AgentEntity,
-    AuthResultEntity,
 )
+from utils.constants import PUBLIC_ROUTES
 
 
 def get_agent_entity(agent: Agent) -> AgentEntity:
@@ -69,7 +69,7 @@ def handle_agent_body(agent: Optional[Agent]) -> Optional[AgentEntity]:
 async def validate_middleware_request(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ) -> AsyncGenerator[Union[bool, Response], None]:
-    validated: bool = request.url.path in ("/docs", "/redoc", "/openapi.json")
+    validated: bool = request.url.path in PUBLIC_ROUTES
 
     yield validated
 

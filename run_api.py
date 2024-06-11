@@ -6,5 +6,7 @@ if __name__ == "__main__":
 
     from server.instances import ServerInstances
     import controllers.public
+    import controllers.private
+    import middlewares.auth
 
-    ServerInstances.public_api.start()
+    ServerInstances.api.start()

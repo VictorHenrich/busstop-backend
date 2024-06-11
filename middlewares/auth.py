@@ -8,7 +8,7 @@ from utils.exceptions import HTTPUnauthorization
 from utils.functions import validate_middleware_request
 
 
-@ServerInstances.private_api.middleware("http")
+@ServerInstances.api.middleware("http")
 async def verify_authentication(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ):

@@ -82,4 +82,4 @@ async def delete_route(route_uuid: str) -> JSONResponse[Optional[RouteEntity]]:
     return JSONResponse(content=route_handled)
 
 
-ServerInstances.private_api.include_router(router)
+ServerInstances.api.include_router(router)
