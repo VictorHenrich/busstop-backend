@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from utils.constants import SWAGGER_API_VERSION
 
+
 class UUIDEntity(BaseModel):
     uuid: str
 
