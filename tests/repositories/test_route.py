@@ -1,9 +1,8 @@
 from typing import Optional, Sequence
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import Mock
-import logging
+from unittest.mock import Mock, AsyncMock, MagicMock, patch
 
-from models import Route, Point, database
+from models import Route
 from repositories.route import (
     RouteRepository,
     RouteCreationRepositoryProps,
@@ -23,16 +22,30 @@ from utils.patterns import (
 
 class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.__route_data: Mock = Mock()
+        self.__mock_points: MagicMock = MagicMock()
 
-        self.__route_data.company = Mock()
+        self.__mock_route: Mock = Mock(
+            uuid="0d0a6d5d-d762-4cc2-8131-1ff5214e3b47",
+            description="Rota alterada",
+            instance=None,
+        )
 
-        self.__route_data.company.id = 1
-        self.__route_data.company.uuid = "29edd5cc-4e7d-4e86-b9bd-b69e64601532"
-        self.__route_data.uuid = "0d0a6d5d-d762-4cc2-8131-1ff5214e3b47"
-        self.__route_data.description = "Rota alterada"
-        self.__route_data.points = [
-            Point(
+        self.__mock_company: Mock = Mock(
+            id=1,
+            uuid="4932d9e1-c715-4b97-890a-ab2f678d3123",
+            company_name="TESTE",
+            fantasy_name="TESTE",
+            document_cnpj="000000000",
+        )
+
+        self.__mock_async_session: AsyncMock = AsyncMock()
+
+        self.__mock_session: Mock = Mock()
+
+        self.__mock_points.add.return_value = None
+
+        self.__mock_points.__iter__.return_value = [
+            Mock(
                 address_state="SC",
                 address_city="Capivari de Baixo Alterado",
                 address_neighborhood="Centro",
@@ -45,70 +58,91 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
                 id=3,
             )
         ]
-        self.__route_data.route_instance = None
 
-    async def test_create(self) -> None:
-        async with database.create_async_session() as session:
-            route_repository: ICreateRepository[
-                RouteCreationRepositoryProps, Optional[Route]
-            ] = RouteRepository(session)
+        self.__mock_route.points = self.__mock_points
 
-            route: Optional[Route] = await route_repository.create(self.__route_data)
+        self.__mock_route.company = self.__mock_company
 
-            await session.commit()
+    @patch("repositories.route.Route", spec=Route)
+    async def test_create(self, MockRoute: Mock) -> None:
+        MockRoute.return_value = self.__mock_route
 
-            await session.refresh(route)
+        route_repository: ICreateRepository[
+            RouteCreationRepositoryProps, Optional[Route]
+        ] = RouteRepository(self.__mock_session)
 
-            logging.info(f"Route Created: {route}")
+        route: Optional[Route] = await route_repository.create(self.__mock_route)
+
+        self.assertEqual(route, self.__mock_route)
 
     async def test_update(self) -> None:
-        async with database.create_async_session() as session:
-            route_repository: IUpdateRepository[
-                RouteUpdateRepositoryProps, Optional[Route]
-            ] = RouteRepository(session)
+        self.__mock_async_session.scalar.return_value = self.__mock_route
 
-            route: Optional[Route] = await route_repository.update(self.__route_data)
+        self.__mock_async_session.execute.return_value = None
 
-            await session.commit()
+        route_repository: IUpdateRepository[
+            RouteUpdateRepositoryProps, Optional[Route]
+        ] = RouteRepository(self.__mock_async_session)
 
-            await session.refresh(route)
+        route: Optional[Route] = await route_repository.update(self.__mock_route)
 
-            logging.info(f"Route Updated: {route}")
+        self.__mock_async_session.scalar.assert_awaited_once()
+
+        self.__mock_async_session.execute.assert_awaited_once()
+
+        self.assertEqual(route, self.__mock_route)
 
     async def test_delete(self) -> None:
-        async with database.create_async_session() as session:
-            route_repository: IDeleteRepository[
-                RouteExclusionRepositoryProps, Optional[Route]
-            ] = RouteRepository(session)
+        self.__mock_async_session.scalar.return_value = self.__mock_route
 
-            route: Optional[Route] = await route_repository.delete(self.__route_data)
+        self.__mock_async_session.execute.return_value = None
 
-            logging.info(f"Route Deleted: {route}")
+        filter_props: Mock = Mock(uuid="", company=self.__mock_company, instance=None)
 
-            await session.commit()
+        route_repository: IDeleteRepository[
+            RouteExclusionRepositoryProps, Optional[Route]
+        ] = RouteRepository(self.__mock_async_session)
+
+        route: Optional[Route] = await route_repository.delete(filter_props)
+
+        self.__mock_async_session.scalar.assert_awaited_once()
+
+        self.__mock_async_session.execute.assert_awaited_once()
+
+        self.assertEqual(route, self.__mock_route)
 
     async def test_find(self) -> None:
-        async with database.create_async_session() as session:
-            route_repository: IFindRepository[
-                RouteCaptureRepositoryProps, Route
-            ] = RouteRepository(session)
+        self.__mock_async_session.scalar.return_value = self.__mock_route
 
-            point: Optional[Route] = await route_repository.find(self.__route_data)
+        filter_props: Mock = Mock(uuid="")
 
-            logging.info(f"Route: {point}")
+        route_repository: IFindRepository[
+            RouteCaptureRepositoryProps, Route
+        ] = RouteRepository(self.__mock_async_session)
 
-            self.assertIsNot(point, None)
+        point: Optional[Route] = await route_repository.find(filter_props)
+
+        self.__mock_async_session.scalar.assert_awaited_once()
+
+        self.assertEqual(point, self.__mock_route)
 
     async def test_find_many(self) -> None:
-        async with database.create_async_session() as session:
-            route_repository: IFindManyRepository[
-                RouteListingRepositoryProps, Route
-            ] = RouteRepository(session)
+        mock_scalars_result: Mock = Mock()
 
-            points: Sequence[Route] = await route_repository.find_many(
-                self.__route_data
-            )
+        mock_scalars_result.all.return_value = [self.__mock_route]
 
-            logging.info(f"Routes: {points}")
+        self.__mock_async_session.scalars.return_value = mock_scalars_result
 
-            self.assertIsNot(points, None)
+        filter_props: Mock = Mock(company=self.__mock_company)
+
+        route_repository: IFindManyRepository[
+            RouteListingRepositoryProps, Route
+        ] = RouteRepository(self.__mock_async_session)
+
+        points: Sequence[Route] = await route_repository.find_many(filter_props)
+
+        self.__mock_async_session.scalars.assert_awaited_once()
+
+        mock_scalars_result.all.assert_called_once()
+
+        self.assertListEqual(list(points), [self.__mock_route])

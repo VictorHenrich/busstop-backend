@@ -48,7 +48,7 @@ class PointUpdateRepositoryProps(Protocol):
 
     longitude: str
 
-    point_instance: Optional[Point] = None
+    instance: Optional[Point] = None
 
 
 class PointExclusionRepositoryProps(Protocol):
@@ -119,18 +119,18 @@ class PointRepository(
 
         data = {name: value for name, value in data.items() if value is not None}
 
-        if props.point_instance:
-            props.point_instance.address_state = props.address_state
-            props.point_instance.address_city = props.address_city
-            props.point_instance.address_neighborhood = props.address_neighborhood
-            props.point_instance.address_street = props.address_street
-            props.point_instance.address_number = props.address_number
-            props.point_instance.latitude = props.latitude
-            props.point_instance.longitude = props.longitude
+        if props.instance:
+            props.instance.address_state = props.address_state
+            props.instance.address_city = props.address_city
+            props.instance.address_neighborhood = props.address_neighborhood
+            props.instance.address_street = props.address_street
+            props.instance.address_number = props.address_number
+            props.instance.latitude = props.latitude
+            props.instance.longitude = props.longitude
 
-            self.session.add(props.point_instance)
+            self.session.add(props.instance)
 
-            return props.point_instance
+            return props.instance
 
         else:
             query: Update = (

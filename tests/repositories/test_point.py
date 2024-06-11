@@ -1,6 +1,6 @@
 from typing import Optional, Sequence
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import Mock, AsyncMock, patch
 
 from models import Point
 from repositories.point import (
@@ -31,7 +31,7 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
             latitude="-28.4759466",
             longitude="-49.0059852",
             uuid="4932d9e1-c715-4b97-890a-ab2f678d3d11",
-            point_instance=None,
+            instance=None,
         )
 
         self.__mock_company: Mock = Mock(
@@ -48,7 +48,10 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
 
         self.__mock_point.company = self.__mock_company
 
-    async def test_create(self) -> None:
+    @patch("repositories.point.Point", spec=Point)
+    async def test_create(self, MockPointModel: Mock) -> None:
+        MockPointModel.return_value = self.__mock_point
+
         self.__mock_session.add.return_value = None
 
         point_repository: ICreateRepository[
@@ -58,9 +61,7 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
         point: Optional[Point] = await point_repository.create(self.__mock_point)
 
         self.assertIsNotNone(point)
-
-        if point:
-            self.assertEqual(point.latitude, self.__mock_point.latitude)
+        self.assertEqual(point, self.__mock_point)
 
     async def test_update(self) -> None:
         self.__mock_async_session.scalar.return_value = self.__mock_point

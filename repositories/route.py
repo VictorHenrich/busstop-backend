@@ -2,9 +2,8 @@ from typing import Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
 from sqlalchemy.orm import joinedload
-from copy import copy
 
-from models import Point, Company, Route, RoutePointRelationship
+from models import Route, Point, Company, RoutePointRelationship
 from utils.patterns import (
     BaseRepository,
     ICreateRepository,
@@ -128,6 +127,8 @@ class RouteRepository(
 
             await self.session.delete(props.instance)
 
+            return props.instance
+
         else:
             query_route_point: Delete = delete(RoutePointRelationship).where(
                 Route.uuid == props.uuid
@@ -137,10 +138,7 @@ class RouteRepository(
 
             query_route = delete(Route).where(Route.uuid == props.uuid).returning(Route)
 
-            route: Optional[Route] = await self.session.scalar(query_route)
-
-            if route is not None:
-                return copy(route)
+            return await self.session.scalar(query_route)
 
     async def find(self, props: RouteCaptureRepositoryProps) -> Optional[Route]:
         query: Select = (
