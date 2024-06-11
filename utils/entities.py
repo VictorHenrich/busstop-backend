@@ -1,14 +1,14 @@
 from typing import List
 from pydantic import BaseModel
 from datetime import datetime
-
+from utils.constants import SWAGGER_API_VERSION
 
 class UUIDEntity(BaseModel):
     uuid: str
 
 
 class IndexEntity(BaseModel):
-    version: str = "1.0"
+    version: str = SWAGGER_API_VERSION
     name: str = "APPLICATION"
     description: str = "APLICATION RUNNING"
 
