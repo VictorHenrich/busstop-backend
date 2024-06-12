@@ -23,15 +23,15 @@ from utils.patterns import (
 
 class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.__mock_company: Mock = Mock()
+        self.__mock_company: Mock = Mock(
+            company_name="Empresa Teste",
+            fantasy_name="Nome Fantasia TESTE",
+            document_cnpj="00000000",
+            email="teste@gmail.com",
+            uuid="6df97b7d-2beb-4d60-ae75-b742ac3df68a",
+        )
 
         self.__mock_session: AsyncMock = AsyncMock()
-
-        self.__mock_company.company_name = "Empresa teste alterado"
-        self.__mock_company.fantasy_name = "Nome fantasia alterado"
-        self.__mock_company.document_cnpj = "02988790000"
-        self.__mock_company.email = "victorhenrich993@gmail.com"
-        self.__mock_company.uuid = "6df97b7d-2beb-4d60-ae75-b742ac3df68a"
 
     async def test_create(self) -> None:
         self.__mock_session.scalar.return_value = self.__mock_company
@@ -44,7 +44,10 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
             self.__mock_company
         )
 
+        self.__mock_session.scalar.assert_awaited_once()
+
         self.assertIsNotNone(company)
+
         self.assertEqual(company, self.__mock_company)
 
     async def test_update(self) -> None:
@@ -58,7 +61,10 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
             self.__mock_company
         )
 
+        self.__mock_session.scalar.assert_awaited_once()
+
         self.assertIsNotNone(company)
+
         self.assertEqual(company, self.__mock_company)
 
     async def test_delete(self) -> None:
@@ -72,7 +78,10 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
 
         company: Optional[Company] = await company_repository.delete(filter_props)
 
+        self.__mock_session.scalar.assert_awaited_once()
+
         self.assertIsNotNone(company)
+
         self.assertEqual(company, self.__mock_company)
 
     async def test_get(self) -> None:
@@ -86,7 +95,10 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
 
         company: Optional[Company] = await company_repository.find(filter_props)
 
+        self.__mock_session.scalar.assert_awaited_once()
+
         self.assertIsNotNone(company)
+
         self.assertEqual(company, self.__mock_company)
 
     async def test_list(self) -> None:
@@ -104,5 +116,10 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
 
         companies: Sequence[Company] = await company_repository.find_many(filter_props)
 
+        mock_result_session.all.assert_called_once()
+
+        self.__mock_session.scalars.assert_awaited_once()
+
         self.assertNotEqual(companies, [])
+
         self.assertListEqual(list(companies), [self.__mock_company])

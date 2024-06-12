@@ -103,10 +103,10 @@ class CompanyService:
 
             company: Optional[Company] = await company_repository.delete(props)
 
+            await session.commit()
+
             if company is not None:
                 return copy(company)
-
-            await session.commit()
 
     async def update_company(
         self,

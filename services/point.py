@@ -56,7 +56,7 @@ class PointUpdateProps(AbstractBaseEntity):
 
     longitude: str
 
-    point_instance: Optional[Point] = None
+    instance: Optional[Point] = None
 
 
 class PointExclusionProps(AbstractBaseEntity):
@@ -145,7 +145,7 @@ class PointService:
             ] = PointRepository(session)
 
             point_props: PointUpdateRepositoryProps = PointUpdateProps(
-                point_instance=point_instance,
+                instance=point_instance,
                 address_state=address_state,
                 address_city=address_city,
                 address_neighborhood=address_neighborhood,
