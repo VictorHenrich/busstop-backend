@@ -102,11 +102,13 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(company, self.__mock_company)
 
     async def test_list(self) -> None:
+        mock_companies: Sequence[Company] = [self.__mock_company]
+
         filter_props: Mock = Mock(company_name="TESTE", limit=50, page=0)
 
         mock_result_session: Mock = Mock()
 
-        mock_result_session.all.return_value = [self.__mock_company]
+        mock_result_session.all.return_value = mock_companies
 
         self.__mock_session.scalars.return_value = mock_result_session
 
@@ -122,4 +124,4 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
 
         self.assertNotEqual(companies, [])
 
-        self.assertListEqual(list(companies), [self.__mock_company])
+        self.assertSequenceEqual(companies, mock_companies)

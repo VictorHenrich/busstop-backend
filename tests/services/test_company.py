@@ -183,4 +183,4 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
 
         mock_database.create_async_session.assert_called_once()
 
-        self.assertListEqual(list(companies), mock_companies)
+        self.assertSequenceEqual(companies, mock_companies)

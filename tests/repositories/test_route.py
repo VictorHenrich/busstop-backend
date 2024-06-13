@@ -127,9 +127,11 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(point, self.__mock_route)
 
     async def test_find_many(self) -> None:
+        mock_routes: Sequence[Route] = [self.__mock_route]
+
         mock_scalars_result: Mock = Mock()
 
-        mock_scalars_result.all.return_value = [self.__mock_route]
+        mock_scalars_result.all.return_value = mock_routes
 
         self.__mock_async_session.scalars.return_value = mock_scalars_result
 
@@ -145,4 +147,4 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
 
         mock_scalars_result.all.assert_called_once()
 
-        self.assertListEqual(list(points), [self.__mock_route])
+        self.assertSequenceEqual(points, mock_routes)

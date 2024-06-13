@@ -105,9 +105,11 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(point, self.__mock_point)
 
     async def test_list(self) -> None:
+        mock_points: Sequence[Point] = [self.__mock_point]
+
         mock_scalars_result: Mock = Mock()
 
-        mock_scalars_result.all.return_value = [self.__mock_point]
+        mock_scalars_result.all.return_value = mock_points
 
         self.__mock_async_session.scalars.return_value = mock_scalars_result
 
@@ -121,4 +123,4 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
 
         self.assertNotEqual(point, [])
 
-        self.assertEqual(point, [self.__mock_point])
+        self.assertSequenceEqual(point, mock_points)
