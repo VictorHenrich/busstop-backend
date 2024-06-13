@@ -31,7 +31,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
     @patch("services.company.database", spec=Database)
     async def test_create(
-        self, mock_database: Mock, MockCompanyRepository: Mock
+        self, mock_database: Mock, mock_company_repository_class: Mock
     ) -> None:
         mock_database.create_async_session.side_effect = (
             lambda: self.__mock_async_session
@@ -41,7 +41,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
 
         mock_instance_repository.create.return_value = self.__mock_company
 
-        MockCompanyRepository.return_value = mock_instance_repository
+        mock_company_repository_class.return_value = mock_instance_repository
 
         company: Optional[Company] = await self.__company_service.create_company(
             company_name=self.__mock_company.company_name,
@@ -63,7 +63,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
     @patch("services.company.database", spec=Database)
     async def test_update(
-        self, mock_database: Mock, MockCompanyRepository: Mock
+        self, mock_database: Mock, mock_company_repository_class: Mock
     ) -> None:
         mock_database.create_async_session.side_effect = (
             lambda: self.__mock_async_session
@@ -73,7 +73,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
 
         mock_instance_repository.update.return_value = self.__mock_company
 
-        MockCompanyRepository.return_value = mock_instance_repository
+        mock_company_repository_class.return_value = mock_instance_repository
 
         company: Optional[Company] = await self.__company_service.update_company(
             company_uuid=self.__mock_company.uuid,
@@ -97,7 +97,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
     @patch("services.company.database", spec=Database)
     async def test_delete(
-        self, mock_database: Mock, MockCompanyRepository: Mock, mock_copy: Mock
+        self, mock_database: Mock, mock_company_repository_class: Mock, mock_copy: Mock
     ) -> None:
         mock_database.create_async_session.side_effect = (
             lambda: self.__mock_async_session
@@ -107,7 +107,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
 
         mock_instance_repository.delete.return_value = self.__mock_company
 
-        MockCompanyRepository.return_value = mock_instance_repository
+        mock_company_repository_class.return_value = mock_instance_repository
 
         mock_copy.return_value = self.__mock_company
 
@@ -130,7 +130,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
     async def test_find(
         self,
         mock_database: Mock,
-        MockCompanyRepository: Mock,
+        mock_company_repository_class: Mock,
     ) -> None:
         mock_database.create_async_session.side_effect = (
             lambda: self.__mock_async_session
@@ -140,7 +140,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
 
         mock_instance_repository.find.return_value = self.__mock_company
 
-        MockCompanyRepository.return_value = mock_instance_repository
+        mock_company_repository_class.return_value = mock_instance_repository
 
         company: Company = await self.__company_service.find_company(
             company_uuid=self.__mock_company.uuid,
@@ -159,7 +159,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
     async def test_find_many(
         self,
         mock_database: Mock,
-        MockCompanyRepository: Mock,
+        mock_company_repository_class: Mock,
     ) -> None:
         mock_companies: Sequence[Company] = [self.__mock_company]
 
@@ -171,7 +171,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
 
         mock_instance_repository.find_many.return_value = mock_companies
 
-        MockCompanyRepository.return_value = mock_instance_repository
+        mock_company_repository_class.return_value = mock_instance_repository
 
         companies: Sequence[Company] = await self.__company_service.find_companies(
             company_name="", limit=10, page=0
