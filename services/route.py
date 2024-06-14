@@ -95,7 +95,7 @@ class RouteService:
 
     async def find_route(self, route_uuid: str) -> Optional[Route]:
         async with database.create_async_session() as session:
-            await self.__find_route_by_uuid(route_uuid, session)
+            return await self.__find_route_by_uuid(route_uuid, session)
 
     async def find_routes(
         self,
@@ -177,6 +177,8 @@ class RouteService:
 
             await session.refresh(route)
 
+            return route
+
     async def delete_route(
         self, route_uuid: str, route_instance: Optional[Route] = None
     ) -> Optional[Route]:
@@ -190,6 +192,8 @@ class RouteService:
             )
 
             route: Optional[Route] = await route_repository.delete(route_props)
+
+            await session.commit()
 
             if route is not None:
                 return copy(route)
