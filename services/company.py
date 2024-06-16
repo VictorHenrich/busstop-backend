@@ -40,6 +40,8 @@ class CompanyUpdateProps(AbstractBaseEntity):
 
     email: str
 
+    instance: Optional[Company]
+
 
 class CompanyCaptureProps(AbstractBaseEntity):
     uuid: str
@@ -47,6 +49,7 @@ class CompanyCaptureProps(AbstractBaseEntity):
 
 class CompanyExclusionProps(AbstractBaseEntity):
     uuid: str
+    instance: Optional[Company]
 
 
 class CompanyCreationProps(AbstractBaseEntity):
@@ -60,6 +63,20 @@ class CompanyCreationProps(AbstractBaseEntity):
 
 
 class CompanyService:
+    async def __find_company_by_id(
+        self, company_uuid: str, company_repository: CompanyRepository
+    ) -> Company:
+        company_props: CompanyCaptureRepositoryProps = CompanyCaptureProps(
+            uuid=company_uuid
+        )
+
+        company: Optional[Company] = await company_repository.find(company_props)
+
+        if not company:
+            raise ModelNotFound(Company, company_uuid)
+
+        return company
+
     async def find_companies(
         self, company_name: Optional[str] = None, limit: int = 50, page: int = 0
     ) -> Sequence[Company]:
@@ -80,16 +97,7 @@ class CompanyService:
                 CompanyCaptureRepositoryProps, Company
             ] = CompanyRepository(session)
 
-            company_props: CompanyCaptureRepositoryProps = CompanyCaptureProps(
-                uuid=company_uuid
-            )
-
-            company: Optional[Company] = await company_repository.find(company_props)
-
-            if not company:
-                raise ModelNotFound(Company, company_uuid)
-
-            return company
+            return await self.__find_company_by_id(company_uuid, company_repository)
 
     async def delete_company(self, company_uuid: str) -> Optional[Company]:
         async with database.create_async_session() as session:
@@ -97,16 +105,19 @@ class CompanyService:
                 CompanyExclusionRepositoryProps, Optional[Company]
             ] = CompanyRepository(session)
 
-            props: CompanyExclusionRepositoryProps = CompanyExclusionProps(
-                uuid=company_uuid
+            company: Company = await self.__find_company_by_id(
+                company_uuid, company_repository
             )
 
-            company: Optional[Company] = await company_repository.delete(props)
+            props: CompanyExclusionRepositoryProps = CompanyExclusionProps(
+                uuid=company_uuid, instance=company
+            )
+
+            await company_repository.delete(props)
 
             await session.commit()
 
-            if company is not None:
-                return copy(company)
+            return copy(company)
 
     async def update_company(
         self,
@@ -121,17 +132,24 @@ class CompanyService:
                 CompanyUpdateRepositoryProps, Optional[Company]
             ] = CompanyRepository(session)
 
+            company: Company = await self.__find_company_by_id(
+                company_uuid, company_repository
+            )
+
             company_props: CompanyUpdateRepositoryProps = CompanyUpdateProps(
-                uuid=company_uuid,
+                instance=company,
+                uuid=company.uuid,
                 company_name=company_name,
                 fantasy_name=fantasy_name,
                 document_cnpj=document_cnpj,
                 email=email,
             )
 
-            company: Optional[Company] = await company_repository.update(company_props)
+            await company_repository.update(company_props)
 
             await session.commit()
+
+            await session.refresh(company)
 
             return company
 
