@@ -6,11 +6,13 @@ from services.company import CompanyService
 from models import Company
 from utils.responses import JSONResponse
 from utils.entities import CompanyEntity, CompanyBodyEntity
-from utils.constants import COMPANY_ENPOINT_NAME
+from utils.constants import COMPANY_ENPOINT_NAME, SWAGGER_COMPANY_SESSION_TAG
 from utils.functions import handle_company_body
 
 
-router: APIRouter = APIRouter(prefix=COMPANY_ENPOINT_NAME)
+router: APIRouter = APIRouter(
+    prefix=COMPANY_ENPOINT_NAME, tags=[SWAGGER_COMPANY_SESSION_TAG]
+)
 
 
 @router.get("")

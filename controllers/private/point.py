@@ -6,11 +6,13 @@ from services.point import PointService
 from models import Point
 from utils.responses import JSONResponse
 from utils.entities import PointEntity, PointBodyEntity
-from utils.constants import POINT_ENPOINT_NAME
+from utils.constants import POINT_ENPOINT_NAME, SWAGGER_POINT_SESSION_TAG
 from utils.functions import handle_point_body
 
 
-router: APIRouter = APIRouter(prefix=POINT_ENPOINT_NAME)
+router: APIRouter = APIRouter(
+    prefix=POINT_ENPOINT_NAME, tags=[SWAGGER_POINT_SESSION_TAG]
+)
 
 
 @router.get("/{{company_uuid}}")

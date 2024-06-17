@@ -6,11 +6,13 @@ from services.route import RouteService
 from models import Route
 from utils.responses import JSONResponse
 from utils.entities import RouteBodyEntity, RouteEntity
-from utils.constants import ROUTE_ENDPOINT_NAME
+from utils.constants import ROUTE_ENDPOINT_NAME, SWAGGER_ROUTE_SESSION_TAG
 from utils.functions import handle_route_body, get_route_entity
 
 
-router: APIRouter = APIRouter(prefix=ROUTE_ENDPOINT_NAME)
+router: APIRouter = APIRouter(
+    prefix=ROUTE_ENDPOINT_NAME, tags=[SWAGGER_ROUTE_SESSION_TAG]
+)
 
 
 @router.get("/{{company_uuid}}")
@@ -45,6 +47,8 @@ async def create_route(
         company_uuid=company_uuid,
         description=body.description,
         point_uuids=body.point_uuids,
+        closing_time=body.closing_time,
+        opening_time=body.opening_time,
     )
 
     route_handled: Optional[RouteEntity] = handle_route_body(route)
@@ -61,6 +65,8 @@ async def update_route(
     route: Optional[Route] = await route_service.update_route(
         route_uuid=route_uuid,
         description=body.description,
+        closing_time=body.closing_time,
+        opening_time=body.opening_time,
         point_uuids=body.point_uuids,
     )
 

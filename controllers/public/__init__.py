@@ -1,1 +1,1 @@
-from . import auth, index
+from . import index, auth

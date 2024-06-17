@@ -9,10 +9,12 @@ from utils.entities import (
     AuthRefreshBodyEntity,
     AuthRefreshResultEntity,
 )
-from utils.constants import AUTH_ENDPOINT_NAME
+from utils.constants import AUTH_ENDPOINT_NAME, SWAGGER_AUTH_SESSION_TAG
 
 
-router: APIRouter = APIRouter(prefix=AUTH_ENDPOINT_NAME)
+router: APIRouter = APIRouter(
+    prefix=AUTH_ENDPOINT_NAME, tags=[SWAGGER_AUTH_SESSION_TAG]
+)
 
 
 @router.post("")

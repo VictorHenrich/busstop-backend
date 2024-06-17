@@ -1,6 +1,7 @@
 from typing import List
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, time
+
 from utils.constants import SWAGGER_API_VERSION
 
 
@@ -50,6 +51,11 @@ class PointEntity(PointBodyEntity, UUIDEntity):
 
 class RouteBodyEntity(BaseModel):
     description: str
+
+    opening_time: time
+
+    closing_time: time
+
     point_uuids: List[str]
 
 

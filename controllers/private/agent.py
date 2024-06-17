@@ -6,11 +6,13 @@ from services.agent import AgentService
 from models import Agent
 from utils.responses import JSONResponse
 from utils.entities import AgentBodyEntity, AgentEntity
-from utils.constants import AGENT_ENDPOINT_NAME
+from utils.constants import AGENT_ENDPOINT_NAME, SWAGGER_AGENT_SESSION_TAG
 from utils.functions import get_agent_entity, handle_agent_body
 
 
-router: APIRouter = APIRouter(prefix=AGENT_ENDPOINT_NAME)
+router: APIRouter = APIRouter(
+    prefix=AGENT_ENDPOINT_NAME, tags=[SWAGGER_AGENT_SESSION_TAG]
+)
 
 
 @router.get("/{{agent_uuid}}")
