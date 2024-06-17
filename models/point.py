@@ -6,7 +6,7 @@ from . import common
 
 if TYPE_CHECKING:
     from models.company import Company
-    from models.route import Route
+    from models.route_point import RoutePoint
 
 
 class Point(common.BaseModel):
@@ -30,9 +30,7 @@ class Point(common.BaseModel):
 
     company: Mapped["Company"] = relationship(back_populates="points")
 
-    routes: Mapped[List["Route"]] = relationship(
-        secondary=common.RoutePointRelationship, back_populates="points"
-    )
+    routes: Mapped[List["RoutePoint"]] = relationship(back_populates="point")
 
     def __repr__(self) -> str:
         return (

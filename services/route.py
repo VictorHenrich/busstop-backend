@@ -1,6 +1,7 @@
 from typing import Optional, Sequence
 from copy import copy
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import time
 
 from models import Route, Company, Point, database
 from repositories.route import (
@@ -29,6 +30,10 @@ class RouteCreationProps(AbstractBaseEntity):
 
     description: str
 
+    opening_time: time
+
+    closing_time: time
+
     points: Sequence[Point]
 
 
@@ -48,6 +53,10 @@ class RouteUpdateProps(AbstractBaseEntity):
     uuid: str
 
     description: str
+
+    opening_time: time
+
+    closing_time: time
 
     points: Sequence[Point]
 
@@ -118,6 +127,8 @@ class RouteService:
     async def create_route(
         self,
         description: str,
+        opening_time: time,
+        closing_time: time,
         point_uuids: Sequence[str],
         company_uuid: Optional[str] = None,
         company_instance: Optional[Company] = None,
@@ -132,7 +143,11 @@ class RouteService:
             points: Sequence[Point] = await self.__find_points(company, point_uuids)
 
             route_props: RouteCreationRepositoryProps = RouteCreationProps(
-                company=company, points=points, description=description
+                company=company,
+                points=points,
+                description=description,
+                opening_time=opening_time,
+                closing_time=closing_time,
             )
 
             route: Optional[Route] = await route_repository.create(route_props)
@@ -145,6 +160,8 @@ class RouteService:
         self,
         route_uuid: str,
         description: str,
+        opening_time: time,
+        closing_time: time,
         point_uuids: Sequence[str],
         route_instance: Optional[Route] = None,
     ) -> Optional[Route]:
@@ -169,6 +186,8 @@ class RouteService:
                 points=points,
                 description=description,
                 instance=route_instance,
+                opening_time=opening_time,
+                closing_time=closing_time,
             )
 
             route = await route_repository.update(route_props)

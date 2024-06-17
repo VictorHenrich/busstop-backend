@@ -2,8 +2,9 @@ from typing import Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
 from sqlalchemy.orm import joinedload
+from datetime import time
 
-from models import Route, Point, Company, RoutePointRelationship
+from models import Route, Point, Company, RoutePoint
 from utils.patterns import (
     BaseRepository,
     ICreateRepository,
@@ -19,6 +20,10 @@ class RouteCreationRepositoryProps(Protocol):
 
     description: str
 
+    opening_time: time
+
+    closing_time: time
+
     points: Sequence[Point]
 
 
@@ -29,11 +34,16 @@ class RouteUpdateRepositoryProps(Protocol):
 
     points: Sequence[Point]
 
+    opening_time: time
+
+    closing_time: time
+
     instance: Optional[Route] = None
 
 
 class RouteExclusionRepositoryProps(Protocol):
     uuid: str
+
     instance: Optional[Route] = None
 
 
@@ -58,9 +68,13 @@ class RouteRepository(
 
         route.company_id = props.company.id
         route.description = props.description
+        route.opening_time = props.opening_time
+        route.closing_time = props.closing_time
 
-        for point in props.points:
-            route.points.add(point)
+        for index in range(len(props.points)):
+            route.points.add(
+                RoutePoint(index=index, route=route, point=props.points[index])
+            )
 
         self.session.add(route)
 
@@ -92,8 +106,16 @@ class RouteRepository(
         if props.instance:
             props.instance.description = props.description
 
-            for point in props.points:
-                props.instance.points.add(point)
+            props.instance.opening_time = props.opening_time
+
+            props.instance.closing_time = props.closing_time
+
+            for index in range(len(props.points)):
+                props.instance.points.add(
+                    RoutePoint(
+                        index=index, route=props.instance, point=props.points[index]
+                    )
+                )
 
             self.session.add(props.instance)
 
@@ -103,7 +125,11 @@ class RouteRepository(
             query_route: Update = (
                 update(Route)
                 .where(Route.uuid == props.uuid)
-                .values(description=props.description)
+                .values(
+                    description=props.description,
+                    opening_time=props.opening_time,
+                    closing_time=props.closing_time,
+                )
                 .returning(Route)
             )
 
@@ -112,8 +138,15 @@ class RouteRepository(
             if not route:
                 return
 
-            query_route_point: Insert = insert(RoutePointRelationship).values(
-                [{"route_id": route.id, "point_id": point.id} for point in props.points]
+            query_route_point: Insert = insert(RoutePoint).values(
+                [
+                    {
+                        "route_id": route.id,
+                        "point_id": props.points[index].id,
+                        "index": index,
+                    }
+                    for index in range(len(props.points))
+                ]
             )
 
             await self.session.execute(query_route_point)
@@ -130,7 +163,7 @@ class RouteRepository(
             return props.instance
 
         else:
-            query_route_point: Delete = delete(RoutePointRelationship).where(
+            query_route_point: Delete = delete(RoutePoint).where(
                 Route.uuid == props.uuid
             )
 

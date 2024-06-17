@@ -1,12 +1,12 @@
 from dotenv import load_dotenv
 import asyncio
 
-from server.instances import ServerInstances
-from server.database import Database
-from utils.constants import DATABASE_INSTANCE_NAME
-
 
 async def main(drop_all: bool = False) -> None:
+    from server.instances import ServerInstances
+    from server.database import Database
+    from utils.constants import DATABASE_INSTANCE_NAME
+
     import models
 
     database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)

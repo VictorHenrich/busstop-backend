@@ -2,7 +2,7 @@ from typing import Optional, Protocol, Sequence, Mapping, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
 
-from models import Point, Company, RoutePointRelationship
+from models import Point, Company, RoutePoint
 from utils.patterns import (
     BaseRepository,
     ICreateRepository,
@@ -143,9 +143,7 @@ class PointRepository(
             return await self.session.scalar(query)
 
     async def delete(self, props: PointExclusionRepositoryProps) -> Optional[Point]:
-        query_route_point: Delete = delete(RoutePointRelationship).where(
-            Point.uuid == props.uuid
-        )
+        query_route_point: Delete = delete(RoutePoint).where(Point.uuid == props.uuid)
 
         await self.session.execute(query_route_point)
 

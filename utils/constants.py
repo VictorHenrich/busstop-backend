@@ -1,6 +1,7 @@
 from typing import Sequence
 import os
 
+
 DATABASE_HOST: str = os.environ.get("DATABASE_HOST", "")
 DATABASE_PORT: str = os.environ.get("DATABASE_PORT", "")
 DATABASE_DBNAME: str = os.environ.get("DATABASE_DBNAME", "")
