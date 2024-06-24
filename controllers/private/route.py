@@ -49,6 +49,7 @@ async def create_route(
         point_uuids=body.point_uuids,
         closing_time=body.closing_time,
         opening_time=body.opening_time,
+        ticket_price=body.ticket_price,
     )
 
     route_handled: Optional[RouteEntity] = handle_route_body(route)
@@ -68,6 +69,7 @@ async def update_route(
         closing_time=body.closing_time,
         opening_time=body.opening_time,
         point_uuids=body.point_uuids,
+        ticket_price=body.ticket_price,
     )
 
     route_handled: Optional[RouteEntity] = handle_route_body(route)

@@ -34,6 +34,8 @@ class RouteCreationProps(AbstractBaseEntity):
 
     closing_time: time
 
+    ticket_price: float
+
     points: Sequence[Point]
 
 
@@ -57,6 +59,8 @@ class RouteUpdateProps(AbstractBaseEntity):
     opening_time: time
 
     closing_time: time
+
+    ticket_price: float
 
     points: Sequence[Point]
 
@@ -129,6 +133,7 @@ class RouteService:
         description: str,
         opening_time: time,
         closing_time: time,
+        ticket_price: float,
         point_uuids: Sequence[str],
         company_uuid: Optional[str] = None,
         company_instance: Optional[Company] = None,
@@ -148,6 +153,7 @@ class RouteService:
                 description=description,
                 opening_time=opening_time,
                 closing_time=closing_time,
+                ticket_price=ticket_price,
             )
 
             route: Optional[Route] = await route_repository.create(route_props)
@@ -162,6 +168,7 @@ class RouteService:
         description: str,
         opening_time: time,
         closing_time: time,
+        ticket_price: float,
         point_uuids: Sequence[str],
         route_instance: Optional[Route] = None,
     ) -> Optional[Route]:
@@ -188,6 +195,7 @@ class RouteService:
                 instance=route_instance,
                 opening_time=opening_time,
                 closing_time=closing_time,
+                ticket_price=ticket_price,
             )
 
             route = await route_repository.update(route_props)

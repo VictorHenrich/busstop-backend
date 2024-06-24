@@ -26,6 +26,8 @@ class Route(common.BaseModel):
 
     closing_time: Mapped[time] = mapped_column(nullable=False)
 
+    ticket_price: Mapped[float] = mapped_column(nullable=False)
+
     def __repr__(self) -> str:
         return (
             "<Route "

@@ -1,6 +1,7 @@
 from typing import Optional, Sequence
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock, AsyncMock, MagicMock, patch
+from datetime import time
 
 from models import Route
 from repositories.route import (
@@ -27,6 +28,9 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
         self.__mock_route: Mock = Mock(
             uuid="0d0a6d5d-d762-4cc2-8131-1ff5214e3b47",
             description="Rota alterada",
+            ticket_price=0,
+            opening_time=time(),
+            closing_time=time(),
             instance=None,
         )
 

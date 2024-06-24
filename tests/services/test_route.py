@@ -23,6 +23,7 @@ class RouteServiceTestCase(IsolatedAsyncioTestCase):
             description="",
             uuid="4932d9e1-c715-4b97-890a-ab2f678d3d11",
             instance=None,
+            ticket_price=0,
             spec=Route,
         )
 
@@ -82,6 +83,9 @@ class RouteServiceTestCase(IsolatedAsyncioTestCase):
             description=self.__mock_route.description,
             point_uuids=[],
             company_uuid=self.__mock_company.uuid,
+            ticket_price=self.__mock_route.ticket_price,
+            closing_time=self.__mock_route.closing_time,
+            opening_time=self.__mock_route.opening_time,
         )
 
         self.__mock_route_repository_instance.create.assert_awaited_once()
@@ -119,6 +123,9 @@ class RouteServiceTestCase(IsolatedAsyncioTestCase):
             description=self.__mock_route.description,
             point_uuids=[],
             route_uuid=self.__mock_route.uuid,
+            ticket_price=self.__mock_route.ticket_price,
+            closing_time=self.__mock_route.closing_time,
+            opening_time=self.__mock_route.opening_time,
         )
 
         self.__mock_route_repository_instance.update.assert_awaited_once()

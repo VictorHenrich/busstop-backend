@@ -24,6 +24,8 @@ class RouteCreationRepositoryProps(Protocol):
 
     closing_time: time
 
+    ticket_price: float
+
     points: Sequence[Point]
 
 
@@ -37,6 +39,8 @@ class RouteUpdateRepositoryProps(Protocol):
     opening_time: time
 
     closing_time: time
+
+    ticket_price: float
 
     instance: Optional[Route] = None
 
@@ -70,6 +74,7 @@ class RouteRepository(
         route.description = props.description
         route.opening_time = props.opening_time
         route.closing_time = props.closing_time
+        route.ticket_price = props.ticket_price
 
         for index in range(len(props.points)):
             route.points.add(
@@ -110,6 +115,8 @@ class RouteRepository(
 
             props.instance.closing_time = props.closing_time
 
+            props.instance.ticket_price = props.ticket_price
+
             for index in range(len(props.points)):
                 props.instance.points.add(
                     RoutePoint(
@@ -129,6 +136,7 @@ class RouteRepository(
                     description=props.description,
                     opening_time=props.opening_time,
                     closing_time=props.closing_time,
+                    ticket_price=props.ticket_price,
                 )
                 .returning(Route)
             )

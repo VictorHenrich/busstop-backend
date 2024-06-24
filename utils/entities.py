@@ -56,6 +56,8 @@ class RouteBodyEntity(BaseModel):
 
     closing_time: time
 
+    ticket_price: float
+
     point_uuids: List[str]
 
 
