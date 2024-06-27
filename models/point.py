@@ -14,6 +14,8 @@ class Point(common.BaseModel):
 
     company_id: Mapped[int] = mapped_column(ForeignKey("company.id"))
 
+    address_zip_code: Mapped[str] = mapped_column(nullable=False)
+
     address_state: Mapped[str] = mapped_column(String(2), nullable=False)
 
     address_city: Mapped[str] = mapped_column(nullable=False)

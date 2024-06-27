@@ -16,6 +16,8 @@ from utils.patterns import (
 class PointCreationRepositoryProps(Protocol):
     company: Company
 
+    address_zip_code: str
+
     address_state: str
 
     address_city: str
@@ -33,6 +35,8 @@ class PointCreationRepositoryProps(Protocol):
 
 class PointUpdateRepositoryProps(Protocol):
     uuid: str
+
+    address_zip_code: str
 
     address_state: str
 
@@ -81,6 +85,7 @@ class PointRepository(
         point.address_neighborhood = props.address_neighborhood
         point.address_street = props.address_street
         point.address_number = props.address_number
+        point.address_zip_code = props.address_zip_code
         point.latitude = props.latitude
         point.longitude = props.longitude
 
@@ -107,20 +112,9 @@ class PointRepository(
         #     return await self.session.scalar(query)
 
     async def update(self, props: PointUpdateRepositoryProps) -> Optional[Point]:
-        data: Mapping[str, Any] = {
-            "address_state": props.address_state,
-            "address_city": props.address_city,
-            "address_neighborhood": props.address_neighborhood,
-            "address_street": props.address_street,
-            "address_number": props.address_number,
-            "latitude": props.latitude,
-            "longitude": props.longitude,
-        }
-
-        data = {name: value for name, value in data.items() if value is not None}
-
         if props.instance:
             props.instance.address_state = props.address_state
+            props.instance.address_zip_code = props.address_zip_code
             props.instance.address_city = props.address_city
             props.instance.address_neighborhood = props.address_neighborhood
             props.instance.address_street = props.address_street
@@ -133,6 +127,19 @@ class PointRepository(
             return props.instance
 
         else:
+            data: Mapping[str, Any] = {
+                "address_zip_code": props.address_zip_code,
+                "address_state": props.address_state,
+                "address_city": props.address_city,
+                "address_neighborhood": props.address_neighborhood,
+                "address_street": props.address_street,
+                "address_number": props.address_number,
+                "latitude": props.latitude,
+                "longitude": props.longitude,
+            }
+
+            data = {name: value for name, value in data.items() if value is not None}
+
             query: Update = (
                 update(Point)
                 .where(Point.uuid == props.uuid)

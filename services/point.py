@@ -22,6 +22,8 @@ from utils.patterns import (
 
 
 class PointCreationProps(AbstractBaseEntity):
+    address_zip_code: str
+
     address_state: str
 
     address_city: str
@@ -41,6 +43,8 @@ class PointCreationProps(AbstractBaseEntity):
 
 class PointUpdateProps(AbstractBaseEntity):
     uuid: str
+
+    address_zip_code: str
 
     address_state: str
 
@@ -88,6 +92,7 @@ class PointService:
 
     async def create_point(
         self,
+        address_zip_code: str,
         address_state: str,
         address_city: str,
         address_neighborhood: str,
@@ -106,6 +111,7 @@ class PointService:
             company: Company = await self.__get_company(company_uuid, company_instance)
 
             point_props: PointCreationRepositoryProps = PointCreationProps(
+                address_zip_code=address_zip_code,
                 address_state=address_state,
                 address_city=address_city,
                 address_neighborhood=address_neighborhood,
@@ -125,6 +131,7 @@ class PointService:
     async def update_point(
         self,
         point_uuid: str,
+        address_zip_code: str,
         address_state: str,
         address_city: str,
         address_neighborhood: str,
@@ -145,6 +152,7 @@ class PointService:
             ] = PointRepository(session)
 
             point_props: PointUpdateRepositoryProps = PointUpdateProps(
+                address_zip_code=address_zip_code,
                 instance=point_instance,
                 address_state=address_state,
                 address_city=address_city,
