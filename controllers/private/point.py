@@ -35,6 +35,7 @@ async def list_points(
             address_number=point.address_number,
             latitude=point.latitude,
             longitude=point.longitude,
+            address_zip_code=point.address_zip_code
         )
         for point in points
     ]
@@ -61,6 +62,7 @@ async def create_point(
 
     point: Optional[Point] = await point_service.create_point(
         company_uuid=company_uuid,
+        address_zip_code=point_body.address_zip_code,
         address_state=point_body.address_state,
         address_city=point_body.address_city,
         address_neighborhood=point_body.address_neighborhood,
@@ -83,6 +85,7 @@ async def update_point(
 
     point: Optional[Point] = await point_service.update_point(
         point_uuid=point_uuid,
+        address_zip_code=point_body.address_zip_code,
         address_state=point_body.address_state,
         address_city=point_body.address_city,
         address_neighborhood=point_body.address_neighborhood,

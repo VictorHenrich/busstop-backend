@@ -30,6 +30,8 @@ class CompanyEntity(CompanyBodyEntity, UUIDEntity):
 
 
 class PointBodyEntity(BaseModel):
+    address_zip_code: str
+
     address_state: str
 
     address_city: str
