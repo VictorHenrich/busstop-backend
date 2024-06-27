@@ -7,6 +7,7 @@ from utils.entities import TokenDataEntity
 from utils.patterns import AbstractBaseEntity, IAuthRepository
 from utils.crypt import CryptUtils
 from utils.constants import TOKEN_EXPIRATION_MINUTE, REFRESH_TOKEN_EXPIRATION_MINUTE
+from utils.exceptions import InvalidToken
 
 
 class AgentAuthProps(AbstractBaseEntity):
@@ -64,6 +65,9 @@ class AuthService:
 
     async def refresh_token(self, token: str) -> str:
         token_data: TokenDataEntity = CryptUtils.Jwt.decode_token(token)
+
+        if not token_data.is_refresh:
+            raise InvalidToken(token)
 
         agent: Agent = await self.__agent_service.find_agent(token_data.agent_uuid)
 
