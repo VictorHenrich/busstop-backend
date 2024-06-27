@@ -35,7 +35,7 @@ async def list_points(
             address_number=point.address_number,
             latitude=point.latitude,
             longitude=point.longitude,
-            address_zip_code=point.address_zip_code
+            address_zip_code=point.address_zip_code,
         )
         for point in points
     ]
