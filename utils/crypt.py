@@ -40,11 +40,11 @@ class CryptUtils:
 
         @staticmethod
         def decode_token(token: str) -> TokenDataEntity:
-            data: Mapping[str, Any] = jwt.decode(token, SECRET_KEY)
+            data: Mapping[str, Any] = jwt.decode(token, SECRET_KEY, ["HS256"])
 
             token_data: TokenDataEntity = TokenDataEntity(**data)
 
-            if token_data.exp > datetime.now(UTC):
+            if token_data.exp < datetime.now(UTC):
                 raise jwt.ExpiredSignatureError()
 
             return token_data
