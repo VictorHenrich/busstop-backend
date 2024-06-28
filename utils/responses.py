@@ -6,5 +6,13 @@ from abc import ABC
 T = TypeVar("T", bound=Union[BaseModel, Sequence[BaseModel], None])
 
 
-class JSONResponse(BaseModel, ABC, Generic[T]):
+class JSONSuccessResponse(BaseModel, Generic[T]):
     content: Optional[T]
+
+
+class JSONErrorResponse(BaseModel):
+    reason: str
+
+
+class JSONUnauthorizedResponse(BaseModel):
+    reason: str = "Unauthorized"

@@ -4,7 +4,7 @@ from fastapi.routing import APIRouter
 from server.instances import ServerInstances
 from services.company import CompanyService
 from models import Company
-from utils.responses import JSONResponse
+from utils.responses import JSONSuccessResponse
 from utils.entities import CompanyEntity, CompanyBodyEntity
 from utils.constants import COMPANY_ENPOINT_NAME, SWAGGER_COMPANY_SESSION_TAG
 from utils.functions import handle_company_body
@@ -18,7 +18,7 @@ router: APIRouter = APIRouter(
 @router.get("")
 async def list_companies(
     page: int = 0, limit: int = 10, company_name: Optional[str] = None
-) -> JSONResponse[List[CompanyEntity]]:
+) -> JSONSuccessResponse[List[CompanyEntity]]:
     company_service: CompanyService = CompanyService()
 
     companies: Sequence[Company] = await company_service.find_companies(
@@ -36,11 +36,13 @@ async def list_companies(
         for company in companies
     ]
 
-    return JSONResponse(content=companies_handled)
+    return JSONSuccessResponse(content=companies_handled)
 
 
 @router.get("/{{company_uuid}}")
-async def get_company(company_uuid: str) -> JSONResponse[Optional[CompanyEntity]]:
+async def get_company(
+    company_uuid: str,
+) -> JSONSuccessResponse[Optional[CompanyEntity]]:
     company_service: CompanyService = CompanyService()
 
     company: Optional[Company] = await company_service.find_company(
@@ -49,13 +51,13 @@ async def get_company(company_uuid: str) -> JSONResponse[Optional[CompanyEntity]
 
     company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
-    return JSONResponse(content=company_handled)
+    return JSONSuccessResponse(content=company_handled)
 
 
 @router.post("")
 async def create_company(
     company_body: CompanyBodyEntity,
-) -> JSONResponse[Optional[CompanyEntity]]:
+) -> JSONSuccessResponse[Optional[CompanyEntity]]:
     company_service: CompanyService = CompanyService()
 
     company: Optional[Company] = await company_service.create_company(
@@ -67,13 +69,13 @@ async def create_company(
 
     company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
-    return JSONResponse(content=company_handled)
+    return JSONSuccessResponse(content=company_handled)
 
 
 @router.put("/{{company_uuid}}")
 async def update_company(
     company_uuid: str, company_body: CompanyBodyEntity
-) -> JSONResponse[Optional[CompanyEntity]]:
+) -> JSONSuccessResponse[Optional[CompanyEntity]]:
     company_service: CompanyService = CompanyService()
 
     company: Optional[Company] = await company_service.update_company(
@@ -86,20 +88,20 @@ async def update_company(
 
     company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
-    return JSONResponse(content=company_handled)
+    return JSONSuccessResponse(content=company_handled)
 
 
 @router.delete("/{{company_uuid}}")
 async def delete_company(
     company_uuid: str,
-) -> JSONResponse[Optional[CompanyEntity]]:
+) -> JSONSuccessResponse[Optional[CompanyEntity]]:
     company_service: CompanyService = CompanyService()
 
     company: Optional[Company] = await company_service.delete_company(company_uuid)
 
     company_handled: Optional[CompanyEntity] = handle_company_body(company)
 
-    return JSONResponse(content=company_handled)
+    return JSONSuccessResponse(content=company_handled)
 
 
 ServerInstances.api.include_router(router)

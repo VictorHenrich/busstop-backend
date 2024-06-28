@@ -4,7 +4,7 @@ from fastapi.routing import APIRouter
 from server.instances import ServerInstances
 from services.point import PointService
 from models import Point
-from utils.responses import JSONResponse
+from utils.responses import JSONSuccessResponse
 from utils.entities import PointEntity, PointBodyEntity
 from utils.constants import POINT_ENPOINT_NAME, SWAGGER_POINT_SESSION_TAG
 from utils.functions import handle_point_body
@@ -18,7 +18,7 @@ router: APIRouter = APIRouter(
 @router.get("/{{company_uuid}}")
 async def list_points(
     company_uuid: str, uuids: List[str] = []
-) -> JSONResponse[List[PointEntity]]:
+) -> JSONSuccessResponse[List[PointEntity]]:
     point_service: PointService = PointService()
 
     points: Sequence[Point] = await point_service.find_points(
@@ -40,24 +40,24 @@ async def list_points(
         for point in points
     ]
 
-    return JSONResponse(content=points_handled)
+    return JSONSuccessResponse(content=points_handled)
 
 
 @router.get("/{{point_uuid}}")
-async def get_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
+async def get_point(point_uuid: str) -> JSONSuccessResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
     point: Optional[Point] = await point_service.find_point(point_uuid)
 
     point_handled: Optional[PointEntity] = handle_point_body(point)
 
-    return JSONResponse(content=point_handled)
+    return JSONSuccessResponse(content=point_handled)
 
 
 @router.post("/{{company_uuid}}")
 async def create_point(
     company_uuid: str, point_body: PointBodyEntity
-) -> JSONResponse[Optional[PointEntity]]:
+) -> JSONSuccessResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
     point: Optional[Point] = await point_service.create_point(
@@ -74,13 +74,13 @@ async def create_point(
 
     point_handled: Optional[PointEntity] = handle_point_body(point)
 
-    return JSONResponse(content=point_handled)
+    return JSONSuccessResponse(content=point_handled)
 
 
 @router.put("/{{point_uuid}}")
 async def update_point(
     point_uuid: str, point_body: PointBodyEntity
-) -> JSONResponse[Optional[PointEntity]]:
+) -> JSONSuccessResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
     point: Optional[Point] = await point_service.update_point(
@@ -97,18 +97,18 @@ async def update_point(
 
     point_handled: Optional[PointEntity] = handle_point_body(point)
 
-    return JSONResponse(content=point_handled)
+    return JSONSuccessResponse(content=point_handled)
 
 
 @router.delete("/{{point_uuid}}")
-async def delete_point(point_uuid: str) -> JSONResponse[Optional[PointEntity]]:
+async def delete_point(point_uuid: str) -> JSONSuccessResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
     point: Optional[Point] = await point_service.delete_point(point_uuid)
 
     point_handled: Optional[PointEntity] = handle_point_body(point)
 
-    return JSONResponse(content=point_handled)
+    return JSONSuccessResponse(content=point_handled)
 
 
 ServerInstances.api.include_router(router)

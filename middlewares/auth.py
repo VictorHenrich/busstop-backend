@@ -1,11 +1,12 @@
 from typing import Callable, Awaitable
 from fastapi import Request, Response
+from fastapi.responses import JSONResponse
 
 from server.instances import ServerInstances
 from models import Agent
 from services.auth import AuthService
-from utils.exceptions import HTTPUnauthorization
 from utils.functions import validate_middleware_request
+from utils.responses import JSONUnauthorizedResponse
 
 
 @ServerInstances.api.middleware("http")
@@ -25,7 +26,7 @@ async def verify_authentication(
         agent: Agent = await auth_service.get_user_data_in_token(token)
 
     except:
-        raise HTTPUnauthorization()
+        return JSONResponse(status_code=401, content=JSONUnauthorizedResponse())
 
     else:
         request.state.user = agent

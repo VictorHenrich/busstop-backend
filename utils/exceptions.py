@@ -25,11 +25,6 @@ class InvalidToken(BaseException):
         super().__init__(f"Passed token is invalid: '{token}'")
 
 
-class HTTPUnauthorization(HTTPException):
-    def __init__(self) -> None:
-        super().__init__(401, "User does not have permission to access this endpoint")
-
-
 class HTTPFailure(HTTPException):
     def __init__(self, error_message: str) -> None:
         super().__init__(500, error_message)

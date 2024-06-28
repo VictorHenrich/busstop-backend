@@ -4,7 +4,7 @@ from fastapi.routing import APIRouter
 from server.instances import ServerInstances
 from services.route import RouteService
 from models import Route
-from utils.responses import JSONResponse
+from utils.responses import JSONSuccessResponse
 from utils.entities import RouteBodyEntity, RouteEntity
 from utils.constants import ROUTE_ENDPOINT_NAME, SWAGGER_ROUTE_SESSION_TAG
 from utils.functions import handle_route_body, get_route_entity
@@ -16,31 +16,31 @@ router: APIRouter = APIRouter(
 
 
 @router.get("/{{company_uuid}}")
-async def list_routes(company_uuid: str) -> JSONResponse[List[RouteEntity]]:
+async def list_routes(company_uuid: str) -> JSONSuccessResponse[List[RouteEntity]]:
     route_service: RouteService = RouteService()
 
     routes: Sequence[Route] = await route_service.find_routes(company_uuid=company_uuid)
 
     routes_handled: List[RouteEntity] = [get_route_entity(route) for route in routes]
 
-    return JSONResponse(content=routes_handled)
+    return JSONSuccessResponse(content=routes_handled)
 
 
 @router.get("/{{route_uuid}}")
-async def get_route(route_uuid: str) -> JSONResponse[Optional[RouteEntity]]:
+async def get_route(route_uuid: str) -> JSONSuccessResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 
     route: Optional[Route] = await route_service.find_route(route_uuid)
 
     route_handled: Optional[RouteEntity] = handle_route_body(route)
 
-    return JSONResponse(content=route_handled)
+    return JSONSuccessResponse(content=route_handled)
 
 
 @router.post("/{{company_uuid}}")
 async def create_route(
     company_uuid: str, body: RouteBodyEntity
-) -> JSONResponse[Optional[RouteEntity]]:
+) -> JSONSuccessResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 
     route: Optional[Route] = await route_service.create_route(
@@ -54,13 +54,13 @@ async def create_route(
 
     route_handled: Optional[RouteEntity] = handle_route_body(route)
 
-    return JSONResponse(content=route_handled)
+    return JSONSuccessResponse(content=route_handled)
 
 
 @router.put("/{{route_uuid}}")
 async def update_route(
     route_uuid: str, body: RouteBodyEntity
-) -> JSONResponse[Optional[RouteEntity]]:
+) -> JSONSuccessResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 
     route: Optional[Route] = await route_service.update_route(
@@ -74,11 +74,11 @@ async def update_route(
 
     route_handled: Optional[RouteEntity] = handle_route_body(route)
 
-    return JSONResponse(content=route_handled)
+    return JSONSuccessResponse(content=route_handled)
 
 
 @router.delete("/{{route_uuid}}")
-async def delete_route(route_uuid: str) -> JSONResponse[Optional[RouteEntity]]:
+async def delete_route(route_uuid: str) -> JSONSuccessResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 
     route: Optional[Route] = await route_service.delete_route(
@@ -87,7 +87,7 @@ async def delete_route(route_uuid: str) -> JSONResponse[Optional[RouteEntity]]:
 
     route_handled: Optional[RouteEntity] = handle_route_body(route)
 
-    return JSONResponse(content=route_handled)
+    return JSONSuccessResponse(content=route_handled)
 
 
 ServerInstances.api.include_router(router)
