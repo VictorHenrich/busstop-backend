@@ -1,11 +1,11 @@
-from typing import Callable, Awaitable
+from typing import Any, Callable, Awaitable, Mapping
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 
 from server.instances import ServerInstances
 from models import Agent
 from services.auth import AuthService
-from utils.functions import validate_middleware_request
+from utils.functions import validate_middleware_request, handle_call_errors
 from utils.responses import JSONUnauthorizedResponse
 
 
@@ -26,9 +26,11 @@ async def verify_authentication(
         agent: Agent = await auth_service.get_user_data_in_token(token)
 
     except:
-        return JSONResponse(status_code=401, content=JSONUnauthorizedResponse())
+        response: Mapping[str, Any] = JSONUnauthorizedResponse().model_dump()
+
+        return JSONResponse(status_code=401, content=response)
 
     else:
         request.state.user = agent
 
-        return await call_next(request)
+        return await handle_call_errors(call_next, request)
