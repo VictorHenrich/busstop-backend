@@ -2,7 +2,7 @@ from typing import Sequence
 from fastapi.routing import APIRouter
 
 from server.instances import ServerInstances
-from services.geo import GeoService
+from services.geolocation import GeoLocationService
 from models import Point
 from utils.responses import JSONSuccessResponse
 from utils.entities import PointBodyEntity
@@ -16,7 +16,7 @@ router: APIRouter = APIRouter(prefix=GEO_ENPOINT_NAME, tags=[SWAGGER_GEO_SESSION
 async def find_address(
     address_description: str,
 ) -> JSONSuccessResponse[Sequence[PointBodyEntity]]:
-    geo_service: GeoService = GeoService()
+    geo_service: GeoLocationService = GeoLocationService()
 
     points: Sequence[Point] = await geo_service.find_address(address_description)
 

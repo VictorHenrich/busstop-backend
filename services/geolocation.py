@@ -15,7 +15,7 @@ from utils.constants import (
 )
 
 
-class GeoService:
+class GeoLocationService:
     def __init__(self) -> None:
         self.__geocoder: GoogleV3 = GoogleV3(
             api_key=GOOGLE_API_KEY, user_agent="busstop", adapter_factory=AioHTTPAdapter
@@ -24,7 +24,9 @@ class GeoService:
     def __get_address_data(
         self, address_type: str, location_raw: Mapping[str, Any]
     ) -> str:
-        address_components: Sequence[Mapping[str, Any]] = location_raw["location_raw"]
+        address_components: Sequence[Mapping[str, Any]] = location_raw[
+            "address_components"
+        ]
 
         for address in address_components:
             if address_type in address["types"]:
@@ -55,9 +57,9 @@ class GeoService:
             TYPE_ADDRESS_NUMBER, location.raw
         )
 
-        point.latitude = location.latitude
+        point.latitude = str(location.latitude)
 
-        point.longitude = location.longitude
+        point.longitude = str(location.longitude)
 
         return point
 
@@ -68,5 +70,8 @@ class GeoService:
             locations = await geocoder.geocode(
                 query=address_description, region=region, exactly_one=False
             )
+
+            if locations is None:
+                return []
 
             return [self.__handle_location(location) for location in locations]
