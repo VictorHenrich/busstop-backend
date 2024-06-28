@@ -1,4 +1,5 @@
 from fastapi.routing import APIRouter
+import jwt
 
 from server.instances import ServerInstances
 from services.auth import AuthService
@@ -10,6 +11,13 @@ from utils.entities import (
     AuthRefreshResultEntity,
 )
 from utils.constants import AUTH_ENDPOINT_NAME, SWAGGER_AUTH_SESSION_TAG
+from utils.types import JSONResponseType
+from utils.exceptions import (
+    InvalidToken,
+    UserNotFound,
+    InvalidUserPassword,
+    HTTPFailure,
+)
 
 
 router: APIRouter = APIRouter(
@@ -18,29 +26,43 @@ router: APIRouter = APIRouter(
 
 
 @router.post("")
-async def authenticate(body: AuthBodyEntity) -> JSONSuccessResponse[AuthResultEntity]:
+async def authenticate(body: AuthBodyEntity) -> JSONResponseType:
     auth_service: AuthService = AuthService()
 
-    auth_data = await auth_service.auth_agent(email=body.email, password=body.password)
+    try:
+        auth_data = await auth_service.auth_agent(
+            email=body.email, password=body.password
+        )
+
+    except (
+        UserNotFound,
+        InvalidUserPassword,
+    ) as error:
+        raise HTTPFailure(str(error))
 
     auth_body: AuthResultEntity = AuthResultEntity(
         token=auth_data["token"], refresh_token=auth_data["refresh_token"]
     )
 
-    return JSONSuccessResponse(content=auth_body)
+    return JSONSuccessResponse[AuthResultEntity](content=auth_body)
 
 
 @router.put("/refresh")
 async def refresh_authencation(
     body: AuthRefreshBodyEntity,
-) -> JSONSuccessResponse[AuthRefreshResultEntity]:
+) -> JSONResponseType:
     auth_service: AuthService = AuthService()
 
-    token: str = await auth_service.refresh_token(body.refresh_token)
+    try:
+        token: str = await auth_service.refresh_token(body.refresh_token)
 
-    auth_body: AuthRefreshResultEntity = AuthRefreshResultEntity(token=token)
+        auth_body: AuthRefreshResultEntity = AuthRefreshResultEntity(token=token)
 
-    return JSONSuccessResponse(content=auth_body)
+    except (InvalidToken, jwt.ExpiredSignatureError, jwt.DecodeError) as error:
+        raise HTTPFailure(str(error))
+
+    else:
+        return JSONSuccessResponse[AuthRefreshResultEntity](content=auth_body)
 
 
 ServerInstances.api.include_router(router)

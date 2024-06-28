@@ -9,8 +9,8 @@ class JSONSuccessResponse(BaseModel, Generic[T]):
 
 
 class JSONErrorResponse(BaseModel):
-    reason: str
+    detail: str
 
 
 class JSONUnauthorizedResponse(BaseModel):
-    reason: str = "Unauthorized"
+    detail: str = "Unauthorized"

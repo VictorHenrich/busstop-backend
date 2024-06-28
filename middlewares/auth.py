@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from server.instances import ServerInstances
 from models import Agent
 from services.auth import AuthService
-from utils.functions import validate_middleware_request, handle_call_errors
+from utils.functions import validate_middleware_request
 from utils.responses import JSONUnauthorizedResponse
 
 
@@ -33,4 +33,4 @@ async def verify_authentication(
     else:
         request.state.user = agent
 
-        return await handle_call_errors(call_next, request)
+        return await call_next(request)

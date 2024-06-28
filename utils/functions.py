@@ -80,18 +80,6 @@ def handle_agent_body(agent: Optional[Agent]) -> Optional[AgentEntity]:
         return get_agent_entity(agent)
 
 
-async def handle_call_errors(
-    call_next: Callable[[Request], Awaitable[Response]], *args: Any
-) -> Response:
-    try:
-        return await call_next(*args)
-
-    except Exception as error:
-        response: Mapping[str, Any] = JSONErrorResponse(reason=str(error)).model_dump()
-
-        return JSONResponse(status_code=500, content=response)
-
-
 async def validate_middleware_request(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ) -> AsyncGenerator[Union[bool, Response], None]:
@@ -100,4 +88,4 @@ async def validate_middleware_request(
     yield validated
 
     if validated:
-        yield await handle_call_errors(call_next, request)
+        yield await call_next(request)
