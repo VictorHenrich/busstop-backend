@@ -11,7 +11,6 @@ from utils.entities import (
     AuthRefreshResultEntity,
 )
 from utils.constants import AUTH_ENDPOINT_NAME, SWAGGER_AUTH_SESSION_TAG
-from utils.types import JSONResponseType
 from utils.exceptions import (
     InvalidToken,
     UserNotFound,
@@ -26,7 +25,7 @@ router: APIRouter = APIRouter(
 
 
 @router.post("")
-async def authenticate(body: AuthBodyEntity) -> JSONResponseType:
+async def authenticate(body: AuthBodyEntity) -> JSONSuccessResponse[AuthResultEntity]:
     auth_service: AuthService = AuthService()
 
     try:
@@ -44,13 +43,13 @@ async def authenticate(body: AuthBodyEntity) -> JSONResponseType:
         token=auth_data["token"], refresh_token=auth_data["refresh_token"]
     )
 
-    return JSONSuccessResponse[AuthResultEntity](content=auth_body)
+    return JSONSuccessResponse(content=auth_body)
 
 
 @router.put("/refresh")
 async def refresh_authencation(
     body: AuthRefreshBodyEntity,
-) -> JSONResponseType:
+) -> JSONSuccessResponse[AuthRefreshResultEntity]:
     auth_service: AuthService = AuthService()
 
     try:
@@ -62,7 +61,7 @@ async def refresh_authencation(
         raise HTTPFailure(str(error))
 
     else:
-        return JSONSuccessResponse[AuthRefreshResultEntity](content=auth_body)
+        return JSONSuccessResponse(content=auth_body)
 
 
 ServerInstances.api.include_router(router)
