@@ -9,7 +9,12 @@ from services.agent import AgentService
 from models import database, Agent, Company
 from repositories.agent import AgentRepository
 from utils.crypt import CryptUtils
-from utils.exceptions import UserNotFound, InvalidUserPassword
+from utils.exceptions import (
+    UserNotFound,
+    InvalidUserPassword,
+    InvalidToken,
+    ModelNotFound,
+)
 
 
 class AuthServiceTestCase(IsolatedAsyncioTestCase):
@@ -192,3 +197,81 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
         self.__mock_agent_service.find_agent.assert_awaited_once()
 
         self.assertEqual(token, refresh_token)
+
+    @patch("services.auth.CryptUtils", spec=CryptUtils)
+    @patch("services.auth.AgentService", spec=AgentService)
+    async def test_refresh_token_with_invalid_token(
+        self, mock_agent_service_class: Mock, mock_crypt_utils_class: Mock
+    ) -> None:
+        mock_crypt_utils_class.Jwt.decode_token.return_value = Mock(
+            is_refresh=False,
+        )
+
+        mock_crypt_utils_class.Jwt.create_token.return_value = None
+
+        mock_agent_service_class.return_value = self.__mock_agent_service
+
+        with self.assertRaises(InvalidToken):
+            auth_service: AuthService = AuthService()
+
+            await auth_service.refresh_token(token="")
+
+        mock_crypt_utils_class.Jwt.decode_token.assert_called_once()
+
+        mock_crypt_utils_class.Jwt.create_token.assert_not_called()
+
+        self.__mock_agent_service.find_agent.assert_not_awaited()
+
+    @patch("services.auth.CryptUtils", spec=CryptUtils)
+    @patch("services.auth.AgentService", spec=AgentService)
+    async def test_refresh_token_with_agent_not_found(
+        self, mock_agent_service_class: Mock, mock_crypt_utils_class: Mock
+    ) -> None:
+        mock_crypt_utils_class.Jwt.decode_token.return_value = Mock(
+            is_refresh=True,
+        )
+
+        self.__mock_agent_service.find_agent.side_effect = ModelNotFound(
+            Agent, self.__mock_agent.uuid
+        )
+
+        mock_crypt_utils_class.Jwt.create_token.return_value = None
+
+        mock_agent_service_class.return_value = self.__mock_agent_service
+
+        with self.assertRaises(ModelNotFound):
+            auth_service: AuthService = AuthService()
+
+            await auth_service.refresh_token(token="")
+
+        self.__mock_agent_service.find_agent.assert_awaited_once()
+
+        mock_crypt_utils_class.Jwt.decode_token.assert_called_once()
+
+        mock_crypt_utils_class.Jwt.create_token.assert_not_called()
+
+    @patch("services.auth.CryptUtils", spec=CryptUtils)
+    @patch("services.auth.AgentService", spec=AgentService)
+    async def test_refresh_token_with_agent_is_none(
+        self, mock_agent_service_class: Mock, mock_crypt_utils_class: Mock
+    ) -> None:
+        mock_crypt_utils_class.Jwt.decode_token.return_value = Mock(
+            is_refresh=True,
+        )
+
+        self.__mock_agent_service.find_agent.return_value = None
+
+        mock_crypt_utils_class.Jwt.create_token.return_value = None
+
+        mock_agent_service_class.return_value = self.__mock_agent_service
+
+        with self.assertRaises(AttributeError):
+            auth_service: AuthService = AuthService()
+
+            await auth_service.refresh_token(token="")
+
+        self.__mock_agent_service.find_agent.assert_awaited_once()
+
+        mock_crypt_utils_class.Jwt.decode_token.assert_called_once()
+
+        mock_crypt_utils_class.Jwt.create_token.assert_not_called()
