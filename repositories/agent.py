@@ -86,14 +86,6 @@ class AgentRepository(
         if password is not None:
             password = CryptUtils.Bcrypt.create_hash(password)
 
-        data: Mapping[str, Any] = {
-            "name": props.name,
-            "email": props.email,
-            "password": password,
-        }
-
-        data = {name: value for name, value in data.items() if value is not None}
-
         if props.instance:
             props.instance.name = props.name
             props.instance.email = props.email
@@ -106,6 +98,14 @@ class AgentRepository(
             return props.instance
 
         else:
+            data: Mapping[str, Any] = {
+                "name": props.name,
+                "email": props.email,
+                "password": password,
+            }
+
+            data = {name: value for name, value in data.items() if value is not None}
+
             query: Update = (
                 update(Agent)
                 .where(Agent.uuid == props.uuid)
@@ -129,7 +129,7 @@ class AgentRepository(
             agent = await self.session.scalar(query)
 
         if agent is not None:
-            copy(agent)
+            return copy(agent)
 
     async def find(self, props: AgentCaptureRepositoryProps) -> Optional[Agent]:
         query: Select = (
