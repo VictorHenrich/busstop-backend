@@ -89,3 +89,14 @@ async def validate_middleware_request(
 
     if validated:
         yield await call_next(request)
+
+
+def handle_dict(
+    dict_data: Mapping[str, Any],
+    callback: Callable[[Any], bool] = lambda value: value is not None,
+) -> Mapping[str, Any]:
+    return {
+        prop_name: prop_value
+        for prop_name, prop_value in dict_data.items()
+        if callback(prop_value)
+    }

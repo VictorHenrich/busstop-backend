@@ -2,7 +2,6 @@ from typing import Optional, Protocol, Sequence, Mapping, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, func
 from sqlalchemy.orm import joinedload
-from copy import copy
 
 from models import Company, Agent
 from utils.patterns import (
@@ -42,7 +41,7 @@ class AgentUpdateRepositoryProps(Protocol):
 
 class AgentExclusionRepositoryProps(Protocol):
     uuid: str
-    instance: Optional[Agent] = None
+    instance: Optional[Agent]
 
 
 class AgentCaptureRepositoryProps(Protocol):
@@ -116,20 +115,15 @@ class AgentRepository(
             return await self.session.scalar(query)
 
     async def delete(self, props: AgentExclusionRepositoryProps) -> Optional[Agent]:
-        agent: Optional[Agent] = None
-
         if props.instance:
             await self.session.delete(props.instance)
 
-            agent = props.instance
+            return props.instance
 
         else:
             query: Delete = delete(Agent).where(Agent.uuid == props.uuid)
 
-            agent = await self.session.scalar(query)
-
-        if agent is not None:
-            return copy(agent)
+            return await self.session.scalar(query)
 
     async def find(self, props: AgentCaptureRepositoryProps) -> Optional[Agent]:
         query: Select = (

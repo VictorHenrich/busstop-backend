@@ -2,7 +2,7 @@ from typing import Type
 from sqlalchemy.orm.decl_api import DeclarativeBase
 from fastapi.exceptions import HTTPException
 
-from models import Agent
+from models import UserBaseModel
 
 
 class ModelNotFound(BaseException):
@@ -16,8 +16,8 @@ class UserNotFound(BaseException):
 
 
 class InvalidUserPassword(BaseException):
-    def __init__(self, agent: Agent) -> None:
-        super().__init__(f"Invalid password passed to user {agent.uuid}")
+    def __init__(self, user: UserBaseModel) -> None:
+        super().__init__(f"Invalid password passed to user {user.uuid}")
 
 
 class InvalidToken(BaseException):

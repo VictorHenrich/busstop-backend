@@ -17,3 +17,13 @@ class BaseModel(database.Base):
     uuid: Mapped[str] = mapped_column(
         Uuid(as_uuid=False, native_uuid=True), default=uuid4
     )
+
+
+class UserBaseModel(BaseModel):
+    __abstract__ = True
+
+    name: Mapped[str] = mapped_column(nullable=False)
+
+    email: Mapped[str] = mapped_column(nullable=False, unique=True)
+
+    password: Mapped[str] = mapped_column(nullable=False)
