@@ -6,10 +6,10 @@ from typing import (
     Optional,
     List,
     AsyncGenerator,
+    Sequence,
     Union,
 )
 from fastapi import Request, Response
-from fastapi.responses import JSONResponse
 
 from models import Point, Route, Company, Agent
 from utils.entities import (
@@ -18,8 +18,6 @@ from utils.entities import (
     CompanyEntity,
     AgentEntity,
 )
-from utils.constants import PUBLIC_ROUTES
-from utils.responses import JSONErrorResponse
 
 
 def get_agent_entity(agent: Agent) -> AgentEntity:
@@ -81,13 +79,15 @@ def handle_agent_body(agent: Optional[Agent]) -> Optional[AgentEntity]:
 
 
 async def validate_middleware_request(
-    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    request: Request,
+    call_next: Callable[[Request], Awaitable[Response]],
+    private_routes: Sequence[str] = [],
 ) -> AsyncGenerator[Union[bool, Response], None]:
-    validated: bool = bool([True for path in PUBLIC_ROUTES if path in request.url.path])
+    validated: bool = any([True for path in private_routes if path in request.url.path])
 
     yield validated
 
-    if validated:
+    if not validated:
         yield await call_next(request)
 
 
