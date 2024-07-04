@@ -4,11 +4,11 @@ from copy import copy
 from models import Company, database
 from repositories.company import (
     CompanyRepository,
-    CompanyListingRepositoryProps,
-    CompanyCaptureRepositoryProps,
-    CompanyExclusionRepositoryProps,
-    CompanyUpdateRepositoryProps,
-    CompanyCreationRepositoryProps,
+    ICompanyFindManyRepository,
+    ICompanyFindRepository,
+    ICompanyDeleteRepository,
+    ICompanyUpdateRepository,
+    ICompanyCreateRepository,
 )
 from utils.patterns import (
     AbstractBaseEntity,
@@ -66,9 +66,7 @@ class CompanyService:
     async def __find_company_by_id(
         self, company_uuid: str, company_repository: CompanyRepository
     ) -> Company:
-        company_props: CompanyCaptureRepositoryProps = CompanyCaptureProps(
-            uuid=company_uuid
-        )
+        company_props: ICompanyFindRepository = CompanyCaptureProps(uuid=company_uuid)
 
         company: Optional[Company] = await company_repository.find(company_props)
 
@@ -82,10 +80,10 @@ class CompanyService:
     ) -> Sequence[Company]:
         async with database.create_async_session() as session:
             company_repository: IFindManyRepository[
-                CompanyListingRepositoryProps, Company
+                ICompanyFindManyRepository, Company
             ] = CompanyRepository(session)
 
-            props: CompanyListingRepositoryProps = CompanyListingProps(
+            props: ICompanyFindManyRepository = CompanyListingProps(
                 company_name=company_name, limit=limit, page=page
             )
 
@@ -94,7 +92,7 @@ class CompanyService:
     async def find_company(self, company_uuid: str) -> Company:
         async with database.create_async_session() as session:
             company_repository: IFindRepository[
-                CompanyCaptureRepositoryProps, Company
+                ICompanyFindRepository, Company
             ] = CompanyRepository(session)
 
             return await self.__find_company_by_id(company_uuid, company_repository)
@@ -102,14 +100,14 @@ class CompanyService:
     async def delete_company(self, company_uuid: str) -> Optional[Company]:
         async with database.create_async_session() as session:
             company_repository: IDeleteRepository[
-                CompanyExclusionRepositoryProps, Optional[Company]
+                ICompanyDeleteRepository, Optional[Company]
             ] = CompanyRepository(session)
 
             company: Company = await self.__find_company_by_id(
                 company_uuid, company_repository
             )
 
-            props: CompanyExclusionRepositoryProps = CompanyExclusionProps(
+            props: ICompanyDeleteRepository = CompanyExclusionProps(
                 uuid=company_uuid, instance=company
             )
 
@@ -129,14 +127,14 @@ class CompanyService:
     ) -> Optional[Company]:
         async with database.create_async_session() as session:
             company_repository: IUpdateRepository[
-                CompanyUpdateRepositoryProps, Optional[Company]
+                ICompanyUpdateRepository, Optional[Company]
             ] = CompanyRepository(session)
 
             company: Company = await self.__find_company_by_id(
                 company_uuid, company_repository
             )
 
-            company_props: CompanyUpdateRepositoryProps = CompanyUpdateProps(
+            company_props: ICompanyUpdateRepository = CompanyUpdateProps(
                 instance=company,
                 uuid=company.uuid,
                 company_name=company_name,
@@ -158,10 +156,10 @@ class CompanyService:
     ) -> Optional[Company]:
         async with database.create_async_session() as session:
             company_repository: ICreateRepository[
-                CompanyCreationRepositoryProps, Optional[Company]
+                ICompanyCreateRepository, Optional[Company]
             ] = CompanyRepository(session)
 
-            company_data: CompanyCreationRepositoryProps = CompanyCreationProps(
+            company_data: ICompanyCreateRepository = CompanyCreationProps(
                 company_name=company_name,
                 fantasy_name=fantasy_name,
                 document_cnpj=document_cnpj,

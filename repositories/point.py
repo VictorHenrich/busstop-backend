@@ -13,7 +13,7 @@ from utils.patterns import (
 )
 
 
-class PointCreationRepositoryProps(Protocol):
+class IPointCreateRepository(Protocol):
     company: Company
 
     address_zip_code: str
@@ -33,7 +33,7 @@ class PointCreationRepositoryProps(Protocol):
     longitude: str
 
 
-class PointUpdateRepositoryProps(Protocol):
+class IPointUpdateRepository(Protocol):
     uuid: str
 
     address_zip_code: str
@@ -55,28 +55,28 @@ class PointUpdateRepositoryProps(Protocol):
     instance: Optional[Point] = None
 
 
-class PointExclusionRepositoryProps(Protocol):
+class IPointDeleteRepository(Protocol):
     uuid: str
 
 
-class PointCaptureRepositoryProps(Protocol):
+class IPointFindRepository(Protocol):
     uuid: str
 
 
-class PointListingRepositoryProps(Protocol):
+class IPointFindManyRepository(Protocol):
     company: Company
     uuids: Sequence[str] = []
 
 
 class PointRepository(
     BaseRepository[AsyncSession],
-    ICreateRepository[PointCreationRepositoryProps, Optional[Point]],
-    IUpdateRepository[PointUpdateRepositoryProps, Optional[Point]],
-    IDeleteRepository[PointExclusionRepositoryProps, Optional[Point]],
-    IFindRepository[PointCaptureRepositoryProps, Point],
-    IFindManyRepository[PointListingRepositoryProps, Point],
+    ICreateRepository[IPointCreateRepository, Optional[Point]],
+    IUpdateRepository[IPointUpdateRepository, Optional[Point]],
+    IDeleteRepository[IPointDeleteRepository, Optional[Point]],
+    IFindRepository[IPointFindRepository, Point],
+    IFindManyRepository[IPointFindManyRepository, Point],
 ):
-    async def create(self, props: PointCreationRepositoryProps) -> Optional[Point]:
+    async def create(self, props: IPointCreateRepository) -> Optional[Point]:
         point: Point = Point()
 
         point.company_id = props.company.id
@@ -111,7 +111,7 @@ class PointRepository(
 
         #     return await self.session.scalar(query)
 
-    async def update(self, props: PointUpdateRepositoryProps) -> Optional[Point]:
+    async def update(self, props: IPointUpdateRepository) -> Optional[Point]:
         if props.instance:
             props.instance.address_state = props.address_state
             props.instance.address_zip_code = props.address_zip_code
@@ -149,7 +149,7 @@ class PointRepository(
 
             return await self.session.scalar(query)
 
-    async def delete(self, props: PointExclusionRepositoryProps) -> Optional[Point]:
+    async def delete(self, props: IPointDeleteRepository) -> Optional[Point]:
         query_route_point: Delete = delete(RoutePoint).where(Point.uuid == props.uuid)
 
         await self.session.execute(query_route_point)
@@ -158,12 +158,12 @@ class PointRepository(
 
         return await self.session.scalar(query_route)
 
-    async def find(self, props: PointCaptureRepositoryProps) -> Optional[Point]:
+    async def find(self, props: IPointFindRepository) -> Optional[Point]:
         query: Select = select(Point).where(Point.uuid == props.uuid)
 
         return await self.session.scalar(query)
 
-    async def find_many(self, props: PointListingRepositoryProps) -> Sequence[Point]:
+    async def find_many(self, props: IPointFindManyRepository) -> Sequence[Point]:
         query: Select = select(Point).where(Point.company_id == props.company.id)
 
         if props.uuids:

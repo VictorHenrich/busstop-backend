@@ -6,11 +6,11 @@ from datetime import time
 from models import Route, Company, Point, database
 from repositories.route import (
     RouteRepository,
-    RouteCaptureRepositoryProps,
-    RouteListingRepositoryProps,
-    RouteCreationRepositoryProps,
-    RouteUpdateRepositoryProps,
-    RouteExclusionRepositoryProps,
+    IRouteFindRepository,
+    IRouteFindManyRepository,
+    IRouteCreateRepository,
+    IRouteUpdateRepository,
+    IRouteDeleteRepository,
 )
 from services.company import CompanyService
 from services.point import PointService
@@ -99,10 +99,10 @@ class RouteService:
         self, route_uuid: str, session: AsyncSession
     ) -> Optional[Route]:
         route_repository: IFindRepository[
-            RouteCaptureRepositoryProps, Route
+            IRouteFindRepository, Route
         ] = RouteRepository(session)
 
-        route_props: RouteCaptureRepositoryProps = RouteCaptureProps(uuid=route_uuid)
+        route_props: IRouteFindRepository = RouteCaptureProps(uuid=route_uuid)
 
         return await route_repository.find(route_props)
 
@@ -117,14 +117,12 @@ class RouteService:
     ) -> Sequence[Route]:
         async with database.create_async_session() as session:
             route_repository: IFindManyRepository[
-                RouteListingRepositoryProps, Route
+                IRouteFindManyRepository, Route
             ] = RouteRepository(session)
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 
-            route_props: RouteListingRepositoryProps = RouteListingProps(
-                company=company
-            )
+            route_props: IRouteFindManyRepository = RouteListingProps(company=company)
 
             return await route_repository.find_many(route_props)
 
@@ -140,14 +138,14 @@ class RouteService:
     ) -> Optional[Route]:
         async with database.create_async_session() as session:
             route_repository: ICreateRepository[
-                RouteCreationRepositoryProps, Optional[Route]
+                IRouteCreateRepository, Optional[Route]
             ] = RouteRepository(session)
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 
             points: Sequence[Point] = await self.__find_points(company, point_uuids)
 
-            route_props: RouteCreationRepositoryProps = RouteCreationProps(
+            route_props: IRouteCreateRepository = RouteCreationProps(
                 company=company,
                 points=points,
                 description=description,
@@ -174,7 +172,7 @@ class RouteService:
     ) -> Optional[Route]:
         async with database.create_async_session() as session:
             route_repository: IUpdateRepository[
-                RouteUpdateRepositoryProps, Optional[Route]
+                IRouteUpdateRepository, Optional[Route]
             ] = RouteRepository(session)
 
             route: Optional[Route] = route_instance or await self.__find_route_by_uuid(
@@ -188,7 +186,7 @@ class RouteService:
                 route.company, point_uuids
             )
 
-            route_props: RouteUpdateRepositoryProps = RouteUpdateProps(
+            route_props: IRouteUpdateRepository = RouteUpdateProps(
                 uuid=route_uuid,
                 points=points,
                 description=description,
@@ -211,10 +209,10 @@ class RouteService:
     ) -> Optional[Route]:
         async with database.create_async_session() as session:
             route_repository: IDeleteRepository[
-                RouteExclusionRepositoryProps, Optional[Route]
+                IRouteDeleteRepository, Optional[Route]
             ] = RouteRepository(session)
 
-            route_props: RouteExclusionRepositoryProps = RouteExclusionProps(
+            route_props: IRouteDeleteRepository = RouteExclusionProps(
                 uuid=route_uuid, instance=route_instance
             )
 

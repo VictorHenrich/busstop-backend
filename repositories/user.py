@@ -16,13 +16,13 @@ from utils.crypt import CryptUtils
 from utils.functions import handle_dict
 
 
-class UserCreationRepositoryProps(Protocol):
+class IUserCreateRepository(Protocol):
     name: str
     email: str
     password: str
 
 
-class UserUpdateRepositoryProps(Protocol):
+class IUserUpdateRepository(Protocol):
     name: str
     email: str
     password: str
@@ -30,29 +30,29 @@ class UserUpdateRepositoryProps(Protocol):
     instance: Optional[User]
 
 
-class UserCaptureRepositoryProps(Protocol):
+class IUserFindRepository(Protocol):
     uuid: str
 
 
-class UserExclusionRepositoryProps(Protocol):
+class IUserDeleteRepository(Protocol):
     uuid: str
     instance: Optional[User]
 
 
-class UserAuthRepositoryProps(Protocol):
+class IUserAuthRepository(Protocol):
     email: str
     password: str
 
 
 class UserRepository(
     BaseRepository[AsyncSession],
-    ICreateRepository[UserCreationRepositoryProps, User],
-    IUpdateRepository[UserUpdateRepositoryProps, Optional[User]],
-    IDeleteRepository[UserExclusionRepositoryProps, Optional[User]],
-    IFindRepository[UserCaptureRepositoryProps, User],
-    IAuthRepository[UserAuthRepositoryProps, User],
+    ICreateRepository[IUserCreateRepository, User],
+    IUpdateRepository[IUserUpdateRepository, Optional[User]],
+    IDeleteRepository[IUserDeleteRepository, Optional[User]],
+    IFindRepository[IUserFindRepository, User],
+    IAuthRepository[IUserAuthRepository, User],
 ):
-    async def create(self, props: UserCreationRepositoryProps) -> User:
+    async def create(self, props: IUserCreateRepository) -> User:
         user: User = User(
             name=props.name,
             email=props.email,
@@ -63,7 +63,7 @@ class UserRepository(
 
         return user
 
-    async def update(self, props: UserUpdateRepositoryProps) -> Optional[User]:
+    async def update(self, props: IUserUpdateRepository) -> Optional[User]:
         password: Optional[str] = None
 
         if props.password:
@@ -93,7 +93,7 @@ class UserRepository(
 
             return await self.session.scalar(query)
 
-    async def delete(self, props: UserExclusionRepositoryProps) -> Optional[User]:
+    async def delete(self, props: IUserDeleteRepository) -> Optional[User]:
         if props.instance:
             await self.session.delete(props.instance)
 
@@ -104,12 +104,12 @@ class UserRepository(
 
             return await self.session.scalar(query)
 
-    async def find(self, props: UserCaptureRepositoryProps) -> Optional[User]:
+    async def find(self, props: IUserFindRepository) -> Optional[User]:
         query: Select = select(User).where(User.uuid == props.uuid)
 
         return await self.session.scalar(query)
 
-    async def auth(self, props: UserAuthRepositoryProps) -> User:
+    async def auth(self, props: IUserAuthRepository) -> User:
         query: Select = select(User).where(func.lower(User.email) == props.email)
 
         user: Optional[User] = await self.session.scalar(query)

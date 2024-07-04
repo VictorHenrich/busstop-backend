@@ -15,7 +15,7 @@ from utils.patterns import (
 )
 
 
-class RouteCreationRepositoryProps(Protocol):
+class IRouteCreateRepository(Protocol):
     company: Company
 
     description: str
@@ -29,7 +29,7 @@ class RouteCreationRepositoryProps(Protocol):
     points: Sequence[Point]
 
 
-class RouteUpdateRepositoryProps(Protocol):
+class IRouteUpdateRepository(Protocol):
     uuid: str
 
     description: str
@@ -45,29 +45,29 @@ class RouteUpdateRepositoryProps(Protocol):
     instance: Optional[Route] = None
 
 
-class RouteExclusionRepositoryProps(Protocol):
+class IRouteDeleteRepository(Protocol):
     uuid: str
 
     instance: Optional[Route] = None
 
 
-class RouteCaptureRepositoryProps(Protocol):
+class IRouteFindRepository(Protocol):
     uuid: str
 
 
-class RouteListingRepositoryProps(Protocol):
+class IRouteFindManyRepository(Protocol):
     company: Company
 
 
 class RouteRepository(
     BaseRepository[AsyncSession],
-    ICreateRepository[RouteCreationRepositoryProps, Optional[Route]],
-    IUpdateRepository[RouteUpdateRepositoryProps, Optional[Route]],
-    IDeleteRepository[RouteExclusionRepositoryProps, Optional[Route]],
-    IFindRepository[RouteCaptureRepositoryProps, Route],
-    IFindManyRepository[RouteListingRepositoryProps, Route],
+    ICreateRepository[IRouteCreateRepository, Optional[Route]],
+    IUpdateRepository[IRouteUpdateRepository, Optional[Route]],
+    IDeleteRepository[IRouteDeleteRepository, Optional[Route]],
+    IFindRepository[IRouteFindRepository, Route],
+    IFindManyRepository[IRouteFindManyRepository, Route],
 ):
-    async def create(self, props: RouteCreationRepositoryProps) -> Optional[Route]:
+    async def create(self, props: IRouteCreateRepository) -> Optional[Route]:
         route: Route = Route()
 
         route.company_id = props.company.id
@@ -107,7 +107,7 @@ class RouteRepository(
 
         # return new_route
 
-    async def update(self, props: RouteUpdateRepositoryProps) -> Optional[Route]:
+    async def update(self, props: IRouteUpdateRepository) -> Optional[Route]:
         if props.instance:
             props.instance.description = props.description
 
@@ -161,7 +161,7 @@ class RouteRepository(
 
             return route
 
-    async def delete(self, props: RouteExclusionRepositoryProps) -> Optional[Route]:
+    async def delete(self, props: IRouteDeleteRepository) -> Optional[Route]:
         if props.instance:
             for point in props.instance.points:
                 props.instance.points.remove(point)
@@ -181,7 +181,7 @@ class RouteRepository(
 
             return await self.session.scalar(query_route)
 
-    async def find(self, props: RouteCaptureRepositoryProps) -> Optional[Route]:
+    async def find(self, props: IRouteFindRepository) -> Optional[Route]:
         query: Select = (
             select(Route)
             .options(joinedload(Route.company))
@@ -190,7 +190,7 @@ class RouteRepository(
 
         return await self.session.scalar(query)
 
-    async def find_many(self, props: RouteListingRepositoryProps) -> Sequence[Route]:
+    async def find_many(self, props: IRouteFindManyRepository) -> Sequence[Route]:
         query: Select = (
             select(Route)
             .join(Company, Route.company_id == Company.id)

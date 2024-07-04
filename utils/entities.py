@@ -98,7 +98,10 @@ class AuthBodyEntity(BaseModel):
 
 
 class TokenDataEntity(BaseModel):
-    agent_uuid: str
-    company_uuid: str
+    user_uuid: str
     exp: datetime
     is_refresh: bool
+
+
+class AgentTokenDataEntity(TokenDataEntity):
+    company_uuid: str

@@ -23,7 +23,7 @@ async def verify_authentication(
     token: str = request.headers.get("Authorization", "")
 
     try:
-        agent: Agent = await auth_service.get_user_data_in_token(token)
+        agent: Agent = await auth_service.get_agent_data_in_token(token)
 
     except:
         response: Mapping[str, Any] = JSONUnauthorizedResponse().model_dump()

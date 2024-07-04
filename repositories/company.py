@@ -13,7 +13,7 @@ from utils.patterns import (
 )
 
 
-class CompanyCreationRepositoryProps(Protocol):
+class ICompanyCreateRepository(Protocol):
     company_name: str
 
     fantasy_name: str
@@ -23,7 +23,7 @@ class CompanyCreationRepositoryProps(Protocol):
     email: str
 
 
-class CompanyUpdateRepositoryProps(Protocol):
+class ICompanyUpdateRepository(Protocol):
     uuid: str
 
     company_name: str
@@ -37,17 +37,17 @@ class CompanyUpdateRepositoryProps(Protocol):
     instance: Optional[Company] = None
 
 
-class CompanyExclusionRepositoryProps(Protocol):
+class ICompanyDeleteRepository(Protocol):
     uuid: str
 
     instance: Optional[Company] = None
 
 
-class CompanyCaptureRepositoryProps(Protocol):
+class ICompanyFindRepository(Protocol):
     uuid: str
 
 
-class CompanyListingRepositoryProps(Protocol):
+class ICompanyFindManyRepository(Protocol):
     company_name: Optional[str]
 
     limit: int = 50
@@ -57,13 +57,13 @@ class CompanyListingRepositoryProps(Protocol):
 
 class CompanyRepository(
     BaseRepository[AsyncSession],
-    ICreateRepository[CompanyCreationRepositoryProps, Optional[Company]],
-    IUpdateRepository[CompanyUpdateRepositoryProps, Optional[Company]],
-    IDeleteRepository[CompanyExclusionRepositoryProps, Optional[Company]],
-    IFindManyRepository[CompanyListingRepositoryProps, Company],
-    IFindRepository[CompanyCaptureRepositoryProps, Company],
+    ICreateRepository[ICompanyCreateRepository, Optional[Company]],
+    IUpdateRepository[ICompanyUpdateRepository, Optional[Company]],
+    IDeleteRepository[ICompanyDeleteRepository, Optional[Company]],
+    IFindManyRepository[ICompanyFindManyRepository, Company],
+    IFindRepository[ICompanyFindRepository, Company],
 ):
-    async def create(self, props: CompanyCreationRepositoryProps) -> Optional[Company]:
+    async def create(self, props: ICompanyCreateRepository) -> Optional[Company]:
         query: Insert = insert(Company).values(
             company_name=props.company_name,
             fantasy_name=props.fantasy_name,
@@ -73,7 +73,7 @@ class CompanyRepository(
 
         return await self.session.scalar(query)
 
-    async def update(self, props: CompanyUpdateRepositoryProps) -> Optional[Company]:
+    async def update(self, props: ICompanyUpdateRepository) -> Optional[Company]:
         if props.instance is not None:
             props.instance.company_name = props.company_name
             props.instance.fantasy_name = props.fantasy_name
@@ -98,7 +98,7 @@ class CompanyRepository(
 
             return await self.session.scalar(query)
 
-    async def delete(self, props: CompanyExclusionRepositoryProps) -> Optional[Company]:
+    async def delete(self, props: ICompanyDeleteRepository) -> Optional[Company]:
         if props.instance is not None:
             await self.session.delete(props.instance)
 
@@ -109,14 +109,12 @@ class CompanyRepository(
 
             return await self.session.scalar(query)
 
-    async def find(self, props: CompanyCaptureRepositoryProps) -> Optional[Company]:
+    async def find(self, props: ICompanyFindRepository) -> Optional[Company]:
         query: Select = select(Company).where(Company.uuid == props.uuid)
 
         return await self.session.scalar(query)
 
-    async def find_many(
-        self, props: CompanyListingRepositoryProps
-    ) -> Sequence[Company]:
+    async def find_many(self, props: ICompanyFindManyRepository) -> Sequence[Company]:
         query_filter: Mapping[str, Any] = {}
 
         query: Select = (

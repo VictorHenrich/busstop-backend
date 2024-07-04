@@ -5,12 +5,12 @@ from unittest.mock import AsyncMock, Mock, patch
 from models import Agent
 from repositories.agent import (
     AgentRepository,
-    AgentCreationRepositoryProps,
-    AgentUpdateRepositoryProps,
-    AgentExclusionRepositoryProps,
-    AgentCaptureRepositoryProps,
-    AgentListingRepositoryProps,
-    AgentAuthRepositoryProps,
+    IAgentCreateRepository,
+    IAgentUpdateRepository,
+    IAgentExclusionRepository,
+    IAgentFindRepository,
+    IAgentFindManyRepository,
+    IAgentAuthRepository,
 )
 from utils.patterns import (
     IAuthRepository,
@@ -65,7 +65,7 @@ class AgentRepositoryTestCase(IsolatedAsyncioTestCase):
         mock_agent_model_class.return_value = self.__mock_agent
 
         agent_repository: ICreateRepository[
-            AgentCreationRepositoryProps, Optional[Agent]
+            IAgentCreateRepository, Optional[Agent]
         ] = AgentRepository(self.__mock_session)
 
         agent: Optional[Agent] = await agent_repository.create(
@@ -88,7 +88,7 @@ class AgentRepositoryTestCase(IsolatedAsyncioTestCase):
         mock_create_hash_function.return_value = self.__mock_agent.password
 
         agent_repository: IUpdateRepository[
-            AgentUpdateRepositoryProps, Optional[Agent]
+            IAgentUpdateRepository, Optional[Agent]
         ] = AgentRepository(self.__mock_async_session)
 
         agent: Optional[Agent] = await agent_repository.update(
@@ -112,7 +112,7 @@ class AgentRepositoryTestCase(IsolatedAsyncioTestCase):
         mock_copy_function.return_value = self.__mock_agent
 
         agent_repository: IDeleteRepository[
-            AgentExclusionRepositoryProps, Optional[Agent]
+            IAgentExclusionRepository, Optional[Agent]
         ] = AgentRepository(self.__mock_async_session)
 
         agent: Optional[Agent] = await agent_repository.delete(
@@ -125,7 +125,7 @@ class AgentRepositoryTestCase(IsolatedAsyncioTestCase):
 
     async def test_find_agent(self) -> None:
         agent_repository: IFindRepository[
-            AgentCaptureRepositoryProps, Agent
+            IAgentFindRepository, Agent
         ] = AgentRepository(self.__mock_async_session)
 
         agent: Optional[Agent] = await agent_repository.find(
@@ -138,7 +138,7 @@ class AgentRepositoryTestCase(IsolatedAsyncioTestCase):
 
     async def test_find_agents(self) -> None:
         agent_repository: IFindManyRepository[
-            AgentListingRepositoryProps, Agent
+            IAgentFindManyRepository, Agent
         ] = AgentRepository(self.__mock_async_session)
 
         agents: Sequence[Agent] = await agent_repository.find_many(
@@ -154,7 +154,7 @@ class AgentRepositoryTestCase(IsolatedAsyncioTestCase):
         mock_compare_password_function.return_value = True
 
         agent_repository: IAuthRepository[
-            AgentAuthRepositoryProps, Agent
+            IAgentAuthRepository, Agent
         ] = AgentRepository(self.__mock_async_session)
 
         agents: Agent = await agent_repository.auth(

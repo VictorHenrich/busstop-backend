@@ -6,11 +6,11 @@ from unittest.mock import Mock, AsyncMock
 from models import Company
 from repositories.company import (
     CompanyRepository,
-    CompanyCreationRepositoryProps,
-    CompanyUpdateRepositoryProps,
-    CompanyExclusionRepositoryProps,
-    CompanyCaptureRepositoryProps,
-    CompanyListingRepositoryProps,
+    ICompanyCreateRepository,
+    ICompanyUpdateRepository,
+    ICompanyDeleteRepository,
+    ICompanyFindRepository,
+    ICompanyFindManyRepository,
 )
 from utils.patterns import (
     ICreateRepository,
@@ -37,7 +37,7 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
         self.__mock_session.scalar.return_value = self.__mock_company
 
         company_repository: ICreateRepository[
-            CompanyCreationRepositoryProps, Optional[Company]
+            ICompanyCreateRepository, Optional[Company]
         ] = CompanyRepository(self.__mock_session)
 
         company: Optional[Company] = await company_repository.create(
@@ -54,7 +54,7 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
         self.__mock_session.scalar.return_value = self.__mock_company
 
         company_repository: IUpdateRepository[
-            CompanyUpdateRepositoryProps, Optional[Company]
+            ICompanyUpdateRepository, Optional[Company]
         ] = CompanyRepository(self.__mock_session)
 
         company: Optional[Company] = await company_repository.update(
@@ -73,7 +73,7 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(uuid="")
 
         company_repository: IDeleteRepository[
-            CompanyExclusionRepositoryProps, Optional[Company]
+            ICompanyDeleteRepository, Optional[Company]
         ] = CompanyRepository(self.__mock_session)
 
         company: Optional[Company] = await company_repository.delete(filter_props)
@@ -90,7 +90,7 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(uuid="")
 
         company_repository: IFindRepository[
-            CompanyCaptureRepositoryProps, Company
+            ICompanyFindRepository, Company
         ] = CompanyRepository(self.__mock_session)
 
         company: Optional[Company] = await company_repository.find(filter_props)
@@ -113,7 +113,7 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
         self.__mock_session.scalars.return_value = mock_result_session
 
         company_repository: IFindManyRepository[
-            CompanyListingRepositoryProps, Company
+            ICompanyFindManyRepository, Company
         ] = CompanyRepository(self.__mock_session)
 
         companies: Sequence[Company] = await company_repository.find_many(filter_props)

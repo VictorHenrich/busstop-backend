@@ -4,11 +4,11 @@ from copy import copy
 from models import Company, Point, database
 from repositories.point import (
     PointRepository,
-    PointCreationRepositoryProps,
-    PointUpdateRepositoryProps,
-    PointExclusionRepositoryProps,
-    PointCaptureRepositoryProps,
-    PointListingRepositoryProps,
+    IPointCreateRepository,
+    IPointUpdateRepository,
+    IPointDeleteRepository,
+    IPointFindRepository,
+    IPointFindManyRepository,
 )
 from services.company import CompanyService
 from utils.patterns import (
@@ -105,12 +105,12 @@ class PointService:
     ) -> Optional[Point]:
         async with database.create_async_session() as session:
             point_repository: ICreateRepository[
-                PointCreationRepositoryProps, Optional[Point]
+                IPointCreateRepository, Optional[Point]
             ] = PointRepository(session)
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 
-            point_props: PointCreationRepositoryProps = PointCreationProps(
+            point_props: IPointCreateRepository = PointCreationProps(
                 address_zip_code=address_zip_code,
                 address_state=address_state,
                 address_city=address_city,
@@ -148,10 +148,10 @@ class PointService:
 
         async with database.create_async_session() as session:
             point_repository: IUpdateRepository[
-                PointUpdateRepositoryProps, Optional[Point]
+                IPointUpdateRepository, Optional[Point]
             ] = PointRepository(session)
 
-            point_props: PointUpdateRepositoryProps = PointUpdateProps(
+            point_props: IPointUpdateRepository = PointUpdateProps(
                 address_zip_code=address_zip_code,
                 instance=point_instance,
                 address_state=address_state,
@@ -174,12 +174,10 @@ class PointService:
     async def delete_point(self, point_uuid: str) -> Optional[Point]:
         async with database.create_async_session() as session:
             point_repository: IDeleteRepository[
-                PointExclusionRepositoryProps, Optional[Point]
+                IPointDeleteRepository, Optional[Point]
             ] = PointRepository(session)
 
-            point_props: PointExclusionRepositoryProps = PointExclusionProps(
-                uuid=point_uuid
-            )
+            point_props: IPointDeleteRepository = PointExclusionProps(uuid=point_uuid)
 
             point: Optional[Point] = await point_repository.delete(point_props)
 
@@ -191,12 +189,10 @@ class PointService:
     async def find_point(self, point_uuid: str) -> Optional[Point]:
         async with database.create_async_session() as session:
             point_repository: IFindRepository[
-                PointCaptureRepositoryProps, Point
+                IPointFindRepository, Point
             ] = PointRepository(session)
 
-            point_props: PointCaptureRepositoryProps = PointCaptureProps(
-                uuid=point_uuid
-            )
+            point_props: IPointFindRepository = PointCaptureProps(uuid=point_uuid)
 
             return await point_repository.find(point_props)
 
@@ -208,12 +204,12 @@ class PointService:
     ) -> Sequence[Point]:
         async with database.create_async_session() as session:
             point_repository: IFindManyRepository[
-                PointListingRepositoryProps, Point
+                IPointFindManyRepository, Point
             ] = PointRepository(session)
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 
-            point_props: PointListingRepositoryProps = PointListingProps(
+            point_props: IPointFindManyRepository = PointListingProps(
                 company=company, uuids=point_uuids
             )
 

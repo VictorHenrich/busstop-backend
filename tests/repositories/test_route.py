@@ -6,11 +6,11 @@ from datetime import time
 from models import Route
 from repositories.route import (
     RouteRepository,
-    RouteCreationRepositoryProps,
-    RouteUpdateRepositoryProps,
-    RouteExclusionRepositoryProps,
-    RouteCaptureRepositoryProps,
-    RouteListingRepositoryProps,
+    IRouteCreateRepository,
+    IRouteUpdateRepository,
+    IRouteDeleteRepository,
+    IRouteFindRepository,
+    IRouteFindManyRepository,
 )
 from utils.patterns import (
     ICreateRepository,
@@ -72,7 +72,7 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
         MockRoute.return_value = self.__mock_route
 
         route_repository: ICreateRepository[
-            RouteCreationRepositoryProps, Optional[Route]
+            IRouteCreateRepository, Optional[Route]
         ] = RouteRepository(self.__mock_session)
 
         route: Optional[Route] = await route_repository.create(self.__mock_route)
@@ -85,7 +85,7 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
         self.__mock_async_session.execute.return_value = None
 
         route_repository: IUpdateRepository[
-            RouteUpdateRepositoryProps, Optional[Route]
+            IRouteUpdateRepository, Optional[Route]
         ] = RouteRepository(self.__mock_async_session)
 
         route: Optional[Route] = await route_repository.update(self.__mock_route)
@@ -104,7 +104,7 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(uuid="", company=self.__mock_company, instance=None)
 
         route_repository: IDeleteRepository[
-            RouteExclusionRepositoryProps, Optional[Route]
+            IRouteDeleteRepository, Optional[Route]
         ] = RouteRepository(self.__mock_async_session)
 
         route: Optional[Route] = await route_repository.delete(filter_props)
@@ -121,7 +121,7 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(uuid="")
 
         route_repository: IFindRepository[
-            RouteCaptureRepositoryProps, Route
+            IRouteFindRepository, Route
         ] = RouteRepository(self.__mock_async_session)
 
         point: Optional[Route] = await route_repository.find(filter_props)
@@ -142,7 +142,7 @@ class RouteRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(company=self.__mock_company)
 
         route_repository: IFindManyRepository[
-            RouteListingRepositoryProps, Route
+            IRouteFindManyRepository, Route
         ] = RouteRepository(self.__mock_async_session)
 
         points: Sequence[Route] = await route_repository.find_many(filter_props)

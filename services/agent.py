@@ -4,11 +4,11 @@ from copy import copy
 from models import Company, database, Agent
 from repositories.agent import (
     AgentRepository,
-    AgentCreationRepositoryProps,
-    AgentUpdateRepositoryProps,
-    AgentExclusionRepositoryProps,
-    AgentCaptureRepositoryProps,
-    AgentListingRepositoryProps,
+    IAgentCreateRepository,
+    IAgentUpdateRepository,
+    IAgentExclusionRepository,
+    IAgentFindRepository,
+    IAgentFindManyRepository,
 )
 from services.company import CompanyService
 from utils.patterns import (
@@ -80,12 +80,12 @@ class AgentService:
     ) -> Optional[Agent]:
         async with database.create_async_session() as session:
             agent_repository: ICreateRepository[
-                AgentCreationRepositoryProps, Optional[Agent]
+                IAgentCreateRepository, Optional[Agent]
             ] = AgentRepository(session)
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 
-            agent_props: AgentCreationRepositoryProps = AgentCreationProps(
+            agent_props: IAgentCreateRepository = AgentCreationProps(
                 company=company,
                 name=name,
                 email=email,
@@ -108,10 +108,10 @@ class AgentService:
     ) -> Optional[Agent]:
         async with database.create_async_session() as session:
             agent_repository: IUpdateRepository[
-                AgentUpdateRepositoryProps, Optional[Agent]
+                IAgentUpdateRepository, Optional[Agent]
             ] = AgentRepository(session)
 
-            agent_props: AgentUpdateRepositoryProps = AgentUpdateProps(
+            agent_props: IAgentUpdateRepository = AgentUpdateProps(
                 uuid=agent_uuid,
                 name=name,
                 email=email,
@@ -133,10 +133,10 @@ class AgentService:
     ) -> Optional[Agent]:
         async with database.create_async_session() as session:
             agent_repository: IDeleteRepository[
-                AgentExclusionRepositoryProps, Optional[Agent]
+                IAgentExclusionRepository, Optional[Agent]
             ] = AgentRepository(session)
 
-            agent_props: AgentExclusionRepositoryProps = AgentExclusionProps(
+            agent_props: IAgentExclusionRepository = AgentExclusionProps(
                 uuid=agent_uuid, instance=agent_instance
             )
 
@@ -150,12 +150,10 @@ class AgentService:
     async def find_agent(self, agent_uuid: str) -> Agent:
         async with database.create_async_session() as session:
             agent_repository: IFindRepository[
-                AgentCaptureRepositoryProps, Agent
+                IAgentFindRepository, Agent
             ] = AgentRepository(session)
 
-            agent_props: AgentCaptureRepositoryProps = AgentCaptureProps(
-                uuid=agent_uuid
-            )
+            agent_props: IAgentFindRepository = AgentCaptureProps(uuid=agent_uuid)
 
             agent: Optional[Agent] = await agent_repository.find(agent_props)
 
@@ -171,13 +169,11 @@ class AgentService:
     ) -> Sequence[Agent]:
         async with database.create_async_session() as session:
             agent_repository: IFindManyRepository[
-                AgentListingRepositoryProps, Agent
+                IAgentFindManyRepository, Agent
             ] = AgentRepository(session)
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 
-            agent_props: AgentListingRepositoryProps = AgentListingProps(
-                company=company
-            )
+            agent_props: IAgentFindManyRepository = AgentListingProps(company=company)
 
             return await agent_repository.find_many(agent_props)

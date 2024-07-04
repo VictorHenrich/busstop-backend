@@ -17,7 +17,7 @@ from utils.exceptions import UserNotFound, InvalidUserPassword
 from utils.crypt import CryptUtils
 
 
-class AgentCreationRepositoryProps(Protocol):
+class IAgentCreateRepository(Protocol):
     name: str
 
     email: str
@@ -27,7 +27,7 @@ class AgentCreationRepositoryProps(Protocol):
     company: Company
 
 
-class AgentUpdateRepositoryProps(Protocol):
+class IAgentUpdateRepository(Protocol):
     uuid: str
 
     name: str
@@ -39,20 +39,20 @@ class AgentUpdateRepositoryProps(Protocol):
     instance: Optional[Agent]
 
 
-class AgentExclusionRepositoryProps(Protocol):
+class IAgentExclusionRepository(Protocol):
     uuid: str
     instance: Optional[Agent]
 
 
-class AgentCaptureRepositoryProps(Protocol):
+class IAgentFindRepository(Protocol):
     uuid: str
 
 
-class AgentListingRepositoryProps(Protocol):
+class IAgentFindManyRepository(Protocol):
     company: Company
 
 
-class AgentAuthRepositoryProps(Protocol):
+class IAgentAuthRepository(Protocol):
     email: str
 
     password: str
@@ -60,14 +60,14 @@ class AgentAuthRepositoryProps(Protocol):
 
 class AgentRepository(
     BaseRepository[AsyncSession],
-    ICreateRepository[AgentCreationRepositoryProps, Optional[Agent]],
-    IUpdateRepository[AgentUpdateRepositoryProps, Optional[Agent]],
-    IDeleteRepository[AgentExclusionRepositoryProps, Optional[Agent]],
-    IFindRepository[AgentCaptureRepositoryProps, Agent],
-    IFindManyRepository[AgentListingRepositoryProps, Agent],
-    IAuthRepository[AgentAuthRepositoryProps, Agent],
+    ICreateRepository[IAgentCreateRepository, Optional[Agent]],
+    IUpdateRepository[IAgentUpdateRepository, Optional[Agent]],
+    IDeleteRepository[IAgentExclusionRepository, Optional[Agent]],
+    IFindRepository[IAgentFindRepository, Agent],
+    IFindManyRepository[IAgentFindManyRepository, Agent],
+    IAuthRepository[IAgentAuthRepository, Agent],
 ):
-    async def create(self, props: AgentCreationRepositoryProps) -> Optional[Agent]:
+    async def create(self, props: IAgentCreateRepository) -> Optional[Agent]:
         agent: Agent = Agent()
 
         agent.company = props.company
@@ -79,7 +79,7 @@ class AgentRepository(
 
         return agent
 
-    async def update(self, props: AgentUpdateRepositoryProps) -> Optional[Agent]:
+    async def update(self, props: IAgentUpdateRepository) -> Optional[Agent]:
         password: Optional[str] = props.password
 
         if password is not None:
@@ -114,7 +114,7 @@ class AgentRepository(
 
             return await self.session.scalar(query)
 
-    async def delete(self, props: AgentExclusionRepositoryProps) -> Optional[Agent]:
+    async def delete(self, props: IAgentExclusionRepository) -> Optional[Agent]:
         if props.instance:
             await self.session.delete(props.instance)
 
@@ -125,7 +125,7 @@ class AgentRepository(
 
             return await self.session.scalar(query)
 
-    async def find(self, props: AgentCaptureRepositoryProps) -> Optional[Agent]:
+    async def find(self, props: IAgentFindRepository) -> Optional[Agent]:
         query: Select = (
             select(Agent)
             .where(Agent.uuid == props.uuid)
@@ -134,7 +134,7 @@ class AgentRepository(
 
         return await self.session.scalar(query)
 
-    async def find_many(self, props: AgentListingRepositoryProps) -> Sequence[Agent]:
+    async def find_many(self, props: IAgentFindManyRepository) -> Sequence[Agent]:
         query: Select = (
             select(Agent)
             .join(Company, Agent.company_id == Company.id)
@@ -144,7 +144,7 @@ class AgentRepository(
 
         return (await self.session.scalars(query)).all()
 
-    async def auth(self, props: AgentAuthRepositoryProps) -> Agent:
+    async def auth(self, props: IAgentAuthRepository) -> Agent:
         query: Select = (
             select(Agent)
             .options(joinedload(Agent.company))

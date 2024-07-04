@@ -5,11 +5,11 @@ from unittest.mock import Mock, AsyncMock, patch
 from models import Point
 from repositories.point import (
     PointRepository,
-    PointCreationRepositoryProps,
-    PointUpdateRepositoryProps,
-    PointExclusionRepositoryProps,
-    PointCaptureRepositoryProps,
-    PointListingRepositoryProps,
+    IPointCreateRepository,
+    IPointUpdateRepository,
+    IPointDeleteRepository,
+    IPointFindRepository,
+    IPointFindManyRepository,
 )
 from utils.patterns import (
     ICreateRepository,
@@ -55,7 +55,7 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
         self.__mock_session.add.return_value = None
 
         point_repository: ICreateRepository[
-            PointCreationRepositoryProps, Optional[Point]
+            IPointCreateRepository, Optional[Point]
         ] = PointRepository(self.__mock_session)
 
         point: Optional[Point] = await point_repository.create(self.__mock_point)
@@ -67,7 +67,7 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
         self.__mock_async_session.scalar.return_value = self.__mock_point
 
         point_repository: IUpdateRepository[
-            PointUpdateRepositoryProps, Optional[Point]
+            IPointUpdateRepository, Optional[Point]
         ] = PointRepository(self.__mock_async_session)
 
         point: Optional[Point] = await point_repository.update(self.__mock_point)
@@ -82,7 +82,7 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(uuid="")
 
         point_repository: IDeleteRepository[
-            PointExclusionRepositoryProps, Optional[Point]
+            IPointDeleteRepository, Optional[Point]
         ] = PointRepository(self.__mock_async_session)
 
         point: Optional[Point] = await point_repository.delete(filter_props)
@@ -96,7 +96,7 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(uuid="")
 
         point_repository: IFindRepository[
-            PointCaptureRepositoryProps, Point
+            IPointFindRepository, Point
         ] = PointRepository(self.__mock_async_session)
 
         point: Optional[Point] = await point_repository.find(filter_props)
@@ -116,7 +116,7 @@ class PointRepositoryTestCase(IsolatedAsyncioTestCase):
         filter_props: Mock = Mock(company=self.__mock_company, uuids=[])
 
         point_repository: IFindManyRepository[
-            PointListingRepositoryProps, Point
+            IPointFindManyRepository, Point
         ] = PointRepository(self.__mock_async_session)
 
         point: Sequence[Point] = await point_repository.find_many(filter_props)

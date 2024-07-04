@@ -1,10 +1,13 @@
-from typing import Mapping, Any
+from typing import Mapping, Any, Type, TypeVar
 import bcrypt
 import jwt
 from datetime import datetime, timedelta, UTC
 
 from utils.entities import TokenDataEntity
 from utils.constants import SECRET_KEY
+
+
+T = TypeVar("T", bound=TokenDataEntity)
 
 
 class CryptUtils:
@@ -20,29 +23,27 @@ class CryptUtils:
     class Jwt:
         @staticmethod
         def create_token(
-            agent_uuid: str,
-            company_uuid: str,
+            user_uuid: str,
             expiration_minute: int,
             is_refresh: bool = False,
+            entity_class: Type[T] = TokenDataEntity,
+            **kwargs: Any
         ) -> str:
             expiration: datetime = datetime.now(UTC) + timedelta(
                 minutes=expiration_minute
             )
 
-            data: TokenDataEntity = TokenDataEntity(
-                agent_uuid=agent_uuid,
-                company_uuid=company_uuid,
-                exp=expiration,
-                is_refresh=is_refresh,
+            data: T = entity_class(
+                user_uuid=user_uuid, exp=expiration, is_refresh=is_refresh, **kwargs
             )
 
             return jwt.encode(data.model_dump(), SECRET_KEY, "HS256")
 
         @staticmethod
-        def decode_token(token: str) -> TokenDataEntity:
+        def decode_token(token: str, entity_class: Type[T] = TokenDataEntity) -> T:
             data: Mapping[str, Any] = jwt.decode(token, SECRET_KEY, ["HS256"])
 
-            token_data: TokenDataEntity = TokenDataEntity(**data)
+            token_data: T = entity_class(**data)
 
             if token_data.exp < datetime.now(UTC):
                 raise jwt.ExpiredSignatureError()
