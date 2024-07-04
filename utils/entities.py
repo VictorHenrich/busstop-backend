@@ -78,6 +78,16 @@ class AgentEntity(AgentBodyEntity, UUIDEntity):
     pass
 
 
+class UserBodyEntity(BaseModel):
+    name: str
+    email: str
+    password: str
+
+
+class UserEntity(UserBodyEntity, UUIDEntity):
+    pass
+
+
 class AuthRefreshBodyEntity(BaseModel):
     refresh_token: str
 

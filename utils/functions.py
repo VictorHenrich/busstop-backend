@@ -11,18 +11,25 @@ from typing import (
 )
 from fastapi import Request, Response
 
-from models import Point, Route, Company, Agent
+from models import Point, Route, Company, Agent, User
 from utils.entities import (
     PointEntity,
     RouteEntity,
     CompanyEntity,
     AgentEntity,
+    UserEntity,
 )
 
 
 def get_agent_entity(agent: Agent) -> AgentEntity:
     return AgentEntity(
         uuid=agent.uuid, email=agent.email, password=agent.password, name=agent.name
+    )
+
+
+def get_user_entity(user: User) -> UserEntity:
+    return UserEntity(
+        uuid=user.uuid, email=user.email, password=user.password, name=user.name
     )
 
 
@@ -76,6 +83,11 @@ def handle_company_body(company: Optional[Company]) -> Optional[CompanyEntity]:
 def handle_agent_body(agent: Optional[Agent]) -> Optional[AgentEntity]:
     if agent is not None:
         return get_agent_entity(agent)
+
+
+def handle_user_body(user: Optional[User]) -> Optional[UserEntity]:
+    if user is not None:
+        return get_user_entity(user)
 
 
 async def validate_middleware_request(

@@ -1,1 +1,1 @@
-from . import agent, company, point, route, geo
+from . import agent, company, point, route, geo, user
