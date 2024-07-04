@@ -1,8 +1,10 @@
-from typing import Mapping, Literal
+from typing import Mapping, Literal, TypeAlias
 
 from models import database, Agent, User
 from repositories.agent import AgentRepository, IAgentAuthRepository
+from repositories.user import UserRepository, IUserAuthRepository
 from services.agent import AgentService
+from services.user import UserService
 from utils.entities import TokenDataEntity, AgentTokenDataEntity
 from utils.patterns import AbstractBaseEntity, IAuthRepository
 from utils.crypt import CryptUtils
@@ -16,9 +18,20 @@ class AgentAuthProps(AbstractBaseEntity):
     password: str
 
 
+class UserAuthProps(AbstractBaseEntity):
+    email: str
+
+    password: str
+
+
+AuthResult: TypeAlias = Mapping[Literal["token", "refresh_token"], str]
+
+
 class AuthService:
     def __init__(self) -> None:
         self.__agent_service: AgentService = AgentService()
+
+        self.__user_service: UserService = UserService()
 
     def __create_agent_token(self, agent: Agent) -> str:
         return CryptUtils.Jwt.create_token(
@@ -52,9 +65,7 @@ class AuthService:
             is_refresh=True,
         )
 
-    async def auth_agent(
-        self, email: str, password: str
-    ) -> Mapping[Literal["token", "refresh_token"], str]:
+    async def auth_agent(self, email: str, password: str) -> AuthResult:
         async with database.create_async_session() as session:
             agent_repository: IAuthRepository[
                 IAgentAuthRepository, Agent
@@ -92,3 +103,38 @@ class AuthService:
         agent: Agent = await self.__agent_service.find_agent(token_data.user_uuid)
 
         return self.__create_agent_token(agent)
+
+    async def auth_user(self, email: str, password: str) -> AuthResult:
+        async with database.create_async_session() as session:
+            user_repository: IAuthRepository[
+                IUserAuthRepository, User
+            ] = UserRepository(session)
+
+            user_props: IUserAuthRepository = UserAuthProps(
+                email=email, password=password
+            )
+
+            user: User = await user_repository.auth(user_props)
+
+            token: str = self.__create_user_token(user)
+
+            refresh_token: str = self.__create_user_refresh_token(user)
+
+            return {"token": token, "refresh_token": refresh_token}
+
+    async def refresh_user_token(self, token: str) -> str:
+        token_data: TokenDataEntity = CryptUtils.Jwt.decode_token(token)
+
+        if not token_data.is_refresh:
+            raise InvalidToken(token)
+
+        user: User = await self.__user_service.find_user(token_data.user_uuid)
+
+        return self.__create_user_token(user)
+
+    async def get_user_data_in_token(self, token: str) -> User:
+        token_handled: str = token.replace("Bearer", "").strip()
+
+        token_data: TokenDataEntity = CryptUtils.Jwt.decode_token(token_handled)
+
+        return await self.__user_service.find_user(token_data.user_uuid)

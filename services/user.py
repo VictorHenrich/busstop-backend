@@ -61,7 +61,7 @@ class UserService:
 
     async def update_user(
         self, name: str, email: str, password: str, user_uuid: str
-    ) -> Optional[User]:
+    ) -> User:
         async with database.create_async_session() as session:
             user_repository: IUpdateRepository[
                 IUserUpdateRepository, Optional[User]
@@ -82,7 +82,7 @@ class UserService:
 
             return user
 
-    async def delete_user(self, user_uuid: str) -> Optional[User]:
+    async def delete_user(self, user_uuid: str) -> User:
         async with database.create_async_session() as session:
             user_repository: IDeleteRepository[
                 IUserDeleteRepository, Optional[User]
@@ -101,7 +101,7 @@ class UserService:
 
             return copy(user)
 
-    async def find_user(self, user_uuid: str) -> Optional[User]:
+    async def find_user(self, user_uuid: str) -> User:
         async with database.create_async_session() as session:
             user_repository: IFindRepository[
                 IUserFindRepository, Optional[User]
