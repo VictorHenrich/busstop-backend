@@ -15,7 +15,7 @@ router: APIRouter = APIRouter(
 )
 
 
-@router.get("/{{agent_uuid}}")
+@router.get("/{agent_uuid}")
 async def find_agent(agent_uuid: str) -> JSONSuccessResponse[AgentEntity]:
     agent_service: AgentService = AgentService()
 
@@ -52,7 +52,7 @@ async def create_agent(
     return JSONSuccessResponse(content=agent_handled)
 
 
-@router.put("/{{agent_uuid}}")
+@router.put("/{agent_uuid}")
 async def update_agent(
     agent_uuid: str, body: AgentBodyEntity
 ) -> JSONSuccessResponse[Optional[AgentEntity]]:
@@ -67,7 +67,7 @@ async def update_agent(
     return JSONSuccessResponse(content=agent_handled)
 
 
-@router.delete("/{{agent_uuid}}")
+@router.delete("/{agent_uuid}")
 async def delete_agent(agent_uuid: str) -> JSONSuccessResponse[Optional[AgentEntity]]:
     agent_service: AgentService = AgentService()
 

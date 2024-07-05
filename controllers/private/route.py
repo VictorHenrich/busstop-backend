@@ -15,7 +15,7 @@ router: APIRouter = APIRouter(
 )
 
 
-@router.get("/{{company_uuid}}")
+@router.get("/{company_uuid}")
 async def list_routes(company_uuid: str) -> JSONSuccessResponse[List[RouteEntity]]:
     route_service: RouteService = RouteService()
 
@@ -26,7 +26,7 @@ async def list_routes(company_uuid: str) -> JSONSuccessResponse[List[RouteEntity
     return JSONSuccessResponse(content=routes_handled)
 
 
-@router.get("/{{route_uuid}}")
+@router.get("/{route_uuid}")
 async def get_route(route_uuid: str) -> JSONSuccessResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 
@@ -37,7 +37,7 @@ async def get_route(route_uuid: str) -> JSONSuccessResponse[Optional[RouteEntity
     return JSONSuccessResponse(content=route_handled)
 
 
-@router.post("/{{company_uuid}}")
+@router.post("/{company_uuid}")
 async def create_route(
     company_uuid: str, body: RouteBodyEntity
 ) -> JSONSuccessResponse[Optional[RouteEntity]]:
@@ -57,7 +57,7 @@ async def create_route(
     return JSONSuccessResponse(content=route_handled)
 
 
-@router.put("/{{route_uuid}}")
+@router.put("/{route_uuid}")
 async def update_route(
     route_uuid: str, body: RouteBodyEntity
 ) -> JSONSuccessResponse[Optional[RouteEntity]]:
@@ -77,7 +77,7 @@ async def update_route(
     return JSONSuccessResponse(content=route_handled)
 
 
-@router.delete("/{{route_uuid}}")
+@router.delete("/{route_uuid}")
 async def delete_route(route_uuid: str) -> JSONSuccessResponse[Optional[RouteEntity]]:
     route_service: RouteService = RouteService()
 

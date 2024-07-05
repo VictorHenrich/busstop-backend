@@ -15,7 +15,7 @@ router: APIRouter = APIRouter(
 )
 
 
-@router.get("/{{company_uuid}}")
+@router.get("/{company_uuid}")
 async def list_points(
     company_uuid: str, uuids: List[str] = []
 ) -> JSONSuccessResponse[List[PointEntity]]:
@@ -43,7 +43,7 @@ async def list_points(
     return JSONSuccessResponse(content=points_handled)
 
 
-@router.get("/{{point_uuid}}")
+@router.get("/{point_uuid}")
 async def get_point(point_uuid: str) -> JSONSuccessResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 
@@ -54,7 +54,7 @@ async def get_point(point_uuid: str) -> JSONSuccessResponse[Optional[PointEntity
     return JSONSuccessResponse(content=point_handled)
 
 
-@router.post("/{{company_uuid}}")
+@router.post("/{company_uuid}")
 async def create_point(
     company_uuid: str, point_body: PointBodyEntity
 ) -> JSONSuccessResponse[Optional[PointEntity]]:
@@ -77,7 +77,7 @@ async def create_point(
     return JSONSuccessResponse(content=point_handled)
 
 
-@router.put("/{{point_uuid}}")
+@router.put("/{point_uuid}")
 async def update_point(
     point_uuid: str, point_body: PointBodyEntity
 ) -> JSONSuccessResponse[Optional[PointEntity]]:
@@ -100,7 +100,7 @@ async def update_point(
     return JSONSuccessResponse(content=point_handled)
 
 
-@router.delete("/{{point_uuid}}")
+@router.delete("/{point_uuid}")
 async def delete_point(point_uuid: str) -> JSONSuccessResponse[Optional[PointEntity]]:
     point_service: PointService = PointService()
 

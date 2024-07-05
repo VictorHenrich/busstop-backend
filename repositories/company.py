@@ -64,11 +64,15 @@ class CompanyRepository(
     IFindRepository[ICompanyFindRepository, Company],
 ):
     async def create(self, props: ICompanyCreateRepository) -> Optional[Company]:
-        query: Insert = insert(Company).values(
-            company_name=props.company_name,
-            fantasy_name=props.fantasy_name,
-            document_cnpj=props.document_cnpj,
-            email=props.email,
+        query: Insert = (
+            insert(Company)
+            .values(
+                company_name=props.company_name,
+                fantasy_name=props.fantasy_name,
+                document_cnpj=props.document_cnpj,
+                email=props.email,
+            )
+            .returning(Company)
         )
 
         return await self.session.scalar(query)

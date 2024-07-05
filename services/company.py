@@ -168,6 +168,4 @@ class CompanyService:
 
             company: Optional[Company] = await company_repository.create(company_data)
 
-            await session.commit()
-
             return company

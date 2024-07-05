@@ -39,7 +39,7 @@ async def list_companies(
     return JSONSuccessResponse(content=companies_handled)
 
 
-@router.get("/{{company_uuid}}")
+@router.get("/{company_uuid}")
 async def get_company(
     company_uuid: str,
 ) -> JSONSuccessResponse[Optional[CompanyEntity]]:
@@ -72,7 +72,7 @@ async def create_company(
     return JSONSuccessResponse(content=company_handled)
 
 
-@router.put("/{{company_uuid}}")
+@router.put("/{company_uuid}")
 async def update_company(
     company_uuid: str, company_body: CompanyBodyEntity
 ) -> JSONSuccessResponse[Optional[CompanyEntity]]:
@@ -91,7 +91,7 @@ async def update_company(
     return JSONSuccessResponse(content=company_handled)
 
 
-@router.delete("/{{company_uuid}}")
+@router.delete("/{company_uuid}")
 async def delete_company(
     company_uuid: str,
 ) -> JSONSuccessResponse[Optional[CompanyEntity]]:

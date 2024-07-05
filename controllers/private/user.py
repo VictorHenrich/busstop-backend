@@ -15,7 +15,7 @@ router: APIRouter = APIRouter(
 )
 
 
-@router.get("/{{user_uuid}}")
+@router.get("/{user_uuid}")
 async def find_user(user_uuid: str) -> JSONSuccessResponse[UserEntity]:
     user_service: UserService = UserService()
 
@@ -41,7 +41,7 @@ async def create_user(
     return JSONSuccessResponse(content=user_handled)
 
 
-@router.put("/{{user_uuid}}")
+@router.put("/{user_uuid}")
 async def update_user(
     user_uuid: str, body: UserBodyEntity
 ) -> JSONSuccessResponse[Optional[UserEntity]]:
@@ -56,7 +56,7 @@ async def update_user(
     return JSONSuccessResponse(content=user_handled)
 
 
-@router.delete("/{{user_uuid}}")
+@router.delete("/{user_uuid}")
 async def delete_user(user_uuid: str) -> JSONSuccessResponse[Optional[UserEntity]]:
     user_service: UserService = UserService()
 
