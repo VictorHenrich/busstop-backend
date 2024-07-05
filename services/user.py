@@ -57,6 +57,8 @@ class UserService:
 
             await session.commit()
 
+            await session.refresh(user)
+
             return user
 
     async def update_user(
@@ -93,8 +95,6 @@ class UserService:
             )
 
             user: Optional[User] = await user_repository.delete(user_exclusion_props)
-
-            await session.commit()
 
             if user is None:
                 raise ModelNotFound(User, user_uuid)

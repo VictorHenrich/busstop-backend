@@ -91,7 +91,7 @@ class UserRepository(
                 update(User).values(**handle_dict(data)).where(User.uuid == props.uuid)
             )
 
-            return await self.session.scalar(query)
+            return await self.session.scalar(query.returning(User))
 
     async def delete(self, props: IUserDeleteRepository) -> Optional[User]:
         if props.instance:
@@ -102,7 +102,7 @@ class UserRepository(
         else:
             query: Delete = delete(User).where(User.uuid == props.uuid)
 
-            return await self.session.scalar(query)
+            return await self.session.scalar(query.returning(User))
 
     async def find(self, props: IUserFindRepository) -> Optional[User]:
         query: Select = select(User).where(User.uuid == props.uuid)

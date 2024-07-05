@@ -121,9 +121,9 @@ class AgentRepository(
             return props.instance
 
         else:
-            query: Delete = delete(Agent).where(Agent.uuid == props.uuid)
+            query = delete(Agent).where(Agent.uuid == props.uuid)
 
-            return await self.session.scalar(query)
+            return await self.session.scalar(query.returning(Agent))
 
     async def find(self, props: IAgentFindRepository) -> Optional[Agent]:
         query: Select = (

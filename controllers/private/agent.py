@@ -1,9 +1,10 @@
 from typing import Sequence, Optional, List
 from fastapi.routing import APIRouter
+from fastapi import Request
 
 from server.instances import ServerInstances
 from services.agent import AgentService
-from models import Agent
+from models import Agent, Company
 from utils.responses import JSONSuccessResponse
 from utils.entities import AgentBodyEntity, AgentEntity
 from utils.constants import AGENT_ENDPOINT_NAME, SWAGGER_AGENT_SESSION_TAG
@@ -27,10 +28,12 @@ async def find_agent(agent_uuid: str) -> JSONSuccessResponse[AgentEntity]:
 
 
 @router.get("")
-async def find_agents() -> JSONSuccessResponse[List[AgentEntity]]:
+async def find_agents(request: Request) -> JSONSuccessResponse[List[AgentEntity]]:
+    company: Company = request.state.user.company
+
     agent_service: AgentService = AgentService()
 
-    agents: Sequence[Agent] = await agent_service.find_agents()
+    agents: Sequence[Agent] = await agent_service.find_agents(company_instance=company)
 
     agents_handled: List[AgentEntity] = [get_agent_entity(agent) for agent in agents]
 
@@ -39,12 +42,17 @@ async def find_agents() -> JSONSuccessResponse[List[AgentEntity]]:
 
 @router.post("")
 async def create_agent(
-    body: AgentBodyEntity,
+    request: Request, body: AgentBodyEntity
 ) -> JSONSuccessResponse[Optional[AgentEntity]]:
+    company: Company = request.state.user.company
+
     agent_service: AgentService = AgentService()
 
     agent: Optional[Agent] = await agent_service.create_agent(
-        name=body.name, email=body.email, password=body.password
+        company_instance=company,
+        name=body.name,
+        email=body.email,
+        password=body.password,
     )
 
     agent_handled: Optional[AgentEntity] = handle_agent_body(agent)

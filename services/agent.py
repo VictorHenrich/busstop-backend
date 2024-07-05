@@ -96,6 +96,8 @@ class AgentService:
 
             await session.commit()
 
+            await session.refresh(agent)
+
             return agent
 
     async def update_agent(
@@ -141,8 +143,6 @@ class AgentService:
             )
 
             agent: Optional[Agent] = await agent_repository.delete(agent_props)
-
-            await session.commit()
 
             if agent is not None:
                 return copy(agent)

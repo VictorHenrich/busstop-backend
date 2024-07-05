@@ -16,9 +16,7 @@ class AuthControllerTestCase(TestCase):
     def test_authenticate_agent(self) -> None:
         url: str = f"{AUTH_ENDPOINT_NAME}/agent"
 
-        body: AuthBodyEntity = AuthBodyEntity(
-            email="victorhenrich993@gmail.com", password="1234"
-        )
+        body: AuthBodyEntity = AuthBodyEntity(email="master@gmail.com", password="1234")
 
         response: Response = self.__client.post(url, json=body.model_dump())
 
@@ -58,9 +56,7 @@ class AuthControllerTestCase(TestCase):
     def test_authenticate_agent_with_password_invalid(self) -> None:
         url: str = f"{AUTH_ENDPOINT_NAME}/agent"
 
-        body: AuthBodyEntity = AuthBodyEntity(
-            email="victorhenrich993@gmail.com", password=""
-        )
+        body: AuthBodyEntity = AuthBodyEntity(email="master@gmail.com", password="")
 
         response: Response = self.__client.post(url, json=body.model_dump())
 
@@ -77,9 +73,7 @@ class AuthControllerTestCase(TestCase):
     def test_authenticate_user(self) -> None:
         url: str = f"{AUTH_ENDPOINT_NAME}/user"
 
-        body: AuthBodyEntity = AuthBodyEntity(
-            email="victorhenrich993@gmail.com", password="1234"
-        )
+        body: AuthBodyEntity = AuthBodyEntity(email="master@gmail.com", password="1234")
 
         response: Response = self.__client.post(url, json=body.model_dump())
 

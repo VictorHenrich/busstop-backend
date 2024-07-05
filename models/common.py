@@ -27,3 +27,13 @@ class UserBaseModel(BaseModel):
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
 
     password: Mapped[str] = mapped_column(nullable=False)
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__} "
+            + f"id='{self.id}' "
+            + f"uuid='{self.uuid}' "
+            + f"name='{self.name}' "
+            + f"email='{self.email}' "
+            + "/>"
+        )
