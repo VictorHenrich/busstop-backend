@@ -1,4 +1,4 @@
-from typing import Mapping, Literal
+from typing import Literal
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, Mock, patch
 import logging
@@ -15,6 +15,7 @@ from utils.exceptions import (
     InvalidToken,
     ModelNotFound,
 )
+from utils.types import DictType
 
 
 class AuthServiceTestCase(IsolatedAsyncioTestCase):
@@ -64,7 +65,7 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
 
         auth_service: AuthService = AuthService()
 
-        token_data: Mapping[
+        token_data: DictType[
             Literal["token", "refresh_token"], str
         ] = await auth_service.auth_agent(email="", password="")
 
@@ -186,7 +187,7 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
 
         auth_service: AuthService = AuthService()
 
-        refresh_token: str = await auth_service.refresh_token(token="")
+        refresh_token: str = await auth_service.refresh_agent_token(token="")
 
         logging.info(f"Refresh Token: {refresh_token}")
 
@@ -214,7 +215,7 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
         with self.assertRaises(InvalidToken):
             auth_service: AuthService = AuthService()
 
-            await auth_service.refresh_token(token="")
+            await auth_service.refresh_agent_token(token="")
 
         mock_crypt_utils_class.Jwt.decode_token.assert_called_once()
 
@@ -242,7 +243,7 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
         with self.assertRaises(ModelNotFound):
             auth_service: AuthService = AuthService()
 
-            await auth_service.refresh_token(token="")
+            await auth_service.refresh_agent_token(token="")
 
         self.__mock_agent_service.find_agent.assert_awaited_once()
 
@@ -268,7 +269,7 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
         with self.assertRaises(AttributeError):
             auth_service: AuthService = AuthService()
 
-            await auth_service.refresh_token(token="")
+            await auth_service.refresh_agent_token(token="")
 
         self.__mock_agent_service.find_agent.assert_awaited_once()
 

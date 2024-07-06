@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Tuple, Type, List, Union
+from typing import Any, Tuple, Type, List, Union
 from enum import Enum
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import DeclarativeBase
@@ -9,6 +9,8 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
 )
+
+from utils.types import DictType
 
 
 class DatabaseDialects(Enum):
@@ -40,7 +42,7 @@ class Database:
         password: str,
         dialect: DatabaseDialects,
     ) -> Tuple[str, str]:
-        dialect_data: Mapping[str, str] = Database._mapped_dialects[dialect]
+        dialect_data: DictType[str, str] = Database._mapped_dialects[dialect]
 
         url: str = f"://{username}:{password}@{host}:{port}/{dbname}"
 

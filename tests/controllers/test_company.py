@@ -1,4 +1,3 @@
-from typing import Mapping, Any
 from unittest import TestCase
 from fastapi.testclient import TestClient
 from httpx import Response
@@ -7,6 +6,7 @@ import logging
 from server.instances import ServerInstances
 from utils.constants import COMPANY_ENPOINT_NAME
 from utils.entities import CompanyBodyEntity
+from utils.types import DictType
 
 
 class CompanyControllerTestCase(TestCase):
@@ -24,7 +24,7 @@ class CompanyControllerTestCase(TestCase):
 
         response: Response = self.__client.get(url)
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"Response Data: {data}")
 
@@ -41,7 +41,7 @@ class CompanyControllerTestCase(TestCase):
 
         response: Response = self.__client.get(url)
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"Response Data: {data}")
 
@@ -65,7 +65,7 @@ class CompanyControllerTestCase(TestCase):
 
         response: Response = self.__client.post(url, json=body.model_dump())
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"Response Data: {data}")
 
@@ -95,7 +95,7 @@ class CompanyControllerTestCase(TestCase):
 
         response: Response = self.__client.put(url, json=body.model_dump())
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"Response Data: {data}")
 

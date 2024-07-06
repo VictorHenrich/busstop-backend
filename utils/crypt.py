@@ -1,10 +1,11 @@
-from typing import Mapping, Any, Type, TypeVar
+from typing import Any, Type, TypeVar
 import bcrypt
 import jwt
 from datetime import datetime, timedelta, UTC
 
 from utils.entities import TokenDataEntity
 from utils.constants import SECRET_KEY
+from utils.types import DictType
 
 
 T = TypeVar("T", bound=TokenDataEntity)
@@ -41,7 +42,7 @@ class CryptUtils:
 
         @staticmethod
         def decode_token(token: str, entity_class: Type[T] = TokenDataEntity) -> T:
-            data: Mapping[str, Any] = jwt.decode(token, SECRET_KEY, ["HS256"])
+            data: DictType = jwt.decode(token, SECRET_KEY, ["HS256"])
 
             token_data: T = entity_class(**data)
 

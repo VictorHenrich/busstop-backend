@@ -1,9 +1,9 @@
-from typing import Any, Mapping, TypeAlias, TypeVar, Union
+from typing import Any, Mapping, TypeAlias, TypeVar
 from enum import Enum
 
 
 DPT = TypeVar("DPT", bound=str)
-DVT = TypeVar("DVT")
+DVT = TypeVar("DVT", bound=Any)
 
 
 class TransportModelType(Enum):
@@ -13,4 +13,4 @@ class TransportModelType(Enum):
     TRANSIT = "transit"
 
 
-DictType: TypeAlias = Mapping[Union[DPT, str], Union[DVT, Any]]
+DictType: TypeAlias = Mapping[DPT, DVT]

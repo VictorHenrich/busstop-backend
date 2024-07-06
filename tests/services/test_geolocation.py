@@ -31,7 +31,7 @@ class GeolocationServiceTestCase(IsolatedAsyncioTestCase):
         amount_register: int = 2
 
         result: Sequence[Point] = [
-            Point(
+            Mock(
                 address_zip_code="88745-000",
                 address_state="SC",
                 address_city="Capivari de Baixo",

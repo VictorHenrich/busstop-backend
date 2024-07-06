@@ -1,4 +1,4 @@
-from typing import Optional, Protocol, Sequence, Mapping, Any
+from typing import Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, func
 from sqlalchemy.orm import joinedload
@@ -15,6 +15,7 @@ from utils.patterns import (
 )
 from utils.exceptions import UserNotFound, InvalidUserPassword
 from utils.crypt import CryptUtils
+from utils.types import DictType
 
 
 class IAgentCreateRepository(Protocol):
@@ -97,7 +98,7 @@ class AgentRepository(
             return props.instance
 
         else:
-            data: Mapping[str, Any] = {
+            data: DictType = {
                 "name": props.name,
                 "email": props.email,
                 "password": password,

@@ -1,4 +1,3 @@
-from typing import Mapping, Any
 from unittest import TestCase
 from fastapi.testclient import TestClient
 from httpx import Response
@@ -7,6 +6,7 @@ import logging
 from server.instances import ServerInstances
 from utils.constants import AUTH_ENDPOINT_NAME
 from utils.entities import AuthBodyEntity
+from utils.types import DictType
 
 
 class AuthControllerTestCase(TestCase):
@@ -20,7 +20,7 @@ class AuthControllerTestCase(TestCase):
 
         response: Response = self.__client.post(url, json=body.model_dump())
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"ResponseData: {data}")
 
@@ -43,7 +43,7 @@ class AuthControllerTestCase(TestCase):
 
         response: Response = self.__client.post(url, json=body.model_dump())
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"ResponseData: {data}")
 
@@ -60,7 +60,7 @@ class AuthControllerTestCase(TestCase):
 
         response: Response = self.__client.post(url, json=body.model_dump())
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"ResponseData: {data}")
 
@@ -77,7 +77,7 @@ class AuthControllerTestCase(TestCase):
 
         response: Response = self.__client.post(url, json=body.model_dump())
 
-        data: Mapping[str, Any] = response.json()
+        data: DictType = response.json()
 
         logging.info(f"ResponseData: {data}")
 

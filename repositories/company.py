@@ -1,4 +1,4 @@
-from typing import Optional, Protocol, Sequence, Mapping, Any
+from typing import Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
 
@@ -11,6 +11,7 @@ from utils.patterns import (
     IFindRepository,
     IFindManyRepository,
 )
+from utils.types import DictType
 
 
 class ICompanyCreateRepository(Protocol):
@@ -119,7 +120,7 @@ class CompanyRepository(
         return await self.session.scalar(query)
 
     async def find_many(self, props: ICompanyFindManyRepository) -> Sequence[Company]:
-        query_filter: Mapping[str, Any] = {}
+        query_filter: DictType = {}
 
         query: Select = (
             select(Company).where(**query_filter).offset(props.page).limit(props.limit)

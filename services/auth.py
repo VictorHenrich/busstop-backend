@@ -1,4 +1,4 @@
-from typing import Mapping, Literal, TypeAlias
+from typing import Literal, TypeAlias
 
 from models import database, Agent, User
 from repositories.agent import AgentRepository, IAgentAuthRepository
@@ -10,6 +10,7 @@ from utils.patterns import AbstractBaseEntity, IAuthRepository
 from utils.crypt import CryptUtils
 from utils.constants import TOKEN_EXPIRATION_MINUTE, REFRESH_TOKEN_EXPIRATION_MINUTE
 from utils.exceptions import InvalidToken
+from utils.types import DictType
 
 
 class AgentAuthProps(AbstractBaseEntity):
@@ -24,7 +25,7 @@ class UserAuthProps(AbstractBaseEntity):
     password: str
 
 
-AuthResult: TypeAlias = Mapping[Literal["token", "refresh_token"], str]
+AuthResult: TypeAlias = DictType[Literal["token", "refresh_token"], str]
 
 
 class AuthService:

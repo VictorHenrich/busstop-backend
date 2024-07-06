@@ -1,6 +1,6 @@
-from typing import Optional, Protocol, Sequence, Mapping, Any
+from typing import Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import Update, update, Delete, delete, Select, select, insert, Insert
+from sqlalchemy import Update, update, Delete, delete, Select, select
 
 from models import Point, Company, RoutePoint
 from utils.patterns import (
@@ -11,6 +11,7 @@ from utils.patterns import (
     IFindRepository,
     IFindManyRepository,
 )
+from utils.types import DictType
 
 
 class IPointCreateRepository(Protocol):
@@ -127,7 +128,7 @@ class PointRepository(
             return props.instance
 
         else:
-            data: Mapping[str, Any] = {
+            data: DictType = {
                 "address_zip_code": props.address_zip_code,
                 "address_state": props.address_state,
                 "address_city": props.address_city,

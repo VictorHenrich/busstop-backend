@@ -1,4 +1,4 @@
-from typing import Optional, Protocol, Mapping, Any
+from typing import Optional, Protocol
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select, func
 
@@ -14,6 +14,7 @@ from utils.patterns import (
 from utils.exceptions import UserNotFound, InvalidUserPassword
 from utils.crypt import CryptUtils
 from utils.functions import handle_dict
+from utils.types import DictType
 
 
 class IUserCreateRepository(Protocol):
@@ -81,7 +82,7 @@ class UserRepository(
             return props.instance
 
         else:
-            data: Mapping[str, Any] = {
+            data: DictType = {
                 "name": props.name,
                 "email": props.email,
                 "password": password,

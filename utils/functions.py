@@ -2,7 +2,6 @@ from typing import (
     Any,
     Callable,
     Awaitable,
-    Mapping,
     Optional,
     List,
     AsyncGenerator,
@@ -19,6 +18,7 @@ from utils.entities import (
     AgentEntity,
     UserEntity,
 )
+from utils.types import DictType
 
 
 def get_agent_entity(agent: Agent) -> AgentEntity:
@@ -106,9 +106,9 @@ async def validate_middleware_request(
 
 
 def handle_dict(
-    dict_data: Mapping[str, Any],
+    dict_data: DictType,
     callback: Callable[[Any], bool] = lambda value: value is not None,
-) -> Mapping[str, Any]:
+) -> DictType:
     return {
         prop_name: prop_value
         for prop_name, prop_value in dict_data.items()
