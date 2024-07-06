@@ -54,7 +54,7 @@ SWAGGER_AUTH_SESSION_TAG: str = os.environ.get("SWAGGER_AUTH_SESSION_TAG", "")
 SWAGGER_INDEX_SESSION_TAG: str = os.environ.get("SWAGGER_INDEX_SESSION_TAG", "")
 
 GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
-
+GOOGLE_API_URL: str = os.environ.get("GOOGLE_API_URL", "")
 
 TYPE_ADDRESS_ZIP_CODE: str = os.environ.get("TYPE_ADDRESS_ZIP_CODE", "")
 TYPE_ADDRESS_STATE: str = os.environ.get("TYPE_ADDRESS_STATE", "")
