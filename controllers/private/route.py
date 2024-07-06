@@ -90,4 +90,4 @@ async def delete_route(route_uuid: str) -> JSONSuccessResponse[Optional[RouteEnt
     return JSONSuccessResponse(content=route_handled)
 
 
-ServerInstances.api.include_router(router)
+ServerInstances.agent_api.include_router(router)

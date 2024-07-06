@@ -69,4 +69,4 @@ async def delete_user(user_uuid: str) -> JSONSuccessResponse[Optional[UserEntity
     return JSONSuccessResponse(content=user_handled)
 
 
-ServerInstances.api.include_router(router)
+ServerInstances.user_api.include_router(router)

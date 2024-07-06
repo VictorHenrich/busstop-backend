@@ -9,4 +9,12 @@ if __name__ == "__main__":
     import controllers.private
     import middlewares.auth
 
-    ServerInstances.api.start()
+    ServerInstances.general_api.mount(
+        path="/agent", app=ServerInstances.agent_api, name="Agent API"
+    )
+
+    ServerInstances.general_api.mount(
+        path="/user", app=ServerInstances.user_api, name="Agent API"
+    )
+
+    ServerInstances.general_api.start()

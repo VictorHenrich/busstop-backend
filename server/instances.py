@@ -31,7 +31,7 @@ class ServerInstances:
         )
     )
 
-    api_user: Api = Api(
+    user_api: Api = Api(
         host=API_HOST,
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,
@@ -41,7 +41,7 @@ class ServerInstances:
         version=SWAGGER_API_VERSION,
     )
 
-    api_agent: Api = Api(
+    agent_api: Api = Api(
         host=API_HOST,
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,
@@ -51,7 +51,7 @@ class ServerInstances:
         version=SWAGGER_API_VERSION,
     )
 
-    api: Api = Api(
+    general_api: Api = Api(
         host=API_HOST,
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,

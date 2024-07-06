@@ -88,4 +88,4 @@ async def delete_agent(agent_uuid: str) -> JSONSuccessResponse[Optional[AgentEnt
     return JSONSuccessResponse(content=agent_handled)
 
 
-ServerInstances.api.include_router(router)
+ServerInstances.agent_api.include_router(router)

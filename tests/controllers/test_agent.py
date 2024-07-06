@@ -14,7 +14,7 @@ class AgentControllerTestCase(TestCase):
         token: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiIyNDg5Y2Q5OC0yMTc4LTQxMzItYmZhNi1jZDdmNmI4ZjE1N2IiLCJleHAiOjE3MjAyMTEyNDIsImlzX3JlZnJlc2giOmZhbHNlLCJjb21wYW55X3V1aWQiOiIyNDg5Y2Q5OC0yMTc4LTQxMzItYmZhNi1jZDdmNmI4ZjE1N2EifQ.itwX8B-N9iUOCD1hxLac3L7E1-3ktaSb9kK8xnq4vm0"
 
         self.__client: TestClient = TestClient(
-            ServerInstances.api, headers={"Authorization": f"Bearer {token}"}
+            ServerInstances.agent_api, headers={"Authorization": f"Bearer {token}"}
         )
 
     def test_create_agent(self) -> None:

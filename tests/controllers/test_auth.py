@@ -11,14 +11,16 @@ from utils.types import DictType
 
 class AuthControllerTestCase(TestCase):
     def setUp(self) -> None:
-        self.__client: TestClient = TestClient(ServerInstances.api)
+        self.__agent_client: TestClient = TestClient(ServerInstances.agent_api)
+
+        self.__user_client: TestClient = TestClient(ServerInstances.user_api)
 
     def test_authenticate_agent(self) -> None:
         url: str = f"{AUTH_ENDPOINT_NAME}/agent"
 
         body: AuthBodyEntity = AuthBodyEntity(email="master@gmail.com", password="1234")
 
-        response: Response = self.__client.post(url, json=body.model_dump())
+        response: Response = self.__agent_client.post(url, json=body.model_dump())
 
         data: DictType = response.json()
 
@@ -41,7 +43,7 @@ class AuthControllerTestCase(TestCase):
 
         body: AuthBodyEntity = AuthBodyEntity(email=wrong_email, password="")
 
-        response: Response = self.__client.post(url, json=body.model_dump())
+        response: Response = self.__agent_client.post(url, json=body.model_dump())
 
         data: DictType = response.json()
 
@@ -58,7 +60,7 @@ class AuthControllerTestCase(TestCase):
 
         body: AuthBodyEntity = AuthBodyEntity(email="master@gmail.com", password="")
 
-        response: Response = self.__client.post(url, json=body.model_dump())
+        response: Response = self.__agent_client.post(url, json=body.model_dump())
 
         data: DictType = response.json()
 
@@ -75,7 +77,7 @@ class AuthControllerTestCase(TestCase):
 
         body: AuthBodyEntity = AuthBodyEntity(email="master@gmail.com", password="1234")
 
-        response: Response = self.__client.post(url, json=body.model_dump())
+        response: Response = self.__user_client.post(url, json=body.model_dump())
 
         data: DictType = response.json()
 

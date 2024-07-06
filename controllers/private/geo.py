@@ -37,4 +37,4 @@ async def find_address(
     return JSONSuccessResponse(content=data)
 
 
-ServerInstances.api.include_router(router)
+ServerInstances.agent_api.include_router(router)

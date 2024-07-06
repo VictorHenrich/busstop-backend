@@ -108,4 +108,4 @@ async def refresh_user_authencation(
         return JSONSuccessResponse(content=auth_body)
 
 
-ServerInstances.api.include_router(router)
+ServerInstances.general_api.include_router(router)

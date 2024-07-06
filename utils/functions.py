@@ -95,13 +95,11 @@ async def validate_middleware_request(
     call_next: Callable[[Request], Awaitable[Response]],
     private_routes: Sequence[str] = [],
 ) -> AsyncGenerator[Union[bool, Response], None]:
-    validated: bool = any(
-        [True for path in private_routes if request.url.path.startswith(path)]
-    )
+    validated: bool = any([True for path in private_routes if path in request.url.path])
 
     yield validated
 
-    if not validated:
+    if validated:
         yield await call_next(request)
 
 
