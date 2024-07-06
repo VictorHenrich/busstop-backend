@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Sequence, Optional
+from typing import Sequence, Optional
 from httpx import AsyncClient, Response
 import logging
 
@@ -13,12 +13,12 @@ from utils.constants import (
     TYPE_ADDRESS_STREET,
     TYPE_ADDRESS_ZIP_CODE,
 )
-from utils.types import TransportModelType
+from utils.types import TransportModelType, DictType
 
 
 class GeoLocationService:
-    def __get_address_data(
-        self, address_type: str, address_components: Sequence[Mapping[str, Any]]
+    def __get_location_data(
+        self, address_type: str, address_components: Sequence[DictType]
     ) -> str:
         for address in address_components:
             if address_type in address["types"]:
@@ -26,49 +26,74 @@ class GeoLocationService:
 
         return ""
 
-    def __handle_location(self, location: Mapping[str, Any]) -> Point:
+    def __handle_location(self, location: DictType) -> Point:
         point: Point = Point()
 
-        geometry: Mapping[str, Any] = location["geometry"]
+        geometry: DictType = location["geometry"]["location"]
 
-        address_components: Sequence[Mapping[str, Any]] = location["address_components"]
+        address_components: Sequence[DictType] = location["address_components"]
 
-        point.address_zip_code = self.__get_address_data(
+        point.address_zip_code = self.__get_location_data(
             TYPE_ADDRESS_ZIP_CODE, address_components
         )
 
-        point.address_state = self.__get_address_data(
+        point.address_state = self.__get_location_data(
             TYPE_ADDRESS_STATE, address_components
         )
 
-        point.address_city = self.__get_address_data(
+        point.address_city = self.__get_location_data(
             TYPE_ADDRESS_CITY, address_components
         )
 
-        point.address_neighborhood = self.__get_address_data(
+        point.address_neighborhood = self.__get_location_data(
             TYPE_ADDRESS_NEIGHBORHOOD, address_components
         )
 
-        point.address_street = self.__get_address_data(
+        point.address_street = self.__get_location_data(
             TYPE_ADDRESS_STREET, address_components
         )
 
-        point.address_number = self.__get_address_data(
+        point.address_number = self.__get_location_data(
             TYPE_ADDRESS_NUMBER, address_components
         )
 
-        point.latitude = str(geometry["latitude"])
+        point.latitude = str(geometry["lat"])
 
-        point.longitude = str(geometry["longitude"])
+        point.longitude = str(geometry["lng"])
 
         return point
+
+    def __get_distance_data(self, element: DictType) -> DictType:
+        distance_data: DictType = element["distance"]
+
+        duration_data: DictType = element["duration"]
+
+        duration_in_traffic_data: DictType = element["duration_in_traffic"]
+
+        return {
+            "distance": {
+                "description": distance_data["text"],
+                "value": distance_data["value"],
+            },
+            "duration": {
+                "description": duration_data["text"],
+                "value": duration_data["value"],
+            },
+            "duration_in_traffic": {
+                "description": duration_in_traffic_data["text"],
+                "value": duration_in_traffic_data["value"],
+            },
+        }
+
+    def __handle_distance(self, elements: Sequence[DictType]) -> Sequence[DictType]:
+        return [self.__get_distance_data(element) for element in elements]
 
     async def find_address(
         self, address_description: str, region: str = "BR"
     ) -> Sequence[Point]:
         url: str = f"{GOOGLE_API_URL}/api/geocode/json"
 
-        params: Mapping[str, Any] = {
+        params: DictType = {
             "key": GOOGLE_API_KEY,
             "address": address_description,
             "region": region,
@@ -79,11 +104,11 @@ class GeoLocationService:
 
             response.raise_for_status()
 
-            data: Mapping[str, Any] = response.json()
-
-            locations: Optional[Sequence[Mapping[str, Any]]] = data.get("results")
+            data: DictType = response.json()
 
             logging.info(f"Address Data Response: {data}")
+
+            locations: Optional[Sequence[DictType]] = data.get("results")
 
             if not locations:
                 return []
@@ -95,10 +120,10 @@ class GeoLocationService:
         origin: Point,
         destiny: Point,
         transport_mode: TransportModelType = TransportModelType.DRIVING,
-    ) -> None:
+    ) -> Sequence[Sequence[DictType]]:
         url: str = f"{GOOGLE_API_URL}/distancematrix/json"
 
-        params: Mapping[str, Any] = {
+        params: DictType = {
             "key": GOOGLE_API_KEY,
             "origins": f"{origin.latitude}-{origin.longitude}",
             "destinations": f"{destiny.latitude}-{destiny.longitude}",
@@ -110,6 +135,12 @@ class GeoLocationService:
 
             response.raise_for_status()
 
-            data: Mapping[str, Any] = response.json()
+            data: DictType = response.json()
 
             logging.info(f"Distance Matrix Data Response: {data}")
+
+            distances: Sequence[DictType] = data["rows"]
+
+            return [
+                self.__handle_distance(distance["elements"]) for distance in distances
+            ]
