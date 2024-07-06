@@ -35,6 +35,8 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
 
         self.__mock_async_session.commit.return_value = None
 
+        self.__mock_async_session.refresh.return_value = None
+
         self.__mock_company_repository_instance.create.return_value = (
             self.__mock_company
         )
@@ -68,8 +70,6 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
         )
 
         self.__mock_async_session.__aenter__.assert_called_once()
-
-        self.__mock_async_session.commit.assert_awaited_once()
 
         self.__mock_company_repository_instance.create.assert_awaited_once()
 
@@ -109,6 +109,8 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
         self.__mock_async_session.__aenter__.assert_called_once()
 
         self.__mock_async_session.commit.assert_awaited_once()
+
+        self.__mock_async_session.refresh.assert_awaited_once_with(company)
 
         self.__mock_company_repository_instance.update.assert_awaited_once()
 
@@ -181,6 +183,8 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
         self.__mock_company_repository_instance.delete.assert_awaited_once()
 
         mock_database.create_async_session.assert_called_once()
+
+        mock_copy.assert_called_once_with(company)
 
         self.assertEqual(company, self.__mock_company)
 

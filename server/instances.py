@@ -31,6 +31,26 @@ class ServerInstances:
         )
     )
 
+    api_user: Api = Api(
+        host=API_HOST,
+        port=API_PORT,
+        docs_url=DOCS_ENDPOINT_NAME,
+        redoc_url=REDOC_ENDPOINT_NAME,
+        title=SWAGGER_API_TITLE,
+        description=SWAGGER_API_DESCRIPTION,
+        version=SWAGGER_API_VERSION,
+    )
+
+    api_agent: Api = Api(
+        host=API_HOST,
+        port=API_PORT,
+        docs_url=DOCS_ENDPOINT_NAME,
+        redoc_url=REDOC_ENDPOINT_NAME,
+        title=SWAGGER_API_TITLE,
+        description=SWAGGER_API_DESCRIPTION,
+        version=SWAGGER_API_VERSION,
+    )
+
     api: Api = Api(
         host=API_HOST,
         port=API_PORT,
