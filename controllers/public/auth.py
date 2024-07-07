@@ -19,12 +19,16 @@ from utils.exceptions import (
 )
 
 
-router: APIRouter = APIRouter(
+agent_router: APIRouter = APIRouter(
+    prefix=AUTH_ENDPOINT_NAME, tags=[SWAGGER_AUTH_SESSION_TAG]
+)
+
+user_router: APIRouter = APIRouter(
     prefix=AUTH_ENDPOINT_NAME, tags=[SWAGGER_AUTH_SESSION_TAG]
 )
 
 
-@router.post("/agent")
+@agent_router.post("/agent")
 async def authenticate_agent(
     body: AuthBodyEntity,
 ) -> JSONSuccessResponse[AuthResultEntity]:
@@ -48,7 +52,7 @@ async def authenticate_agent(
     return JSONSuccessResponse(content=auth_body)
 
 
-@router.put("/agent/refresh")
+@agent_router.put("/agent/refresh")
 async def refresh_agent_authencation(
     body: AuthRefreshBodyEntity,
 ) -> JSONSuccessResponse[AuthRefreshResultEntity]:
@@ -66,7 +70,7 @@ async def refresh_agent_authencation(
         return JSONSuccessResponse(content=auth_body)
 
 
-@router.post("/user")
+@user_router.post("/user")
 async def authenticate_user(
     body: AuthBodyEntity,
 ) -> JSONSuccessResponse[AuthResultEntity]:
@@ -90,7 +94,7 @@ async def authenticate_user(
     return JSONSuccessResponse(content=auth_body)
 
 
-@router.put("/user/refresh")
+@user_router.put("/user/refresh")
 async def refresh_user_authencation(
     body: AuthRefreshBodyEntity,
 ) -> JSONSuccessResponse[AuthRefreshResultEntity]:
@@ -108,4 +112,6 @@ async def refresh_user_authencation(
         return JSONSuccessResponse(content=auth_body)
 
 
-ServerInstances.general_api.include_router(router)
+ServerInstances.agent_api.include_router(agent_router)
+
+ServerInstances.user_api.include_router(user_router)

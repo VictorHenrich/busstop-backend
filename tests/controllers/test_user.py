@@ -14,7 +14,7 @@ class UserControllerTestCase(TestCase):
         token: str = ""
 
         self.__client: TestClient = TestClient(
-            ServerInstances.api, headers={"Authorization": f"Bearer {token}"}
+            ServerInstances.user_api, headers={"Authorization": f"Bearer {token}"}
         )
 
     def test_create_user(self) -> None:

@@ -14,7 +14,7 @@ class CompanyControllerTestCase(TestCase):
         token: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4N2JhZGE0OS04NDFkLTQ0MDUtYjVkZi1iYmY0NmRjNTQxMjAiLCJleHAiOjE3MjAyNzY0MDksImlzX3JlZnJlc2giOnRydWUsImNvbXBhbnlfdXVpZCI6IjQzNDBkYzQ4LTVmMDQtNDIzMS05YjgyLWMzZjUzMjNjMDc3YSJ9.gxO1fRlohGpohTf4G7Wei3voum61g1lwcmkLnUbjnk4"
 
         self.__client: TestClient = TestClient(
-            ServerInstances.api, headers={"Authorization": f"Bearer {token}"}
+            ServerInstances.agent_api, headers={"Authorization": f"Bearer {token}"}
         )
 
     def test_find_company(self) -> None:

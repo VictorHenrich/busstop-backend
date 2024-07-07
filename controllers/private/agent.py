@@ -7,12 +7,12 @@ from services.agent import AgentService
 from models import Agent, Company
 from utils.responses import JSONSuccessResponse
 from utils.entities import AgentBodyEntity, AgentEntity
-from utils.constants import AGENT_ENDPOINT_NAME, SWAGGER_AGENT_SESSION_TAG
+from utils.constants import PROFILE_ENDPOINT_NAME, SWAGGER_PROFILE_SESSION_TAG
 from utils.functions import get_agent_entity, handle_agent_body
 
 
 router: APIRouter = APIRouter(
-    prefix=AGENT_ENDPOINT_NAME, tags=[SWAGGER_AGENT_SESSION_TAG]
+    prefix=PROFILE_ENDPOINT_NAME, tags=[SWAGGER_PROFILE_SESSION_TAG]
 )
 
 

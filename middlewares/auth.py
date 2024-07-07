@@ -7,7 +7,7 @@ from models import Agent, User
 from services.auth import AuthService
 from utils.functions import validate_middleware_request
 from utils.responses import JSONUnauthorizedResponse
-from utils.constants import AGENT_PUBLIC_ROUTES, USER_PRIVATE_ROUTES
+from utils.constants import AGENT_PUBLIC_ROUTES, USER_PUBLIC_ROUTES
 
 
 @ServerInstances.agent_api.middleware("http")
@@ -44,7 +44,7 @@ async def verify_user_authentication(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ):
     verify_request = validate_middleware_request(
-        request, call_next, private_routes=USER_PRIVATE_ROUTES
+        request, call_next, private_routes=USER_PUBLIC_ROUTES
     )
 
     if await anext(verify_request):

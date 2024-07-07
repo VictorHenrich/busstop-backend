@@ -15,6 +15,10 @@ from utils.constants import (
     SWAGGER_API_DESCRIPTION,
     SWAGGER_API_TITLE,
     SWAGGER_API_VERSION,
+    SWAGGER_AGENT_API_TITLE,
+    SWAGGER_USER_API_TITLE,
+    SWAGGER_AGENT_API_DESCRIPTION,
+    SWAGGER_USER_API_DESCRIPTION,
 )
 
 
@@ -36,8 +40,8 @@ class ServerInstances:
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,
         redoc_url=REDOC_ENDPOINT_NAME,
-        title=SWAGGER_API_TITLE,
-        description=SWAGGER_API_DESCRIPTION,
+        title=SWAGGER_USER_API_TITLE,
+        description=SWAGGER_USER_API_DESCRIPTION,
         version=SWAGGER_API_VERSION,
     )
 
@@ -46,8 +50,8 @@ class ServerInstances:
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,
         redoc_url=REDOC_ENDPOINT_NAME,
-        title=SWAGGER_API_TITLE,
-        description=SWAGGER_API_DESCRIPTION,
+        title=SWAGGER_AGENT_API_TITLE,
+        description=SWAGGER_AGENT_API_DESCRIPTION,
         version=SWAGGER_API_VERSION,
     )
 

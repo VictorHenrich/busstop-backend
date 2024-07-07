@@ -6,12 +6,12 @@ from services.user import UserService
 from models import User
 from utils.responses import JSONSuccessResponse
 from utils.entities import UserBodyEntity, UserEntity
-from utils.constants import USER_ENDPOINT_NAME, SWAGGER_USER_SESSION_TAG
+from utils.constants import PROFILE_ENDPOINT_NAME, SWAGGER_PROFILE_SESSION_TAG
 from utils.functions import get_user_entity, handle_user_body
 
 
 router: APIRouter = APIRouter(
-    prefix=USER_ENDPOINT_NAME, tags=[SWAGGER_USER_SESSION_TAG]
+    prefix=PROFILE_ENDPOINT_NAME, tags=[SWAGGER_PROFILE_SESSION_TAG]
 )
 
 
