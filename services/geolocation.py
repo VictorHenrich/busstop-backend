@@ -91,7 +91,7 @@ class GeoLocationService:
     async def find_address(
         self, address_description: str, region: str = "BR"
     ) -> Sequence[Point]:
-        url: str = f"{GOOGLE_API_URL}/api/geocode/json"
+        url: str = f"{GOOGLE_API_URL}/geocode/json"
 
         params: DictType = {
             "key": GOOGLE_API_KEY,
