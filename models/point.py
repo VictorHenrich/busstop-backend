@@ -30,6 +30,8 @@ class Point(common.BaseModel):
 
     longitude: Mapped[str] = mapped_column(nullable=False)
 
+    place_id: Mapped[str]
+
     company: Mapped["Company"] = relationship(back_populates="points")
 
     routes: Mapped[List["RoutePoint"]] = relationship(back_populates="point")

@@ -40,6 +40,8 @@ class PointCreationProps(AbstractBaseEntity):
 
     company: Company
 
+    place_id: Optional[str] = None
+
 
 class PointUpdateProps(AbstractBaseEntity):
     uuid: str
@@ -61,6 +63,8 @@ class PointUpdateProps(AbstractBaseEntity):
     longitude: str
 
     instance: Optional[Point] = None
+
+    place_id: Optional[str] = None
 
 
 class PointExclusionProps(AbstractBaseEntity):
@@ -100,6 +104,7 @@ class PointService:
         address_number: str,
         latitude: str,
         longitude: str,
+        place_id: Optional[str] = None,
         company_instance: Optional[Company] = None,
         company_uuid: Optional[str] = None,
     ) -> Optional[Point]:
@@ -119,6 +124,7 @@ class PointService:
                 address_number=address_number,
                 latitude=latitude,
                 longitude=longitude,
+                place_id=place_id,
                 company=company,
             )
 
@@ -139,6 +145,7 @@ class PointService:
         address_number: str,
         latitude: str,
         longitude: str,
+        place_id: Optional[str] = None,
         point_instance: Optional[Point] = None,
     ) -> Optional[Point]:
         uuid: str = point_uuid
@@ -161,6 +168,7 @@ class PointService:
                 address_number=address_number,
                 latitude=latitude,
                 longitude=longitude,
+                place_id=place_id,
                 uuid=uuid,
             )
 

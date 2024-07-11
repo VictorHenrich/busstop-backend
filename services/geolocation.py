@@ -61,6 +61,8 @@ class GeoLocationService:
 
         point.longitude = str(geometry["lng"])
 
+        point.place_id = location["place_id"]
+
         return point
 
     def __get_distance_data(self, element: DictType) -> DictType:

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime, time
 
@@ -45,6 +45,8 @@ class PointBodyEntity(BaseModel):
     latitude: str
 
     longitude: str
+
+    place_id: Optional[str] = None
 
 
 class PointEntity(PointBodyEntity, UUIDEntity):

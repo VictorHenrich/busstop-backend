@@ -33,6 +33,8 @@ class IPointCreateRepository(Protocol):
 
     longitude: str
 
+    place_id: Optional[str]
+
 
 class IPointUpdateRepository(Protocol):
     uuid: str
@@ -52,6 +54,8 @@ class IPointUpdateRepository(Protocol):
     latitude: str
 
     longitude: str
+
+    place_id: Optional[str]
 
     instance: Optional[Point] = None
 
