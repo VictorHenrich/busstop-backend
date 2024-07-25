@@ -30,6 +30,7 @@ async def find_address(
             address_number=point.address_number,
             latitude=point.latitude,
             longitude=point.longitude,
+            place_id=point.place_id,
         )
         for point in points
     ]

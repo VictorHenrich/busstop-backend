@@ -13,4 +13,15 @@ class TransportModelType(Enum):
     TRANSIT = "transit"
 
 
+class VehicleType(Enum):
+    BUS = "bus"
+    CAR = "car"
+
+
+class DatabaseDialectType(Enum):
+    POSTGRESQL = "postgresql"
+
+    MYSQL = "mysql"
+
+
 DictType: TypeAlias = Mapping[DPT, DVT]

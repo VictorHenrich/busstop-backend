@@ -35,48 +35,41 @@ class BaseRepository(ABC, Generic[BST]):
 
 
 class ICreateRepository(Protocol, Generic[RPT, RRT]):
-    def create(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
-        ...
+    def create(self, props: RPT) -> Union[Awaitable[RRT], RRT]: ...
 
 
 class IUpdateRepository(Protocol, Generic[RPT, RRT]):
-    def update(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
-        ...
+    def update(self, props: RPT) -> Union[Awaitable[RRT], RRT]: ...
 
 
 class IDeleteRepository(Protocol, Generic[RPT, RRT]):
-    def delete(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
-        ...
+    def delete(self, props: RPT) -> Union[Awaitable[RRT], RRT]: ...
 
 
 class IFindRepository(Protocol, Generic[RPT, RRT]):
-    def find(self, props: RPT) -> Union[Awaitable[Optional[RRT]], Optional[RRT]]:
-        ...
+    def find(self, props: RPT) -> Union[Awaitable[Optional[RRT]], Optional[RRT]]: ...
 
 
 class ICreateManyRepository(Protocol, Generic[RPT, RRT]):
-    def create_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
-        ...
+    def create_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]: ...
 
 
 class IUpdateManyRepository(Protocol, Generic[RPT, RRT]):
-    def update_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
-        ...
+    def update_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]: ...
 
 
 class IDeleteManyRepository(Protocol, Generic[RPT, RRT]):
-    def delete_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
-        ...
+    def delete_many(self, props: RPT) -> Union[Awaitable[RRT], RRT]: ...
 
 
 class IFindManyRepository(Protocol, Generic[RPT, RRT]):
-    def find_many(self, props: RPT) -> Union[Awaitable[Sequence[RRT]], Sequence[RRT]]:
-        ...
+    def find_many(
+        self, props: RPT
+    ) -> Union[Awaitable[Sequence[RRT]], Sequence[RRT]]: ...
 
 
 class IAuthRepository(Protocol, Generic[RPT, RRT]):
-    def auth(self, props: RPT) -> Union[Awaitable[RRT], RRT]:
-        ...
+    def auth(self, props: RPT) -> Union[Awaitable[RRT], RRT]: ...
 
 
 class AbstractBaseEntity(BaseModel, ABC):

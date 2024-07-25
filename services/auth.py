@@ -68,9 +68,9 @@ class AuthService:
 
     async def auth_agent(self, email: str, password: str) -> AuthResult:
         async with database.create_async_session() as session:
-            agent_repository: IAuthRepository[
-                IAgentAuthRepository, Agent
-            ] = AgentRepository(session)
+            agent_repository: IAuthRepository[IAgentAuthRepository, Agent] = (
+                AgentRepository(session)
+            )
 
             agent_props: IAgentAuthRepository = AgentAuthProps(
                 email=email, password=password
@@ -107,9 +107,9 @@ class AuthService:
 
     async def auth_user(self, email: str, password: str) -> AuthResult:
         async with database.create_async_session() as session:
-            user_repository: IAuthRepository[
-                IUserAuthRepository, User
-            ] = UserRepository(session)
+            user_repository: IAuthRepository[IUserAuthRepository, User] = (
+                UserRepository(session)
+            )
 
             user_props: IUserAuthRepository = UserAuthProps(
                 email=email, password=password

@@ -91,9 +91,9 @@ class CompanyService:
 
     async def find_company(self, company_uuid: str) -> Company:
         async with database.create_async_session() as session:
-            company_repository: IFindRepository[
-                ICompanyFindRepository, Company
-            ] = CompanyRepository(session)
+            company_repository: IFindRepository[ICompanyFindRepository, Company] = (
+                CompanyRepository(session)
+            )
 
             return await self.__find_company_by_id(company_uuid, company_repository)
 

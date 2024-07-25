@@ -138,10 +138,10 @@ class GeolocationServiceTestCase(IsolatedAsyncioTestCase):
 
         geolocation_service: GeoLocationService = GeoLocationService()
 
-        distances: Sequence[
-            Sequence[DictType]
-        ] = await geolocation_service.calculate_distance(
-            origin, destiny, transport_mode=TransportModelType.WALKING
+        distances: Sequence[Sequence[DictType]] = (
+            await geolocation_service.calculate_distance(
+                origin, destiny, transport_mode=TransportModelType.WALKING
+            )
         )
 
         logging.info(f"Located Distances: {distances}")

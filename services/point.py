@@ -1,5 +1,6 @@
 from typing import Optional, Sequence
 from copy import copy
+from pyspark.sql import SparkSession, DataFrame
 
 from models import Company, Point, database
 from repositories.point import (
@@ -11,6 +12,8 @@ from repositories.point import (
     IPointFindManyRepository,
 )
 from services.company import CompanyService
+from services.geolocation import GeoLocationService
+from utils.spark import SparkUtils
 from utils.patterns import (
     AbstractBaseEntity,
     ICreateRepository,
@@ -84,6 +87,8 @@ class PointListingProps(AbstractBaseEntity):
 class PointService:
     def __init__(self) -> None:
         self.__company_service: CompanyService = CompanyService()
+
+        self.__geolocation_service: GeoLocationService = GeoLocationService()
 
     async def __get_company(
         self, company_uuid: Optional[str], company_instance: Optional[Company]
@@ -196,9 +201,9 @@ class PointService:
 
     async def find_point(self, point_uuid: str) -> Optional[Point]:
         async with database.create_async_session() as session:
-            point_repository: IFindRepository[
-                IPointFindRepository, Point
-            ] = PointRepository(session)
+            point_repository: IFindRepository[IPointFindRepository, Point] = (
+                PointRepository(session)
+            )
 
             point_props: IPointFindRepository = PointCaptureProps(uuid=point_uuid)
 
@@ -211,9 +216,9 @@ class PointService:
         company_uuid: Optional[str] = None,
     ) -> Sequence[Point]:
         async with database.create_async_session() as session:
-            point_repository: IFindManyRepository[
-                IPointFindManyRepository, Point
-            ] = PointRepository(session)
+            point_repository: IFindManyRepository[IPointFindManyRepository, Point] = (
+                PointRepository(session)
+            )
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 
@@ -222,3 +227,36 @@ class PointService:
             )
 
             return await point_repository.find_many(point_props)
+
+    async def find_points_closer(
+        self, origin: Point, distance: float = 0, company_uuids: Sequence[str] = []
+    ):
+        spark_session: SparkSession = SparkUtils.create_session_for_database(
+            "PointCloserSpark"
+        )
+
+        spark_session.createDataFrame([["a", 1], ["b", 2], ["c", 3]]).show()
+
+        spark_session.stop()
+
+        # point_dataframe: DataFrame = SparkUtils.create_dataframe_for_table(
+        #     database=database, table=Point, spark_session=spark_session
+        # )
+
+        # company_dataframe: DataFrame = SparkUtils.create_dataframe_for_table(
+        #     database=database, table=Company, spark_session=spark_session
+        # )
+
+        # company_dataframe = company_dataframe.filter(
+        #     company_dataframe["uuid"].isin(company_uuids)
+        # )
+
+        # point_company_dataframe = point_dataframe.join(
+        #     company_dataframe, point_dataframe["company_id"] == company_dataframe["id"]
+        # )
+
+        # point_company_dataframe.show()
+
+        # spark_session.stop()
+
+        return []

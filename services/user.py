@@ -45,9 +45,9 @@ class UserCaptureProps(AbstractBaseEntity):
 class UserService:
     async def create_user(self, name: str, email: str, password: str) -> User:
         async with database.create_async_session() as session:
-            user_repository: ICreateRepository[
-                IUserCreateRepository, User
-            ] = UserRepository(session)
+            user_repository: ICreateRepository[IUserCreateRepository, User] = (
+                UserRepository(session)
+            )
 
             user_creation_props: IUserCreateRepository = UserCreationProps(
                 name=name, email=email, password=password
@@ -103,9 +103,9 @@ class UserService:
 
     async def find_user(self, user_uuid: str) -> User:
         async with database.create_async_session() as session:
-            user_repository: IFindRepository[
-                IUserFindRepository, Optional[User]
-            ] = UserRepository(session)
+            user_repository: IFindRepository[IUserFindRepository, Optional[User]] = (
+                UserRepository(session)
+            )
 
             user_capture_props: IUserFindRepository = UserCaptureProps(uuid=user_uuid)
 

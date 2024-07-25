@@ -3,7 +3,7 @@ from fastapi import FastAPI
 import uvicorn
 
 
-class Api(FastAPI):
+class ServerApi(FastAPI):
     def __init__(
         self, host: str, port: Union[int, str], *args: Any, **kwargs: Any
     ) -> None:

@@ -102,6 +102,7 @@ class PointServiceTestCase(IsolatedAsyncioTestCase):
             address_neighborhood=self.__mock_point.address_neighborhood,
             address_street=self.__mock_point.address_street,
             address_number=self.__mock_point.address_number,
+            address_zip_code=self.__mock_point.address_zip_code,
             latitude=self.__mock_point.latitude,
             longitude=self.__mock_point.longitude,
             company_uuid=self.__mock_company.uuid,
@@ -146,6 +147,7 @@ class PointServiceTestCase(IsolatedAsyncioTestCase):
             address_neighborhood=self.__mock_point.address_neighborhood,
             address_street=self.__mock_point.address_street,
             address_number=self.__mock_point.address_number,
+            address_zip_code=self.__mock_point.address_zip_code,
             latitude=self.__mock_point.latitude,
             longitude=self.__mock_point.longitude,
             point_uuid=self.__mock_point.uuid,
@@ -275,3 +277,8 @@ class PointServiceTestCase(IsolatedAsyncioTestCase):
         mock_point_repository_class.assert_called_once()
 
         self.assertSequenceEqual(point, mock_points)
+
+    async def test_find_points_closer(self) -> None:
+        point_service: PointService = PointService()
+
+        points: Sequence[Point] = await point_service.find_points_closer(Mock(), 0, [])

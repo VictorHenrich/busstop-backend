@@ -1,5 +1,6 @@
-from server.api import Api
-from server.database import Databases, Database, DatabaseDialects
+from server.api import ServerApi
+from server.database import ServerDatabases, ServerDatabase
+from utils.types import DatabaseDialectType
 from utils.constants import (
     API_HOST,
     API_PORT,
@@ -23,19 +24,19 @@ from utils.constants import (
 
 
 class ServerInstances:
-    databases: Databases = Databases(
-        Database(
+    databases: ServerDatabases = ServerDatabases(
+        ServerDatabase(
             host=DATABASE_HOST,
             port=DATABASE_PORT,
             dbname=DATABASE_DBNAME,
             username=DATABASE_USERNAME,
             password=DATABASE_PASSWORD,
-            dialect=DatabaseDialects(DATABASE_DIALECT),
+            dialect=DatabaseDialectType(DATABASE_DIALECT),
             instance_name=DATABASE_INSTANCE_NAME,
         )
     )
 
-    user_api: Api = Api(
+    user_api: ServerApi = ServerApi(
         host=API_HOST,
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,
@@ -45,7 +46,7 @@ class ServerInstances:
         version=SWAGGER_API_VERSION,
     )
 
-    agent_api: Api = Api(
+    agent_api: ServerApi = ServerApi(
         host=API_HOST,
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,
@@ -55,7 +56,7 @@ class ServerInstances:
         version=SWAGGER_API_VERSION,
     )
 
-    general_api: Api = Api(
+    general_api: ServerApi = ServerApi(
         host=API_HOST,
         port=API_PORT,
         docs_url=DOCS_ENDPOINT_NAME,

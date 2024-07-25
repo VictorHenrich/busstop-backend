@@ -65,9 +65,9 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
 
         auth_service: AuthService = AuthService()
 
-        token_data: DictType[
-            Literal["token", "refresh_token"], str
-        ] = await auth_service.auth_agent(email="", password="")
+        token_data: DictType[Literal["token", "refresh_token"], str] = (
+            await auth_service.auth_agent(email="", password="")
+        )
 
         logging.info(f"Token Data: {token_data}")
 
@@ -172,7 +172,9 @@ class AuthServiceTestCase(IsolatedAsyncioTestCase):
     async def test_refresh_token(
         self, mock_agent_service_class: Mock, mock_crypt_utils_class: Mock
     ) -> None:
-        token: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZ2VudF91dWlkIjoiNmRmOTdiN2QtMmJlYi00ZDYwLWFlNzUtYjc0MmFjM2RmMTExIiwiY29tcGFueV91dWlkIjoiNmRmOTdiN2QtMmJlYi00ZDYwLWFlNzUtYjc0MmFjM2RmNjhhIiwiZXhwIjoxNzE5NjgyODkzLCJpc19yZWZyZXNoIjpmYWxzZX0.uKR-vc7BbOnUZIbcqp2oKnKU5-D7GjKTLCXANmJVOkc"
+        token: str = (
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZ2VudF91dWlkIjoiNmRmOTdiN2QtMmJlYi00ZDYwLWFlNzUtYjc0MmFjM2RmMTExIiwiY29tcGFueV91dWlkIjoiNmRmOTdiN2QtMmJlYi00ZDYwLWFlNzUtYjc0MmFjM2RmNjhhIiwiZXhwIjoxNzE5NjgyODkzLCJpc19yZWZyZXNoIjpmYWxzZX0.uKR-vc7BbOnUZIbcqp2oKnKU5-D7GjKTLCXANmJVOkc"
+        )
 
         mock_crypt_utils_class.Jwt.decode_token.return_value = Mock(
             agent_uuid=self.__mock_agent.uuid,

@@ -1,5 +1,4 @@
 from typing import Any, Tuple, Type, List, Union
-from enum import Enum
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm.session import sessionmaker, Session
@@ -10,23 +9,17 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from utils.types import DictType
+from utils.types import DictType, DatabaseDialectType
 
 
-class DatabaseDialects(Enum):
-    POSTGRESQL = "postgresql"
-
-    MYSQL = "mysql"
-
-
-class Database:
+class ServerDatabase:
     _mapped_dialects = {
-        DatabaseDialects.POSTGRESQL: {
+        DatabaseDialectType.POSTGRESQL: {
             "name": "postgresql",
             "default": "psycopg2",
             "async": "asyncpg",
         },
-        DatabaseDialects.MYSQL: {
+        DatabaseDialectType.MYSQL: {
             "name": "mysql",
             "default": "PyMySQL",
             "async": "aiomysql",
@@ -40,9 +33,9 @@ class Database:
         dbname: str,
         username: str,
         password: str,
-        dialect: DatabaseDialects,
+        dialect: DatabaseDialectType,
     ) -> Tuple[str, str]:
-        dialect_data: DictType[str, str] = Database._mapped_dialects[dialect]
+        dialect_data: DictType[str, str] = ServerDatabase._mapped_dialects[dialect]
 
         url: str = f"://{username}:{password}@{host}:{port}/{dbname}"
 
@@ -65,16 +58,16 @@ class Database:
         dbname: str,
         username: str,
         password: str,
-        dialect: DatabaseDialects,
+        dialect: DatabaseDialectType,
         instance_name: str = "main",
     ) -> None:
-        url, url_async = self.__create_url(
+        self.__url, self.__async_url = self.__create_url(
             host, port, dbname, username, password, dialect
         )
 
-        self.__engine: Engine = create_engine(url)
+        self.__engine: Engine = create_engine(self.__url)
 
-        self.__async_engine: AsyncEngine = create_async_engine(url_async)
+        self.__async_engine: AsyncEngine = create_async_engine(self.__async_url)
 
         self.__Base: Type[DeclarativeBase] = self.__create_base()
 
@@ -95,6 +88,14 @@ class Database:
     @property
     def instance_name(self) -> str:
         return self.__instance_name
+
+    @property
+    def url(self) -> str:
+        return self.__url
+
+    @property
+    def async_url(self) -> str:
+        return self.__async_url
 
     def create_session(self, **kwargs: Any) -> Session:
         return sessionmaker(self.__engine, class_=Session, **kwargs)()
@@ -117,14 +118,14 @@ class Database:
             await conn.run_sync(self.__Base.metadata.drop_all)
 
 
-class Databases:
-    def __init__(self, *bases: Database) -> None:
-        self.__bases: List[Database] = list(bases)
+class ServerDatabases:
+    def __init__(self, *bases: ServerDatabase) -> None:
+        self.__bases: List[ServerDatabase] = list(bases)
 
-    def insert_database(self, database: Database) -> None:
+    def insert_database(self, database: ServerDatabase) -> None:
         self.__bases.append(database)
 
-    def select(self, instance_name: str = "main") -> Database:
+    def select(self, instance_name: str = "main") -> ServerDatabase:
         for base in self.__bases:
             if instance_name == base.instance_name:
                 return base

@@ -3,10 +3,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 from uuid import uuid4
 
 from server.instances import ServerInstances
-from server.database import Database
+from server.database import ServerDatabase
 from utils.constants import DATABASE_INSTANCE_NAME
 
-database: Database = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
+database: ServerDatabase = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
 
 
 class BaseModel(database.Base):

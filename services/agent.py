@@ -149,9 +149,9 @@ class AgentService:
 
     async def find_agent(self, agent_uuid: str) -> Agent:
         async with database.create_async_session() as session:
-            agent_repository: IFindRepository[
-                IAgentFindRepository, Agent
-            ] = AgentRepository(session)
+            agent_repository: IFindRepository[IAgentFindRepository, Agent] = (
+                AgentRepository(session)
+            )
 
             agent_props: IAgentFindRepository = AgentCaptureProps(uuid=agent_uuid)
 
@@ -168,9 +168,9 @@ class AgentService:
         company_instance: Optional[Company] = None,
     ) -> Sequence[Agent]:
         async with database.create_async_session() as session:
-            agent_repository: IFindManyRepository[
-                IAgentFindManyRepository, Agent
-            ] = AgentRepository(session)
+            agent_repository: IFindManyRepository[IAgentFindManyRepository, Agent] = (
+                AgentRepository(session)
+            )
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 

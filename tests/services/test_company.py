@@ -3,7 +3,7 @@ from unittest import IsolatedAsyncioTestCase
 from unittest.mock import patch, Mock, AsyncMock
 
 from models import Company
-from server.database import Database
+from server.database import ServerDatabase
 from repositories.company import CompanyRepository
 from services.company import (
     CompanyService,
@@ -52,7 +52,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
         ]
 
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
-    @patch("services.company.database", spec=Database)
+    @patch("services.company.database", spec=ServerDatabase)
     async def test_create(
         self, mock_database: Mock, mock_company_repository_class: Mock
     ) -> None:
@@ -80,7 +80,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
     @patch("services.company.CompanyCaptureProps", spec=CompanyCaptureProps)
     @patch("services.company.CompanyUpdateProps", spec=CompanyUpdateProps)
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
-    @patch("services.company.database", spec=Database)
+    @patch("services.company.database", spec=ServerDatabase)
     async def test_update(
         self,
         mock_database: Mock,
@@ -119,7 +119,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(company, self.__mock_company)
 
     # @patch("services.company.CompanyRepository", spec=CompanyRepository)
-    # @patch("services.company.database", spec=Database)
+    # @patch("services.company.database", spec=ServerDatabase)
     # async def test_update_error(
     #     self, mock_database: Mock, mock_company_repository_class: Mock
     # ) -> None:
@@ -151,7 +151,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
     @patch("services.company.CompanyCaptureProps", spec=CompanyCaptureProps)
     @patch("services.company.copy")
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
-    @patch("services.company.database", spec=Database)
+    @patch("services.company.database", spec=ServerDatabase)
     async def test_delete(
         self,
         mock_database: Mock,
@@ -189,7 +189,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(company, self.__mock_company)
 
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
-    @patch("services.company.database", spec=Database)
+    @patch("services.company.database", spec=ServerDatabase)
     async def test_find(
         self,
         mock_database: Mock,
@@ -214,7 +214,7 @@ class CompanyServiceTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(company, self.__mock_company)
 
     @patch("services.company.CompanyRepository", spec=CompanyRepository)
-    @patch("services.company.database", spec=Database)
+    @patch("services.company.database", spec=ServerDatabase)
     async def test_find_many(
         self,
         mock_database: Mock,

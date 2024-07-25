@@ -8,8 +8,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     from server.instances import ServerInstances
-    import controllers.public
-    import controllers.private
+    import controllers.http.public
+    import controllers.http.private
     import middlewares.auth
     from utils.constants import AGENT_ENDPOINT_NAME, USER_ENDPOINT_NAME
 

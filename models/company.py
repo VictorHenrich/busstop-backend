@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from models.point import Point
     from models.route import Route
     from models.agent import Agent
+    from models.vehicle import Vehicle
 
 
 class Company(common.BaseModel):
@@ -25,6 +26,8 @@ class Company(common.BaseModel):
     points: Mapped[List["Point"]] = relationship(back_populates="company")
 
     agents: Mapped[List["Agent"]] = relationship(back_populates="company")
+
+    vehicles: Mapped[List["Vehicle"]] = relationship(back_populates="company")
 
     def __repr__(self) -> str:
         return (

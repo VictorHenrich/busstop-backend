@@ -34,9 +34,9 @@ AGENT_PUBLIC_ROUTES: Sequence[str] = (
 USER_PUBLIC_ROUTES: Sequence[str] = AUTH_ENDPOINT_NAME
 
 SECRET_KEY: str = os.environ.get("SECRET_KEY", "")
-TOKEN_EXPIRATION_MINUTE: int = int(os.environ.get("TOKEN_EXPIRATION_MINUTE", ""))
+TOKEN_EXPIRATION_MINUTE: int = int(os.environ.get("TOKEN_EXPIRATION_MINUTE", "0"))
 REFRESH_TOKEN_EXPIRATION_MINUTE: int = int(
-    os.environ.get("REFRESH_TOKEN_EXPIRATION_MINUTE", "")
+    os.environ.get("REFRESH_TOKEN_EXPIRATION_MINUTE", "0")
 )
 PROFILE_ENDPOINT_NAME: str = os.environ.get("PROFILE_ENDPOINT_NAME", "")
 
@@ -64,3 +64,7 @@ TYPE_ADDRESS_CITY: str = os.environ.get("TYPE_ADDRESS_CITY", "")
 TYPE_ADDRESS_NEIGHBORHOOD: str = os.environ.get("TYPE_ADDRESS_NEIGHBORHOOD", "")
 TYPE_ADDRESS_STREET: str = os.environ.get("TYPE_ADDRESS_STREET", "")
 TYPE_ADDRESS_NUMBER: str = os.environ.get("TYPE_ADDRESS_NUMBER", "")
+
+SPARK_JDBC_URL: str = os.environ.get("SPARK_JDBC_URL", "")
+
+BROKER_KAFKA_URL: str = os.environ.get("BROKER_KAFKA_URL", "localhost:9092")

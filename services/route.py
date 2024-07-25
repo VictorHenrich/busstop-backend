@@ -98,9 +98,9 @@ class RouteService:
     async def __find_route_by_uuid(
         self, route_uuid: str, session: AsyncSession
     ) -> Optional[Route]:
-        route_repository: IFindRepository[
-            IRouteFindRepository, Route
-        ] = RouteRepository(session)
+        route_repository: IFindRepository[IRouteFindRepository, Route] = (
+            RouteRepository(session)
+        )
 
         route_props: IRouteFindRepository = RouteCaptureProps(uuid=route_uuid)
 
@@ -116,9 +116,9 @@ class RouteService:
         company_instance: Optional[Company] = None,
     ) -> Sequence[Route]:
         async with database.create_async_session() as session:
-            route_repository: IFindManyRepository[
-                IRouteFindManyRepository, Route
-            ] = RouteRepository(session)
+            route_repository: IFindManyRepository[IRouteFindManyRepository, Route] = (
+                RouteRepository(session)
+            )
 
             company: Company = await self.__get_company(company_uuid, company_instance)
 

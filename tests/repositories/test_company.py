@@ -89,9 +89,9 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
 
         filter_props: Mock = Mock(uuid="")
 
-        company_repository: IFindRepository[
-            ICompanyFindRepository, Company
-        ] = CompanyRepository(self.__mock_session)
+        company_repository: IFindRepository[ICompanyFindRepository, Company] = (
+            CompanyRepository(self.__mock_session)
+        )
 
         company: Optional[Company] = await company_repository.find(filter_props)
 
@@ -112,9 +112,9 @@ class CompanyRepositoryTestCase(IsolatedAsyncioTestCase):
 
         self.__mock_session.scalars.return_value = mock_result_session
 
-        company_repository: IFindManyRepository[
-            ICompanyFindManyRepository, Company
-        ] = CompanyRepository(self.__mock_session)
+        company_repository: IFindManyRepository[ICompanyFindManyRepository, Company] = (
+            CompanyRepository(self.__mock_session)
+        )
 
         companies: Sequence[Company] = await company_repository.find_many(filter_props)
 
