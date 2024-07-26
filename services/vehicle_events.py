@@ -27,7 +27,7 @@ class VehicleEventsService:
             "longitude": longitude,
         }
 
-        url: str = f"{VEHICLE_ENDPOINT_NAME}/location"
+        url: str = f"{VEHICLE_ENDPOINT_NAME}/{vehicle_uuid}/location"
 
         connections: Sequence[WebSocket] = (
             ServerInstances.general_api.find_websocket_connections_by_url(url)
