@@ -6,7 +6,7 @@ from server.instances import ServerInstances
 from models import Vehicle
 from services.vehicle import VehicleService
 from utils.types import DictType
-from utils.constants import VEHICLE_EVENTS_ENDPOINT_NAME
+from utils.constants import VEHICLE_ENDPOINT_NAME
 
 
 class VehicleEventsService:
@@ -27,7 +27,7 @@ class VehicleEventsService:
             "longitude": longitude,
         }
 
-        url = f"{VEHICLE_EVENTS_ENDPOINT_NAME}/location"
+        url = f"{VEHICLE_ENDPOINT_NAME}/{vehicle_uuid}/position"
 
         connections: Sequence[WebSocket] = (
             ServerInstances.general_api.find_websocket_connections_by_url(url)
