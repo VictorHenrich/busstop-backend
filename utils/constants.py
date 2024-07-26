@@ -23,6 +23,10 @@ AUTH_ENDPOINT_NAME: str = os.environ.get("AUTH_ENDPOINT_NAME", "")
 DOCS_ENDPOINT_NAME: str = os.environ.get("DOCS_ENDPOINT_NAME", "")
 REDOC_ENDPOINT_NAME: str = os.environ.get("REDOC_ENDPOINT_NAME", "")
 INDEX_ENDPOINT_NAME: str = os.environ.get("INDEX_ENDPOINT_NAME", "")
+PROFILE_ENDPOINT_NAME: str = os.environ.get("PROFILE_ENDPOINT_NAME", "")
+VEHICLE_ENDPOINT_NAME: str = os.environ.get("VEHICLE_ENDPOINT_NAME", "")
+
+EVENTS_ENDPOINT_NAME: str = os.environ.get("EVENTS_ENDPOINT_NAME", "")
 
 
 AGENT_PUBLIC_ROUTES: Sequence[str] = (
@@ -38,7 +42,6 @@ TOKEN_EXPIRATION_MINUTE: int = int(os.environ.get("TOKEN_EXPIRATION_MINUTE", "0"
 REFRESH_TOKEN_EXPIRATION_MINUTE: int = int(
     os.environ.get("REFRESH_TOKEN_EXPIRATION_MINUTE", "0")
 )
-PROFILE_ENDPOINT_NAME: str = os.environ.get("PROFILE_ENDPOINT_NAME", "")
 
 SWAGGER_API_TITLE: str = os.environ.get("SWAGGER_API_TITLE", "")
 SWAGGER_AGENT_API_TITLE: str = os.environ.get("SWAGGER_AGENT_API_TITLE", "")
@@ -54,6 +57,7 @@ SWAGGER_COMPANY_SESSION_TAG: str = os.environ.get("SWAGGER_COMPANY_SESSION_TAG",
 SWAGGER_PROFILE_SESSION_TAG: str = os.environ.get("SWAGGER_PROFILE_SESSION_TAG", "")
 SWAGGER_AUTH_SESSION_TAG: str = os.environ.get("SWAGGER_AUTH_SESSION_TAG", "")
 SWAGGER_INDEX_SESSION_TAG: str = os.environ.get("SWAGGER_INDEX_SESSION_TAG", "")
+SWAGGER_EVENTS_SESSION_TAG: str = os.environ.get("SWAGGER_EVENTS_SESSION_TAG", "")
 
 GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
 GOOGLE_API_URL: str = os.environ.get("GOOGLE_API_URL", "")

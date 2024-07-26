@@ -10,6 +10,7 @@ if __name__ == "__main__":
     from server.instances import ServerInstances
     import controllers.http.public
     import controllers.http.private
+    import controllers.websocket
     import middlewares.auth
     from utils.constants import AGENT_ENDPOINT_NAME, USER_ENDPOINT_NAME
 

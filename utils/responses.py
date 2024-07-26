@@ -5,7 +5,7 @@ T = TypeVar("T", bound=Union[BaseModel, Sequence[BaseModel], None])
 
 
 class JSONSuccessResponse(BaseModel, Generic[T]):
-    content: Optional[T]
+    content: Optional[T] = None
 
 
 class JSONErrorResponse(BaseModel):

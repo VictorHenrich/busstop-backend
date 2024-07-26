@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic import BaseModel
 from datetime import datetime, time
 
@@ -117,3 +117,9 @@ class TokenDataEntity(BaseModel):
 
 class AgentTokenDataEntity(TokenDataEntity):
     company_uuid: str
+
+
+class VehiclePositionBodyEntity(BaseModel):
+    latitude: Union[str, float]
+
+    longitude: Union[str, float]
