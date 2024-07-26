@@ -15,6 +15,10 @@ class ServerApi(FastAPI):
 
         self.__websocket_connections: List[WebSocket] = []
 
+    @property
+    def websocket_connections(self) -> List[WebSocket]:
+        return self.__websocket_connections
+
     async def connect_websocket(self, websocket: WebSocket) -> None:
         await websocket.accept()
 
