@@ -14,5 +14,5 @@ async def on_connect(websocket: WebSocket, vehicle_uuid: str) -> None:
         while True:
             await websocket.receive()
 
-    except (WebSocketDisconnect, WebSocketException):
+    except (WebSocketDisconnect, WebSocketException, RuntimeError):
         await ServerInstances.general_api.disconnect_websocket(websocket)
