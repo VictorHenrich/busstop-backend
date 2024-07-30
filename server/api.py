@@ -25,9 +25,11 @@ class ServerApi(FastAPI):
         self.__websocket_connections.append(websocket)
 
     async def disconnect_websocket(self, websocket: WebSocket) -> None:
-        await websocket.close()
+        try:
+            await websocket.close()
 
-        self.__websocket_connections.remove(websocket)
+        finally:
+            self.__websocket_connections.remove(websocket)
 
     def find_websocket_connections_by_url(self, url: str) -> List[WebSocket]:
         return [
