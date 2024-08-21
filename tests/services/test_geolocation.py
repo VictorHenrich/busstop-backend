@@ -8,7 +8,7 @@ from models import Point
 from utils.types import DictType, TransportModelType
 
 
-class GeolocationServiceTestCase(IsolatedAsyncioTestCase):
+class GeolocationServiceOfflineTestCase(IsolatedAsyncioTestCase):
     def setUp(self) -> None:
         self.__mock_async_client_instance: AsyncMock = AsyncMock()
 
@@ -155,3 +155,7 @@ class GeolocationServiceTestCase(IsolatedAsyncioTestCase):
         self.assertTrue(len(distances) == total_rows)
 
         self.assertTrue(len(distances[0]) == total_elements)
+
+
+class GeolocationServiceOnlineTestCase(IsolatedAsyncioTestCase):
+    pass
