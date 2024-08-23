@@ -99,6 +99,7 @@ class CompanyRepository(
                     document_cnpj=props.document_cnpj,
                     email=props.email,
                 )
+                .returning(Company)
             )
 
             return await self.session.scalar(query)
@@ -110,7 +111,7 @@ class CompanyRepository(
             return props.instance
 
         else:
-            query: Delete = delete(Company).where(Company.uuid == props.uuid)
+            query = delete(Company).where(Company.uuid == props.uuid).returning(Company)
 
             return await self.session.scalar(query)
 

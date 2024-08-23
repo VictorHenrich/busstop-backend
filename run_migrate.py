@@ -3,18 +3,12 @@ import asyncio
 
 
 async def main(drop_all: bool = False) -> None:
-    from server.instances import ServerInstances
-    from server.database import ServerDatabase
-    from utils.constants import DATABASE_INSTANCE_NAME
-
     import models
 
-    database: ServerDatabase = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
-
     if drop_all:
-        await database.drop_all_async()
+        await models.database.drop_all_async()
 
-    await database.create_all_async()
+    await models.database.create_all_async()
 
 
 if __name__ == "__main__":

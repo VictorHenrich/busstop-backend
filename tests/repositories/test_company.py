@@ -142,6 +142,7 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
             fantasy_name="Nome Fantasia Teste",
             document_cnpj="00000000",
             email="teste@gmail.com",
+            instance=None,
         )
 
         return await repository.create(repository_params)
@@ -159,6 +160,7 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
             document_cnpj="00000000",
             email="alterado@gmail.com",
             uuid=company_uuid,
+            instance=None,
         )
 
         return await repository.update(repository_params)
@@ -170,7 +172,9 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
             CompanyRepository(session)
         )
 
-        repository_params: ICompanyDeleteRepository = Mock(uuid=company_uuid)
+        repository_params: ICompanyDeleteRepository = Mock(
+            uuid=company_uuid, instance=None
+        )
 
         return await repository.delete(repository_params)
 
@@ -246,13 +250,17 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
     async def test_crud(self) -> None:
         async with database.create_async_session() as session:
-            company: Company = await self.__create_company(session)
+            company: Optional[Company] = await self.__create_company(session)
 
             assert company is not None
+
+            await session.refresh(company)
 
             company = await self.__update_company(session, company.uuid)
 
             assert company is not None
+
+            await session.refresh(company)
 
             company, companies = await asyncio.gather(
                 self.__find_company(session, company.uuid),
@@ -267,4 +275,4 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
             assert company is not None
 
-            session.rollback()
+            await session.rollback()
