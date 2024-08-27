@@ -40,7 +40,7 @@ class IAgentUpdateRepository(Protocol):
     instance: Optional[Agent]
 
 
-class IAgentExclusionRepository(Protocol):
+class IAgentDeleteRepository(Protocol):
     uuid: str
     instance: Optional[Agent]
 
@@ -51,6 +51,8 @@ class IAgentFindRepository(Protocol):
 
 class IAgentFindManyRepository(Protocol):
     company: Company
+    page: int
+    limit: int
 
 
 class IAgentAuthRepository(Protocol):
@@ -63,7 +65,7 @@ class AgentRepository(
     BaseRepository[AsyncSession],
     ICreateRepository[IAgentCreateRepository, Optional[Agent]],
     IUpdateRepository[IAgentUpdateRepository, Optional[Agent]],
-    IDeleteRepository[IAgentExclusionRepository, Optional[Agent]],
+    IDeleteRepository[IAgentDeleteRepository, Optional[Agent]],
     IFindRepository[IAgentFindRepository, Agent],
     IFindManyRepository[IAgentFindManyRepository, Agent],
     IAuthRepository[IAgentAuthRepository, Agent],
@@ -115,7 +117,7 @@ class AgentRepository(
 
             return await self.session.scalar(query)
 
-    async def delete(self, props: IAgentExclusionRepository) -> Optional[Agent]:
+    async def delete(self, props: IAgentDeleteRepository) -> Optional[Agent]:
         if props.instance:
             await self.session.delete(props.instance)
 
@@ -141,6 +143,8 @@ class AgentRepository(
             .join(Company, Agent.company_id == Company.id)
             .options(joinedload(Agent.company))
             .where(Agent.company_id == props.company.id)
+            .offset(props.page)
+            .limit(props.limit)
         )
 
         return (await self.session.scalars(query)).all()

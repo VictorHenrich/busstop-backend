@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import asyncio
+import logging
 
 
 async def main(drop_all: bool = False) -> None:
@@ -13,5 +14,7 @@ async def main(drop_all: bool = False) -> None:
 
 if __name__ == "__main__":
     load_dotenv()
+
+    logging.basicConfig(level=logging.INFO)
 
     asyncio.run(main())

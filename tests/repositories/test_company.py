@@ -3,6 +3,7 @@ from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock, AsyncMock
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
+import logging
 
 from models import Company, database
 from repositories.company import (
@@ -189,7 +190,7 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
         return await repository.find(repository_params)
 
-    async def __find_many_company(
+    async def __find_companies(
         self, session: AsyncSession, limit: int, page: int
     ) -> Sequence[Company]:
         repository: IFindManyRepository[ICompanyFindManyRepository, Company] = (
@@ -198,13 +199,17 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
         repository_params: ICompanyFindManyRepository = Mock(limit=limit, page=page)
 
-        return await repository.find_many(repository_params)
+        companies: Sequence[Company] = await repository.find_many(repository_params)
+
+        logging.info(f"Companies: {companies}\n")
+
+        return companies
 
     async def test_find_many(self) -> None:
         limit: int = 10
 
         async with database.create_async_session() as session:
-            companies: Sequence[Company] = await self.__find_many_company(
+            companies: Sequence[Company] = await self.__find_companies(
                 session, limit=limit, page=0
             )
 
@@ -264,7 +269,7 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
             company, companies = await asyncio.gather(
                 self.__find_company(session, company.uuid),
-                self.__find_many_company(session, limit=10, page=0),
+                self.__find_companies(session, limit=10, page=0),
             )
 
             assert company is not None

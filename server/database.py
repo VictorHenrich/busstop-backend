@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
 )
+import logging
 
 from utils.types import DictType, DatabaseDialectType
 
@@ -111,10 +112,14 @@ class ServerDatabase:
 
     async def create_all_async(self) -> None:
         async with self.__async_engine.begin() as conn:
+            logging.warning(f"Creating all database tables")
+
             await conn.run_sync(self.__Base.metadata.create_all)
 
     async def drop_all_async(self) -> None:
         async with self.__async_engine.begin() as conn:
+            logging.warning(f"Deleting all database tables")
+
             await conn.run_sync(self.__Base.metadata.drop_all)
 
 

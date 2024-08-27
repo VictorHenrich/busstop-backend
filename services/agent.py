@@ -6,7 +6,7 @@ from repositories.agent import (
     AgentRepository,
     IAgentCreateRepository,
     IAgentUpdateRepository,
-    IAgentExclusionRepository,
+    IAgentDeleteRepository,
     IAgentFindRepository,
     IAgentFindManyRepository,
 )
@@ -135,10 +135,10 @@ class AgentService:
     ) -> Optional[Agent]:
         async with database.create_async_session() as session:
             agent_repository: IDeleteRepository[
-                IAgentExclusionRepository, Optional[Agent]
+                IAgentDeleteRepository, Optional[Agent]
             ] = AgentRepository(session)
 
-            agent_props: IAgentExclusionRepository = AgentExclusionProps(
+            agent_props: IAgentDeleteRepository = AgentExclusionProps(
                 uuid=agent_uuid, instance=agent_instance
             )
 
