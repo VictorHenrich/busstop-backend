@@ -43,15 +43,27 @@ class AsyncBaseRepositoryOnlineTestCase(IsolatedAsyncioTestCase, ABC):
                 self.create_company(session), self.create_user(session)
             )
 
+            await asyncio.gather(
+                session.refresh(self.__company), session.refresh(self.__user)
+            )
+
             self.__agent, self.__point, self.__vehicle = await asyncio.gather(
                 self.create_agent(session, self.__company),
                 self.create_point(session, self.__company),
                 self.create_vehicle(session, self.__company),
             )
 
-            self.__route = await self.create_route(
-                session, self.__company, (self.__point,)
+            await asyncio.gather(
+                session.refresh(self.__agent),
+                session.refresh(self.__point),
+                session.refresh(self.__vehicle),
             )
+
+            (self.__route,) = await asyncio.gather(
+                self.create_route(session, self.__company, (self.__point,))
+            )
+
+            await asyncio.gather(session.refresh(self.__route))
 
             await session.commit()
 
