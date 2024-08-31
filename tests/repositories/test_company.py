@@ -1,8 +1,6 @@
 from typing import Sequence, Optional
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock, AsyncMock
-from sqlalchemy.ext.asyncio import AsyncSession
-import asyncio
 import logging
 
 from models import Company, database
@@ -21,6 +19,7 @@ from utils.patterns import (
     IDeleteRepository,
     IFindManyRepository,
 )
+from .common import AsyncBaseRepositoryOnlineTestCase
 
 
 class CompanyRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
@@ -129,89 +128,22 @@ class CompanyRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
         self.assertSequenceEqual(companies, mock_companies)
 
 
-class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
-    def setUp(self) -> None:
-        self.__company_uuid: str = ""
-
-    async def __create_company(self, session: AsyncSession) -> Optional[Company]:
-        repository: ICreateRepository[ICompanyCreateRepository, Optional[Company]] = (
-            CompanyRepository(session)
-        )
-
-        repository_params: ICompanyCreateRepository = Mock(
-            company_name="Empresa Teste",
-            fantasy_name="Nome Fantasia Teste",
-            document_cnpj="00000000",
-            email="teste@gmail.com",
-            instance=None,
-        )
-
-        return await repository.create(repository_params)
-
-    async def __update_company(
-        self, session: AsyncSession, company_uuid: str
-    ) -> Optional[Company]:
-        repository: IUpdateRepository[ICompanyUpdateRepository, Optional[Company]] = (
-            CompanyRepository(session)
-        )
-
-        repository_params: ICompanyUpdateRepository = Mock(
-            company_name="Empresa Teste Alterada",
-            fantasy_name="Nome Fantasia Alterada",
-            document_cnpj="00000000",
-            email="alterado@gmail.com",
-            uuid=company_uuid,
-            instance=None,
-        )
-
-        return await repository.update(repository_params)
-
-    async def __delete_company(
-        self, session: AsyncSession, company_uuid: str
-    ) -> Optional[Company]:
-        repository: IDeleteRepository[ICompanyDeleteRepository, Optional[Company]] = (
-            CompanyRepository(session)
-        )
-
-        repository_params: ICompanyDeleteRepository = Mock(
-            uuid=company_uuid, instance=None
-        )
-
-        return await repository.delete(repository_params)
-
-    async def __find_company(
-        self, session: AsyncSession, company_uuid: str
-    ) -> Optional[Company]:
-        repository: IFindRepository[ICompanyFindRepository, Company] = (
-            CompanyRepository(session)
-        )
-
-        repository_params: ICompanyFindRepository = Mock(uuid=company_uuid)
-
-        return await repository.find(repository_params)
-
-    async def __find_companies(
-        self, session: AsyncSession, limit: int, page: int
-    ) -> Sequence[Company]:
-        repository: IFindManyRepository[ICompanyFindManyRepository, Company] = (
-            CompanyRepository(session)
-        )
-
-        repository_params: ICompanyFindManyRepository = Mock(limit=limit, page=page)
-
-        companies: Sequence[Company] = await repository.find_many(repository_params)
-
-        logging.info(f"Companies: {companies}\n")
-
-        return companies
-
+class CompanyRepositoryOnlineTestCase(AsyncBaseRepositoryOnlineTestCase):
     async def test_find_many(self) -> None:
         limit: int = 10
 
+        page: int = 0
+
         async with database.create_async_session() as session:
-            companies: Sequence[Company] = await self.__find_companies(
-                session, limit=limit, page=0
+            repository: IFindManyRepository[ICompanyFindManyRepository, Company] = (
+                CompanyRepository(session)
             )
+
+            repository_params: ICompanyFindManyRepository = Mock(limit=limit, page=page)
+
+            companies: Sequence[Company] = await repository.find_many(repository_params)
+
+            logging.info(f"Companies: {companies}\n")
 
             self.assertTrue(len(companies) > 0)
 
@@ -219,17 +151,31 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
     async def test_find(self):
         async with database.create_async_session() as session:
-            company: Optional[Company] = await self.__find_company(
-                session, self.__company_uuid
+            repository: IFindRepository[ICompanyFindRepository, Company] = (
+                CompanyRepository(session)
             )
+
+            repository_params: ICompanyFindRepository = Mock(uuid=self.company.uuid)
+
+            company: Optional[Company] = await repository.find(repository_params)
+
+            logging.info(f"Company Finded: {company}")
 
             self.assertIsNotNone(company)
 
     async def test_delete(self) -> None:
         async with database.create_async_session() as session:
-            company: Optional[Company] = await self.__delete_company(
-                session, self.__company_uuid
+            repository: IDeleteRepository[
+                ICompanyDeleteRepository, Optional[Company]
+            ] = CompanyRepository(session)
+
+            repository_params: ICompanyDeleteRepository = Mock(
+                uuid=self.company.uuid, instance=None
             )
+
+            company: Optional[Company] = await repository.delete(repository_params)
+
+            logging.info(f"Company Deleted: {company}")
 
             await session.commit()
 
@@ -237,9 +183,22 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
     async def test_update(self) -> None:
         async with database.create_async_session() as session:
-            company: Optional[Company] = await self.__update_company(
-                session, self.__company_uuid
+            repository: IUpdateRepository[
+                ICompanyUpdateRepository, Optional[Company]
+            ] = CompanyRepository(session)
+
+            repository_params: ICompanyUpdateRepository = Mock(
+                company_name="Empresa Teste Alterada",
+                fantasy_name="Nome Fantasia Alterada",
+                document_cnpj="00000000",
+                email="alterado@gmail.com",
+                uuid=self.company.uuid,
+                instance=None,
             )
+
+            company: Optional[Company] = await repository.update(repository_params)
+
+            logging.info(f"Company Updated: {company}")
 
             await session.commit()
 
@@ -247,37 +206,22 @@ class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
 
     async def test_create(self) -> None:
         async with database.create_async_session() as session:
-            company: Optional[Company] = await self.__create_company(session)
+            repository: ICreateRepository[
+                ICompanyCreateRepository, Optional[Company]
+            ] = CompanyRepository(session)
+
+            repository_params: ICompanyCreateRepository = Mock(
+                company_name="Empresa Teste",
+                fantasy_name="Nome Fantasia Teste",
+                document_cnpj="00000000",
+                email="teste@gmail.com",
+                instance=None,
+            )
+
+            company: Optional[Company] = await repository.create(repository_params)
+
+            logging.info(f"Company Created: {company}")
 
             await session.commit()
 
             self.assertIsNotNone(company)
-
-    async def test_crud(self) -> None:
-        async with database.create_async_session() as session:
-            company: Optional[Company] = await self.__create_company(session)
-
-            assert company is not None
-
-            await session.refresh(company)
-
-            company = await self.__update_company(session, company.uuid)
-
-            assert company is not None
-
-            await session.refresh(company)
-
-            company, companies = await asyncio.gather(
-                self.__find_company(session, company.uuid),
-                self.__find_companies(session, limit=10, page=0),
-            )
-
-            assert company is not None
-
-            assert len(companies) > 0
-
-            company = await self.__delete_company(session, company.uuid)
-
-            assert company is not None
-
-            await session.rollback()

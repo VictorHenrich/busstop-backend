@@ -1,11 +1,9 @@
 from typing import Optional, Sequence
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, Mock, patch
-from sqlalchemy.ext.asyncio import AsyncSession
-import asyncio
 import logging
 
-from models import Agent, Company, database
+from models import Agent, database
 from repositories.agent import (
     AgentRepository,
     IAgentCreateRepository,
@@ -24,6 +22,7 @@ from utils.patterns import (
     IFindManyRepository,
 )
 from utils.crypt import CryptUtils
+from .common import AsyncBaseRepositoryOnlineTestCase
 
 
 class AgentRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
@@ -173,199 +172,121 @@ class AgentRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(agents, self.__mock_agent)
 
 
-class AgentRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
-    def setUp(self) -> None:
-        self.__mock_company: Company = Company(
-            company_name="Empresa Teste",
-            fantasy_name="Nome Fantasia TESTE",
-            document_cnpj="00000000",
-            email="teste@gmail.com",
-        )
-
-        self.__agent_uuid: str = ""
-
-    async def __create_agent(self, session: AsyncSession) -> Optional[Agent]:
-        repository: ICreateRepository[IAgentCreateRepository, Optional[Agent]] = (
-            AgentRepository(session)
-        )
-
-        repository_params: IAgentCreateRepository = Mock(
-            email="usuario_teste_realizado@gmail.com",
-            password="1234",
-            company=self.__mock_company,
-        )
-
-        repository_params.name = "Usuário Teste"
-
-        agent: Optional[Agent] = await repository.create(repository_params)
-
-        logging.info(f"Agent Created: {agent}")
-
-        return agent
-
-    async def __update_agent(
-        self, session: AsyncSession, agent_uuid: str
-    ) -> Optional[Agent]:
-        repository: IUpdateRepository[IAgentUpdateRepository, Optional[Agent]] = (
-            AgentRepository(session)
-        )
-
-        repository_params: IAgentCreateRepository = Mock(
-            email="usuario_teste_alterado@gmail.com",
-            password="1234",
-            company=self.__mock_company,
-        )
-
-        repository_params.name = "Usuário Teste"
-
-        agent: Optional[Agent] = await repository.update(repository_params)
-
-        logging.info(f"Agent Updated: {agent}\n")
-
-        return agent
-
-    async def __delete_agent(
-        self, session: AsyncSession, agent_uuid: str
-    ) -> Optional[Agent]:
-        repository: IDeleteRepository[IAgentDeleteRepository, Optional[Agent]] = (
-            AgentRepository(session)
-        )
-
-        repository_params: IAgentCreateRepository = Mock(
-            uuid=agent_uuid,
-            instance=None,
-        )
-
-        agent: Optional[Agent] = await repository.delete(repository_params)
-
-        logging.info(f"Agent Deleted: {agent}\n")
-
-        return agent
-
-    async def __find_agent(
-        self, session: AsyncSession, agent_uuid: str
-    ) -> Optional[Agent]:
-        repository: IFindRepository[IAgentFindRepository, Optional[Agent]] = (
-            AgentRepository(session)
-        )
-
-        repository_params: IAgentCreateRepository = Mock(uuid=agent_uuid)
-
-        agent: Optional[Agent] = await repository.find(repository_params)
-
-        logging.info(f"Agent Finded: {agent}\n")
-
-        return agent
-
-    async def __find_agents(
-        self, session: AsyncSession, limit: int, page: int
-    ) -> Sequence[Agent]:
-        repository: IFindManyRepository[IAgentFindManyRepository, Optional[Agent]] = (
-            AgentRepository(session)
-        )
-
-        repository_params: IAgentCreateRepository = Mock(
-            company=self.__mock_company, limit=limit, page=page
-        )
-
-        agents: Sequence[Agent] = await repository.find_many(repository_params)
-
-        logging.info(f"Agensts Located: {agents}\n")
-
-        return agents
-
-    async def __auth_agent(
-        self, session: AsyncSession, email: str, password: str
-    ) -> Agent:
-        repository: IAuthRepository[IAgentAuthRepository, Optional[Agent]] = (
-            AgentRepository(session)
-        )
-
-        repository_params: IAgentCreateRepository = Mock(email=email, password=password)
-
-        agent: Agent = await repository.auth(repository_params)
-
-        logging.info(f"Agent Auth: {agent}\n")
-
-        return agent
-
+class AgentRepositoryOnlineTestCase(AsyncBaseRepositoryOnlineTestCase):
     async def test_create(self) -> None:
         async with database.create_async_session() as session:
-            agent: Optional[Agent] = await self.__create_agent(session)
+            repository: ICreateRepository[IAgentCreateRepository, Optional[Agent]] = (
+                AgentRepository(session)
+            )
 
-            await session.rollback()
+            repository_params: IAgentCreateRepository = Mock(
+                email="usuario_teste_novo@gmail.com",
+                password="1234",
+                company=self.company,
+            )
+
+            repository_params.name = "Usuário Teste"
+
+            agent: Optional[Agent] = await repository.create(repository_params)
+
+            logging.info(f"Agent Created: {agent}")
+
+            await session.commit()
 
             self.assertIsNotNone(agent)
 
     async def test_update(self) -> None:
         async with database.create_async_session() as session:
-            agent: Optional[Agent] = await self.__update_agent(
-                session, self.__agent_uuid
+            repository: IUpdateRepository[IAgentUpdateRepository, Optional[Agent]] = (
+                AgentRepository(session)
             )
 
-            await session.rollback()
+            repository_params: IAgentUpdateRepository = Mock(
+                email="usuario_teste_alterado@gmail.com",
+                password="1234",
+                uuid=self.agent.uuid,
+                company=self.company,
+            )
+
+            repository_params.name = "Usuário Teste"
+
+            agent: Optional[Agent] = await repository.update(repository_params)
+
+            logging.info(f"Agent Updated: {agent}\n")
+
+            await session.commit()
 
             self.assertIsNotNone(agent)
 
     async def test_delete(self) -> None:
         async with database.create_async_session() as session:
-            agent: Optional[Agent] = await self.__delete_agent(
-                session, self.__agent_uuid
+            repository: IDeleteRepository[IAgentDeleteRepository, Optional[Agent]] = (
+                AgentRepository(session)
             )
 
-            await session.rollback()
+            repository_params: IAgentDeleteRepository = Mock(
+                uuid=self.agent.uuid,
+                instance=None,
+            )
+
+            agent: Optional[Agent] = await repository.delete(repository_params)
+
+            logging.info(f"Agent Deleted: {agent}\n")
+
+            await session.commit()
 
             self.assertIsNotNone(agent)
 
     async def test_find(self) -> None:
         async with database.create_async_session() as session:
-            agent: Optional[Agent] = await self.__find_agent(session, self.__agent_uuid)
+            repository: IFindRepository[IAgentFindRepository, Optional[Agent]] = (
+                AgentRepository(session)
+            )
+
+            repository_params: IAgentFindRepository = Mock(uuid=self.agent.uuid)
+
+            agent: Optional[Agent] = await repository.find(repository_params)
+
+            logging.info(f"Agent Finded: {agent}\n")
 
             self.assertIsNotNone(agent)
 
     async def test_find_many(self) -> None:
-        async with database.create_async_session() as session:
-            agent: Sequence[Agent] = await self.__find_agents(session, limit=10, page=0)
+        limit: int = 0
 
-            self.assertTrue(agent)
+        page: int = 0
+
+        async with database.create_async_session() as session:
+            repository: IFindManyRepository[
+                IAgentFindManyRepository, Optional[Agent]
+            ] = AgentRepository(session)
+
+            repository_params: IAgentFindManyRepository = Mock(
+                company=self.company, limit=limit, page=page
+            )
+
+            agents: Sequence[Agent] = await repository.find_many(repository_params)
+
+            logging.info(f"Agensts Located: {agents}\n")
+
+            self.assertTrue(agents)
 
     async def test_auth(self) -> None:
-        username: str = ""
+        email: str = ""
 
         password: str = ""
 
         async with database.create_async_session() as session:
-            agent: Agent = await self.__auth_agent(
-                session, email=username, password=password
+            repository: IAuthRepository[IAgentAuthRepository, Optional[Agent]] = (
+                AgentRepository(session)
             )
+
+            repository_params: IAgentCreateRepository = Mock(
+                email=email, password=password
+            )
+
+            agent: Agent = await repository.auth(repository_params)
+
+            logging.info(f"Agent Auth: {agent}\n")
 
             self.assertIsNotNone(agent)
-
-    async def test_crud(self) -> None:
-        async with database.create_async_session() as session:
-            agent: Optional[Agent] = await self.__create_agent(session)
-
-            assert agent is not None
-
-            await session.refresh(agent)
-
-            agent = await self.__update_agent(session, agent.uuid)
-
-            assert agent is not None
-
-            await session.refresh(agent)
-
-            agent, agents = await asyncio.gather(
-                self.__find_agent(session, agent.uuid),
-                self.__find_agents(session, limit=10, page=0),
-            )
-
-            assert agent is not None
-
-            assert len(agents) > 0
-
-            agent = await self.__delete_agent(session, agent.uuid)
-
-            assert agent is not None
-
-            await session.rollback()
