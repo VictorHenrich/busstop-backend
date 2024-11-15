@@ -4,7 +4,7 @@ from httpx import Response
 import logging
 
 from server.instances import ServerInstances
-from utils.constants import AGENT_ENDPOINT_NAME
+from utils.config import AGENT_ENDPOINT_NAME
 from utils.entities import AgentBodyEntity
 from utils.types import DictType
 

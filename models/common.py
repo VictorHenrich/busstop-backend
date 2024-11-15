@@ -4,9 +4,9 @@ from uuid import uuid4
 
 from server.instances import ServerInstances
 from server.database import ServerDatabase
-from utils.constants import DATABASE_INSTANCE_NAME
+from utils.config import DATABASE_CURRENT_NAME
 
-database: ServerDatabase = ServerInstances.databases.select(DATABASE_INSTANCE_NAME)
+database: ServerDatabase = ServerInstances.databases.select(DATABASE_CURRENT_NAME)
 
 
 class BaseModel(database.Base):

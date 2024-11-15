@@ -6,7 +6,7 @@ from server.instances import ServerInstances
 from models import Vehicle
 from services.vehicle import VehicleService
 from utils.types import DictType
-from utils.constants import VEHICLE_ENDPOINT_NAME
+from utils.config import VEHICLE_ENDPOINT_NAME
 
 
 class VehicleEventsService:

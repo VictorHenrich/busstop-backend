@@ -1,4 +1,4 @@
-from typing import Optional, Sequence
+from typing import Coroutine, Optional, Sequence
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, Mock, patch
 import logging
@@ -13,6 +13,7 @@ from repositories.agent import (
     IAgentFindManyRepository,
     IAgentAuthRepository,
 )
+from tests.repositories.mocks import create_company
 from utils.patterns import (
     IAuthRepository,
     ICreateRepository,
@@ -22,7 +23,6 @@ from utils.patterns import (
     IFindManyRepository,
 )
 from utils.crypt import CryptUtils
-from .common import AsyncBaseRepositoryOnlineTestCase
 
 
 class AgentRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
@@ -172,7 +172,10 @@ class AgentRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
         self.assertEqual(agents, self.__mock_agent)
 
 
-class AgentRepositoryOnlineTestCase(AsyncBaseRepositoryOnlineTestCase):
+class AgentRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
+    async def asyncSetUp(self) -> None:
+        self.company: Company = create_company()
+
     async def test_create(self) -> None:
         async with database.create_async_session() as session:
             repository: ICreateRepository[IAgentCreateRepository, Optional[Agent]] = (

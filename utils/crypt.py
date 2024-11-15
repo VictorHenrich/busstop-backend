@@ -4,7 +4,7 @@ import jwt
 from datetime import datetime, timedelta, UTC
 
 from utils.entities import TokenDataEntity
-from utils.constants import SECRET_KEY
+from utils.config import SECRET_KEY
 from utils.types import DictType
 
 

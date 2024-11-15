@@ -3,7 +3,7 @@ from httpx import AsyncClient, Response
 import logging
 
 from models import Point
-from utils.constants import (
+from utils.config import (
     GOOGLE_API_URL,
     GOOGLE_API_KEY,
     TYPE_ADDRESS_NUMBER,

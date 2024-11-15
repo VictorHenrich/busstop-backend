@@ -4,7 +4,7 @@ from httpx import Response
 import logging
 
 from server.instances import ServerInstances
-from utils.constants import COMPANY_ENPOINT_NAME
+from utils.config import COMPANY_ENPOINT_NAME
 from utils.entities import CompanyBodyEntity
 from utils.types import DictType
 

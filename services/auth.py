@@ -8,7 +8,7 @@ from services.user import UserService
 from utils.entities import TokenDataEntity, AgentTokenDataEntity
 from utils.patterns import AbstractBaseEntity, IAuthRepository
 from utils.crypt import CryptUtils
-from utils.constants import TOKEN_EXPIRATION_MINUTE, REFRESH_TOKEN_EXPIRATION_MINUTE
+from utils.config import TOKEN_EXPIRATION_MINUTE, REFRESH_TOKEN_EXPIRATION_MINUTE
 from utils.exceptions import InvalidToken
 from utils.types import DictType
 

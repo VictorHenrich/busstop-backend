@@ -6,7 +6,7 @@ from services.user import UserService
 from models import User
 from utils.responses import JSONSuccessResponse
 from utils.entities import UserBodyEntity, UserEntity
-from utils.constants import PROFILE_ENDPOINT_NAME, SWAGGER_PROFILE_SESSION_TAG
+from utils.config import PROFILE_ENDPOINT_NAME, SWAGGER_PROFILE_SESSION_TAG
 from utils.functions import get_user_entity, handle_user_body
 
 

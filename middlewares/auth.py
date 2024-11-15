@@ -7,7 +7,7 @@ from models import Agent, User
 from services.auth import AuthService
 from utils.functions import validate_middleware_request
 from utils.responses import JSONUnauthorizedResponse
-from utils.constants import AGENT_PUBLIC_ROUTES, USER_PUBLIC_ROUTES
+from utils.config import AGENT_PUBLIC_ROUTES, USER_PUBLIC_ROUTES
 
 
 @ServerInstances.agent_api.middleware("http")

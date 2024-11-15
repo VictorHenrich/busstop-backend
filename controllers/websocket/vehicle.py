@@ -1,7 +1,7 @@
 from fastapi import WebSocket, WebSocketDisconnect, WebSocketException
 
 from server.instances import ServerInstances
-from utils.constants import VEHICLE_ENDPOINT_NAME
+from utils.config import VEHICLE_ENDPOINT_NAME
 
 
 @ServerInstances.general_api.websocket(

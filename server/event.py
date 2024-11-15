@@ -3,7 +3,7 @@ from threading import Thread
 from kafka import KafkaConsumer, KafkaProducer
 import logging
 
-from utils.constants import BROKER_KAFKA_URL
+from utils.config import BROKER_KAFKA_URL
 
 
 CallbackType: TypeAlias = Callable[[Any], None]

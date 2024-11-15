@@ -6,7 +6,7 @@ from services.geolocation import GeoLocationService
 from models import Point
 from utils.responses import JSONSuccessResponse
 from utils.entities import PointBodyEntity
-from utils.constants import GEO_ENPOINT_NAME, SWAGGER_GEO_SESSION_TAG
+from utils.config import GEO_ENPOINT_NAME, SWAGGER_GEO_SESSION_TAG
 
 
 router: APIRouter = APIRouter(prefix=GEO_ENPOINT_NAME, tags=[SWAGGER_GEO_SESSION_TAG])

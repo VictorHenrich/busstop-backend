@@ -4,7 +4,7 @@ from httpx import Response
 import logging
 
 from server.instances import ServerInstances
-from utils.constants import USER_ENDPOINT_NAME
+from utils.config import USER_ENDPOINT_NAME
 from utils.entities import UserBodyEntity
 from utils.types import DictType
 

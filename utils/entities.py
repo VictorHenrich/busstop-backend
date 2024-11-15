@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 from pydantic import BaseModel
 from datetime import datetime, time
 
-from utils.constants import SWAGGER_API_VERSION
+from utils.config import SWAGGER_API_VERSION
 
 
 class UUIDEntity(BaseModel):

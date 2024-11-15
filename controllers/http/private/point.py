@@ -6,7 +6,7 @@ from services.point import PointService
 from models import Point
 from utils.responses import JSONSuccessResponse
 from utils.entities import PointEntity, PointBodyEntity
-from utils.constants import POINT_ENPOINT_NAME, SWAGGER_POINT_SESSION_TAG
+from utils.config import POINT_ENPOINT_NAME, SWAGGER_POINT_SESSION_TAG
 from utils.functions import handle_point_body
 
 

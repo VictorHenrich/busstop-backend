@@ -17,13 +17,18 @@ class ServerDatabase:
     _mapped_dialects = {
         DatabaseDialectType.POSTGRESQL: {
             "name": "postgresql",
-            "default": "psycopg2",
-            "async": "asyncpg",
+            "default_lib": "psycopg2",
+            "async_lib": "asyncpg",
         },
         DatabaseDialectType.MYSQL: {
             "name": "mysql",
-            "default": "PyMySQL",
-            "async": "aiomysql",
+            "default_lib": "PyMySQL",
+            "async_lib": "aiomysql",
+        },
+        DatabaseDialectType.SQLITE: {
+            "name": "sqlite",
+            "default_lib": None,
+            "async_lib": "aiosqlite",
         },
     }
 
@@ -34,15 +39,32 @@ class ServerDatabase:
         dbname: str,
         username: str,
         password: str,
+        in_memory: bool,
         dialect: DatabaseDialectType,
     ) -> Tuple[str, str]:
         dialect_data: DictType[str, str] = ServerDatabase._mapped_dialects[dialect]
 
-        url: str = f"://{username}:{password}@{host}:{port}/{dbname}"
+        url: str = (
+            ":///:memory:"
+            if in_memory is True
+            else f"://{username}:{password}@{host}:{port}/{dbname}"
+        )
 
-        url_default: str = f"{dialect_data['name']}+{dialect_data['default']}{url}"
+        url_default: str = f"{dialect_data['name']}"
 
-        url_async: str = f"{dialect_data['name']}+{dialect_data['async']}{url}"
+        url_async: str = f"{dialect_data['name']}"
+
+        if not dialect_data["default_lib"]:
+            url_default += url
+
+        if not dialect_data["async_lib"]:
+            url_async += url
+
+        if dialect_data["default_lib"] is not None:
+            url_default += f"+{dialect_data['default_lib']}{url}"
+
+        if dialect_data["async_lib"] is not None:
+            url_async += f"+{dialect_data['async_lib']}{url}"
 
         return url_default, url_async
 
@@ -60,10 +82,11 @@ class ServerDatabase:
         username: str,
         password: str,
         dialect: DatabaseDialectType,
+        in_memory: bool = False,
         instance_name: str = "main",
     ) -> None:
         self.__url, self.__async_url = self.__create_url(
-            host, port, dbname, username, password, dialect
+            host, port, dbname, username, password, in_memory, dialect
         )
 
         self.__engine: Engine = create_engine(self.__url)
@@ -98,6 +121,10 @@ class ServerDatabase:
     def async_url(self) -> str:
         return self.__async_url
 
+    @Base.setter
+    def Base(self, base_cls: Type[DeclarativeBase]) -> None:
+        self.__Base = base_cls
+
     def create_session(self, **kwargs: Any) -> Session:
         return sessionmaker(self.__engine, class_=Session, **kwargs)()
 
@@ -129,6 +156,12 @@ class ServerDatabases:
 
     def insert_database(self, database: ServerDatabase) -> None:
         self.__bases.append(database)
+
+    def remove_database(self, database: ServerDatabase) -> None:
+        self.__bases.remove(database)
+
+    def set_databases(self, *databases: ServerDatabase):
+        self.__bases = list(databases)
 
     def select(self, instance_name: str = "main") -> ServerDatabase:
         for base in self.__bases:

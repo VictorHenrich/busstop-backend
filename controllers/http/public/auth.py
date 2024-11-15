@@ -10,7 +10,7 @@ from utils.entities import (
     AuthRefreshBodyEntity,
     AuthRefreshResultEntity,
 )
-from utils.constants import AUTH_ENDPOINT_NAME, SWAGGER_AUTH_SESSION_TAG
+from utils.config import AUTH_ENDPOINT_NAME, SWAGGER_AUTH_SESSION_TAG
 from utils.exceptions import (
     InvalidToken,
     UserNotFound,

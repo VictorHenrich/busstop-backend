@@ -6,7 +6,7 @@ from services.route import RouteService
 from models import Route
 from utils.responses import JSONSuccessResponse
 from utils.entities import RouteBodyEntity, RouteEntity
-from utils.constants import ROUTE_ENDPOINT_NAME, SWAGGER_ROUTE_SESSION_TAG
+from utils.config import ROUTE_ENDPOINT_NAME, SWAGGER_ROUTE_SESSION_TAG
 from utils.functions import handle_route_body, get_route_entity
 
 

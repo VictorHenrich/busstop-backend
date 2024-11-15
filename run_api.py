@@ -12,7 +12,7 @@ if __name__ == "__main__":
     import controllers.http.private
     import controllers.websocket
     import middlewares.auth
-    from utils.constants import AGENT_ENDPOINT_NAME, USER_ENDPOINT_NAME
+    from utils.config import AGENT_ENDPOINT_NAME, USER_ENDPOINT_NAME
 
     ServerInstances.general_api.mount(
         path=AGENT_ENDPOINT_NAME, app=ServerInstances.agent_api, name="Agent API"

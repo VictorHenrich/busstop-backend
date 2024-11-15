@@ -23,5 +23,7 @@ class DatabaseDialectType(Enum):
 
     MYSQL = "mysql"
 
+    SQLITE = "sqlite"
+
 
 DictType: TypeAlias = Mapping[DPT, DVT]

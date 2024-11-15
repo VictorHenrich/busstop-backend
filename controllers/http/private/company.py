@@ -6,7 +6,7 @@ from services.company import CompanyService
 from models import Company
 from utils.responses import JSONSuccessResponse
 from utils.entities import CompanyEntity, CompanyBodyEntity
-from utils.constants import COMPANY_ENPOINT_NAME, SWAGGER_COMPANY_SESSION_TAG
+from utils.config import COMPANY_ENPOINT_NAME, SWAGGER_COMPANY_SESSION_TAG
 from utils.functions import handle_company_body
 
 

@@ -3,7 +3,7 @@ from fastapi.routing import APIRouter
 from server.instances import ServerInstances
 from services.vehicle_events import VehicleEventsService
 from utils.responses import JSONSuccessResponse
-from utils.constants import (
+from utils.config import (
     EVENTS_ENDPOINT_NAME,
     VEHICLE_ENDPOINT_NAME,
     SWAGGER_EVENTS_SESSION_TAG,

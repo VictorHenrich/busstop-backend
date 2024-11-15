@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession, DataFrame
 from server.database import ServerDatabase
 from models.common import BaseModel
 from utils.types import DictType
-from utils.constants import SPARK_JDBC_URL
+from utils.config import SPARK_JDBC_URL
 
 
 class SparkUtils:

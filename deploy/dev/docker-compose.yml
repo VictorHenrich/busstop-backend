@@ -1,0 +1,32 @@
+services:
+  # app:
+  #   build:
+  #     context: ../../
+  #     dockerfile: ./deploy/dev/Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - app_network
+  #   depends_on:
+  #     - busstop_test_database
+
+  busstop_test_database:
+      image: postgres:16
+      container_name: busstop_test_database_container
+      environment:
+        POSTGRES_USER: test
+        POSTGRES_PASSWORD: 1234
+        POSTGRES_DB: busstop_test
+      ports:
+        - "5432:5432"
+      volumes:
+        - busstop_test_database_data:/var/lib/postgresql/data
+      networks:
+        - app_network
+
+volumes:
+  busstop_test_database_data:
+
+networks:
+  app_network:
+    driver: bridge

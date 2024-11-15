@@ -1,14 +1,12 @@
 from server.api import ServerApi
 from server.database import ServerDatabases, ServerDatabase
 from utils.types import DatabaseDialectType
-from utils.constants import (
+from utils.config import (
     API_HOST,
     API_PORT,
     DATABASE_HOST,
     DATABASE_PORT,
     DATABASE_DBNAME,
-    DATABASE_DIALECT,
-    DATABASE_INSTANCE_NAME,
     DATABASE_PASSWORD,
     DATABASE_USERNAME,
     DOCS_ENDPOINT_NAME,
@@ -31,9 +29,19 @@ class ServerInstances:
             dbname=DATABASE_DBNAME,
             username=DATABASE_USERNAME,
             password=DATABASE_PASSWORD,
-            dialect=DatabaseDialectType(DATABASE_DIALECT),
-            instance_name=DATABASE_INSTANCE_NAME,
-        )
+            dialect=DatabaseDialectType.POSTGRESQL,
+            instance_name="main",
+        ),
+        ServerDatabase(
+            host="",
+            port="",
+            dbname="",
+            username="",
+            password="",
+            in_memory=True,
+            dialect=DatabaseDialectType.SQLITE,
+            instance_name="tests",
+        ),
     )
 
     user_api: ServerApi = ServerApi(
