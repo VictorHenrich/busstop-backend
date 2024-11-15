@@ -20,6 +20,7 @@ from utils.patterns import (
     IFindManyRepository,
 )
 from .mocks import create_company
+from .common import BaseRepositoryTestCase
 
 
 class CompanyRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
@@ -128,8 +129,10 @@ class CompanyRepositoryOfflineTestCase(IsolatedAsyncioTestCase):
         self.assertSequenceEqual(companies, mock_companies)
 
 
-class CompanyRepositoryOnlineTestCase(IsolatedAsyncioTestCase):
+class CompanyRepositoryOnlineTestCase(BaseRepositoryTestCase):
     async def asyncSetUp(self) -> None:
+        await super().asyncSetUp()
+
         self.company: Company = await create_company()
 
     async def test_find_many(self) -> None:

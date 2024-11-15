@@ -15,7 +15,7 @@ class BaseModel(database.Base):
     id: Mapped[int] = mapped_column(primary_key=True, unique=True, autoincrement=True)
 
     uuid: Mapped[str] = mapped_column(
-        Uuid(as_uuid=False, native_uuid=True), default=uuid4
+        Uuid(as_uuid=False, native_uuid=True), default=lambda: str(uuid4())
     )
 
 
