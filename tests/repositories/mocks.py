@@ -1,6 +1,7 @@
 from datetime import time
 
 from models import Company, Agent, Point, Route, Vehicle, database
+from utils.crypt import CryptUtils
 
 
 async def create_company(
@@ -33,7 +34,12 @@ async def create_agent(
     password: str = "1234",
 ) -> Agent:
     async with database.create_async_session() as session:
-        agent: Agent = Agent(name=name, email=email, password=password, company=company)
+        agent: Agent = Agent(
+            name=name,
+            email=email,
+            password=CryptUtils.Bcrypt.create_hash(password),
+            company=company,
+        )
 
         session.add(agent)
 

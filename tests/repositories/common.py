@@ -1,4 +1,5 @@
 from unittest import IsolatedAsyncioTestCase
+import asyncio
 
 from models import database
 

@@ -1,6 +1,6 @@
 from typing import Optional, Protocol, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import Update, update, Delete, delete, Select, select, func
+from sqlalchemy import Update, update, delete, Select, select, func
 from sqlalchemy.orm import joinedload
 
 from models import Company, Agent

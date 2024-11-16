@@ -1,12 +1,4 @@
-from dotenv import load_dotenv
-import logging
-
-
 if __name__ == "__main__":
-    load_dotenv()
-
-    logging.basicConfig(level=logging.INFO)
-
     from server.instances import ServerInstances
     import controllers.http.public
     import controllers.http.private

@@ -1,6 +1,9 @@
 from typing import Sequence
 import os
 
+from utils.env import EnvUtils
+
+EnvUtils.load_global_envs()
 
 DATABASE_HOST: str = os.environ.get("DATABASE_HOST", "localhost")
 DATABASE_PORT: str = os.environ.get("DATABASE_PORT", "5432")
@@ -12,18 +15,18 @@ DATABASE_PASSWORD: str = os.environ.get("DATABASE_PASSWORD", "1234")
 API_HOST: str = os.environ.get("API_HOST", "")
 API_PORT: str = os.environ.get("API_PORT", "")
 
-COMPANY_ENPOINT_NAME: str = os.environ.get("COMPANY_ENPOINT_NAME", "")
-GEO_ENPOINT_NAME: str = os.environ.get("GEO_ENPOINT_NAME", "")
-POINT_ENPOINT_NAME: str = os.environ.get("POINT_ENPOINT_NAME", "")
-ROUTE_ENDPOINT_NAME: str = os.environ.get("ROUTE_ENDPOINT_NAME", "")
-AGENT_ENDPOINT_NAME: str = os.environ.get("AGENT_ENDPOINT_NAME", "")
-USER_ENDPOINT_NAME: str = os.environ.get("USER_ENDPOINT_NAME", "")
-AUTH_ENDPOINT_NAME: str = os.environ.get("AUTH_ENDPOINT_NAME", "")
-DOCS_ENDPOINT_NAME: str = os.environ.get("DOCS_ENDPOINT_NAME", "")
-REDOC_ENDPOINT_NAME: str = os.environ.get("REDOC_ENDPOINT_NAME", "")
-INDEX_ENDPOINT_NAME: str = os.environ.get("INDEX_ENDPOINT_NAME", "")
-PROFILE_ENDPOINT_NAME: str = os.environ.get("PROFILE_ENDPOINT_NAME", "")
-VEHICLE_ENDPOINT_NAME: str = os.environ.get("VEHICLE_ENDPOINT_NAME", "")
+COMPANY_ENPOINT_NAME: str = os.environ.get("COMPANY_ENPOINT_NAME", "/company")
+GEO_ENPOINT_NAME: str = os.environ.get("GEO_ENPOINT_NAME", "/geolocation")
+POINT_ENPOINT_NAME: str = os.environ.get("POINT_ENPOINT_NAME", "/point")
+ROUTE_ENDPOINT_NAME: str = os.environ.get("ROUTE_ENDPOINT_NAME", "/route")
+AGENT_ENDPOINT_NAME: str = os.environ.get("AGENT_ENDPOINT_NAME", "/agent")
+USER_ENDPOINT_NAME: str = os.environ.get("USER_ENDPOINT_NAME", "/user")
+AUTH_ENDPOINT_NAME: str = os.environ.get("AUTH_ENDPOINT_NAME", "/auth")
+DOCS_ENDPOINT_NAME: str = os.environ.get("DOCS_ENDPOINT_NAME", "/docs")
+REDOC_ENDPOINT_NAME: str = os.environ.get("REDOC_ENDPOINT_NAME", "/docs")
+INDEX_ENDPOINT_NAME: str = os.environ.get("INDEX_ENDPOINT_NAME", "/")
+PROFILE_ENDPOINT_NAME: str = os.environ.get("PROFILE_ENDPOINT_NAME", "/profile")
+VEHICLE_ENDPOINT_NAME: str = os.environ.get("VEHICLE_ENDPOINT_NAME", "/vehicle")
 
 EVENTS_ENDPOINT_NAME: str = os.environ.get("EVENTS_ENDPOINT_NAME", "")
 
@@ -36,10 +39,10 @@ AGENT_PUBLIC_ROUTES: Sequence[str] = (
 
 USER_PUBLIC_ROUTES: Sequence[str] = AUTH_ENDPOINT_NAME
 
-SECRET_KEY: str = os.environ.get("SECRET_KEY", "")
-TOKEN_EXPIRATION_MINUTE: int = int(os.environ.get("TOKEN_EXPIRATION_MINUTE", "0"))
+SECRET_KEY: str = os.environ.get("SECRET_KEY", "test123")
+TOKEN_EXPIRATION_MINUTE: int = int(os.environ.get("TOKEN_EXPIRATION_MINUTE", "5"))
 REFRESH_TOKEN_EXPIRATION_MINUTE: int = int(
-    os.environ.get("REFRESH_TOKEN_EXPIRATION_MINUTE", "0")
+    os.environ.get("REFRESH_TOKEN_EXPIRATION_MINUTE", "10")
 )
 
 SWAGGER_API_TITLE: str = os.environ.get("SWAGGER_API_TITLE", "")
