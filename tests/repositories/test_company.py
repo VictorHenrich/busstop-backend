@@ -26,7 +26,7 @@ class CompanyRepositoryOnlineTestCase(BaseRepositoryTestCase):
     async def asyncSetUp(self) -> None:
         await super().asyncSetUp()
 
-        self.company: Company = await create_company()
+        self.__company: Company = await create_company()
 
     async def test_find_many(self) -> None:
         limit: int = 10
@@ -52,7 +52,7 @@ class CompanyRepositoryOnlineTestCase(BaseRepositoryTestCase):
                 CompanyRepository(session)
             )
 
-            repository_params: ICompanyFindRepository = Mock(uuid=self.company.uuid)
+            repository_params: ICompanyFindRepository = Mock(uuid=self.__company.uuid)
 
             company: Optional[Company] = await repository.find(repository_params)
 
@@ -65,7 +65,7 @@ class CompanyRepositoryOnlineTestCase(BaseRepositoryTestCase):
             ] = CompanyRepository(session)
 
             repository_params: ICompanyDeleteRepository = Mock(
-                uuid=self.company.uuid, instance=None
+                uuid=self.__company.uuid, instance=None
             )
 
             company: Optional[Company] = await repository.delete(repository_params)
@@ -85,7 +85,7 @@ class CompanyRepositoryOnlineTestCase(BaseRepositoryTestCase):
                 fantasy_name="Nome Fantasia Alterada",
                 document_cnpj="00000000",
                 email="alterado@gmail.com",
-                uuid=self.company.uuid,
+                uuid=self.__company.uuid,
                 instance=None,
             )
 

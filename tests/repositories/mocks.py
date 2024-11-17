@@ -90,7 +90,7 @@ async def create_route(
     description: str = "Rota para centro",
     opening_time: time = time(),
     closing_time: time = time(),
-    ticker_price: float = 0,
+    ticket_price: float = 0,
 ) -> Route:
     async with database.create_async_session() as session:
         route: Route = Route(
@@ -98,7 +98,7 @@ async def create_route(
             description=description,
             opening_time=opening_time,
             closing_time=closing_time,
-            ticker_price=ticker_price,
+            ticket_price=ticket_price,
         )
 
         session.add(route)

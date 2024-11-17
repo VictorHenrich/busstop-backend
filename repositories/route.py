@@ -13,6 +13,7 @@ from utils.patterns import (
     IFindRepository,
     IFindManyRepository,
 )
+from utils.exceptions import ModelNotFound
 
 
 class IRouteCreateRepository(Protocol):
@@ -171,15 +172,22 @@ class RouteRepository(
             return props.instance
 
         else:
+            route: Optional[Route] = await self.session.scalar(
+                select(Route).where(Route.uuid == props.uuid)
+            )
+
+            if not route:
+                raise ModelNotFound(Route, props.uuid)
+
             query_route_point: Delete = delete(RoutePoint).where(
-                Route.uuid == props.uuid
+                RoutePoint.route_id == route.id
             )
 
             await self.session.execute(query_route_point)
 
-            query_route = delete(Route).where(Route.uuid == props.uuid).returning(Route)
+            await self.session.delete(route)
 
-            return await self.session.scalar(query_route)
+            return route
 
     async def find(self, props: IRouteFindRepository) -> Optional[Route]:
         query: Select = (
