@@ -33,10 +33,10 @@ class AgentRepositoryOnlineTestCase(BaseRepositoryTestCase):
 
         self.__agent_password: str = "1234"
 
-        self.company: Company = await create_company()
+        self.__company: Company = await create_company()
 
-        self.agent: Agent = await create_agent(
-            self.company, email=self.__agent_email, password=self.__agent_password
+        self.__agent: Agent = await create_agent(
+            self.__company, email=self.__agent_email, password=self.__agent_password
         )
 
     async def test_create(self) -> None:
@@ -48,7 +48,7 @@ class AgentRepositoryOnlineTestCase(BaseRepositoryTestCase):
             repository_params: IAgentCreateRepository = Mock(
                 email="usuario_teste@gmail.com",
                 password="1234",
-                company=self.company,
+                company=self.__company,
             )
 
             repository_params.name = "Usuário Teste"
@@ -68,8 +68,8 @@ class AgentRepositoryOnlineTestCase(BaseRepositoryTestCase):
             repository_params: IAgentUpdateRepository = Mock(
                 email="usuario_teste_alterado@gmail.com",
                 password="1234",
-                uuid=self.agent.uuid,
-                company=self.company,
+                uuid=self.__agent.uuid,
+                company=self.__company,
                 instance=None,
             )
 
@@ -88,7 +88,7 @@ class AgentRepositoryOnlineTestCase(BaseRepositoryTestCase):
             )
 
             repository_params: IAgentDeleteRepository = Mock(
-                uuid=self.agent.uuid,
+                uuid=self.__agent.uuid,
                 instance=None,
             )
 
@@ -104,7 +104,7 @@ class AgentRepositoryOnlineTestCase(BaseRepositoryTestCase):
                 AgentRepository(session)
             )
 
-            repository_params: IAgentFindRepository = Mock(uuid=self.agent.uuid)
+            repository_params: IAgentFindRepository = Mock(uuid=self.__agent.uuid)
 
             agent: Optional[Agent] = await repository.find(repository_params)
 
@@ -121,7 +121,7 @@ class AgentRepositoryOnlineTestCase(BaseRepositoryTestCase):
             ] = AgentRepository(session)
 
             repository_params: IAgentFindManyRepository = Mock(
-                company=self.company, limit=limit, page=page
+                company=self.__company, limit=limit, page=page
             )
 
             agents: Sequence[Agent] = await repository.find_many(repository_params)

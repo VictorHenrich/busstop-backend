@@ -1,8 +1,7 @@
 from typing import Optional, Sequence
-from unittest import IsolatedAsyncioTestCase
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import Mock
 
-from models import Point
+from models import Point, Company, database
 from repositories.point import (
     PointRepository,
     IPointCreateRepository,
@@ -18,109 +17,102 @@ from utils.patterns import (
     IUpdateRepository,
     IDeleteRepository,
 )
+from .mocks import create_company, create_point
+from .common import BaseRepositoryTestCase
 
 
-class PointRepositoryTestCase(IsolatedAsyncioTestCase):
-    def setUp(self) -> None:
-        self.__mock_point: Mock = Mock(
-            address_state="SC",
-            address_city="Capivari de Baixo Alterado",
-            address_neighborhood="Centro",
-            address_street="victorhenrich993@gmail.com",
-            address_number="400",
-            latitude="-28.4759466",
-            longitude="-49.0059852",
-            uuid="4932d9e1-c715-4b97-890a-ab2f678d3d11",
-            instance=None,
-        )
+class PointRepositoryTestCase(BaseRepositoryTestCase):
+    async def asyncSetUp(self) -> None:
+        await super().asyncSetUp()
 
-        self.__mock_company: Mock = Mock(
-            id=1,
-            uuid="4932d9e1-c715-4b97-890a-ab2f678d3123",
-            company_name="TESTE",
-            fantasy_name="TESTE",
-            document_cnpj="000000000",
-        )
+        self.__company: Company = await create_company()
 
-        self.__mock_async_session: AsyncMock = AsyncMock()
+        self.__point: Point = await create_point(self.__company)
 
-        self.__mock_session: Mock = Mock()
+    async def test_create(self) -> None:
+        async with database.create_async_session() as session:
+            point_repository: ICreateRepository[
+                IPointCreateRepository, Optional[Point]
+            ] = PointRepository(session)
 
-        self.__mock_point.company = self.__mock_company
+            repository_props: IPointCreateRepository = Mock(
+                company=self.__company,
+                address_zip_code="00000",
+                address_state="SC",
+                address_city="Cidade teste",
+                address_neighborhood="Bairro teste",
+                address_street="Rua teste",
+                address_number="00",
+                latitude="0",
+                longitude="0",
+                place_id="1234",
+            )
 
-    @patch("repositories.point.Point", spec=Point)
-    async def test_create(self, MockPointModel: Mock) -> None:
-        MockPointModel.return_value = self.__mock_point
+            point: Optional[Point] = await point_repository.create(repository_props)
 
-        self.__mock_session.add.return_value = None
-
-        point_repository: ICreateRepository[IPointCreateRepository, Optional[Point]] = (
-            PointRepository(self.__mock_session)
-        )
-
-        point: Optional[Point] = await point_repository.create(self.__mock_point)
-
-        self.assertIsNotNone(point)
-        self.assertEqual(point, self.__mock_point)
+            self.assertIsNotNone(point)
 
     async def test_update(self) -> None:
-        self.__mock_async_session.scalar.return_value = self.__mock_point
+        async with database.create_async_session() as session:
+            point_repository: IUpdateRepository[
+                IPointUpdateRepository, Optional[Point]
+            ] = PointRepository(session)
 
-        point_repository: IUpdateRepository[IPointUpdateRepository, Optional[Point]] = (
-            PointRepository(self.__mock_async_session)
-        )
+            repository_props: IPointUpdateRepository = Mock(
+                company=self.__company,
+                uuid=self.__point.uuid,
+                address_zip_code="00000",
+                address_state="SC",
+                address_city="Cidade teste",
+                address_neighborhood="Bairro teste",
+                address_street="Rua teste",
+                address_number="00",
+                latitude="0",
+                longitude="0",
+                place_id="1234",
+                instance=None,
+            )
 
-        point: Optional[Point] = await point_repository.update(self.__mock_point)
+            point: Optional[Point] = await point_repository.update(repository_props)
 
-        self.assertIsNotNone(point)
-        self.assertEqual(point, self.__mock_point)
+            self.assertIsNotNone(point)
 
     async def test_delete(self) -> None:
-        self.__mock_async_session.execute.return_value = None
-        self.__mock_async_session.scalar.return_value = self.__mock_point
+        async with database.create_async_session() as session:
+            point_repository: IDeleteRepository[
+                IPointDeleteRepository, Optional[Point]
+            ] = PointRepository(session)
 
-        filter_props: Mock = Mock(uuid="")
+            repository_props: IPointDeleteRepository = Mock(uuid=self.__point.uuid)
 
-        point_repository: IDeleteRepository[IPointDeleteRepository, Optional[Point]] = (
-            PointRepository(self.__mock_async_session)
-        )
+            point: Optional[Point] = await point_repository.delete(repository_props)
 
-        point: Optional[Point] = await point_repository.delete(filter_props)
+            self.assertIsNotNone(point)
 
-        self.assertIsNotNone(point)
-        self.assertEqual(point, self.__mock_point)
+    async def test_find(self) -> None:
+        async with database.create_async_session() as session:
+            point_repository: IFindRepository[IPointFindRepository, Optional[Point]] = (
+                PointRepository(session)
+            )
 
-    async def test_get(self) -> None:
-        self.__mock_async_session.scalar.return_value = self.__mock_point
+            repository_props: IPointFindRepository = Mock(uuid=self.__point.uuid)
 
-        filter_props: Mock = Mock(uuid="")
+            point: Optional[Point] = await point_repository.find(repository_props)
 
-        point_repository: IFindRepository[IPointFindRepository, Point] = (
-            PointRepository(self.__mock_async_session)
-        )
+            self.assertIsNotNone(point)
 
-        point: Optional[Point] = await point_repository.find(filter_props)
+    async def test_find_many(self) -> None:
+        async with database.create_async_session() as session:
+            point_repository: IFindManyRepository[
+                IPointFindManyRepository, Optional[Point]
+            ] = PointRepository(session)
 
-        self.assertIsNotNone(point)
-        self.assertEqual(point, self.__mock_point)
+            repository_props: IPointFindManyRepository = Mock(
+                company=self.__company, uuids=[]
+            )
 
-    async def test_list(self) -> None:
-        mock_points: Sequence[Point] = [self.__mock_point]
+            points: Sequence[Point] = await point_repository.find_many(repository_props)
 
-        mock_scalars_result: Mock = Mock()
+            self.assertIsNotNone(points)
 
-        mock_scalars_result.all.return_value = mock_points
-
-        self.__mock_async_session.scalars.return_value = mock_scalars_result
-
-        filter_props: Mock = Mock(company=self.__mock_company, uuids=[])
-
-        point_repository: IFindManyRepository[IPointFindManyRepository, Point] = (
-            PointRepository(self.__mock_async_session)
-        )
-
-        point: Sequence[Point] = await point_repository.find_many(filter_props)
-
-        self.assertNotEqual(point, [])
-
-        self.assertSequenceEqual(point, mock_points)
+            self.assertTrue(len(points) > 0)

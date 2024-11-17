@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Update, update, Delete, delete, Select, select
 
 from models import Point, Company, RoutePoint
+from utils.exceptions import ModelNotFound
 from utils.patterns import (
     BaseRepository,
     ICreateRepository,
@@ -70,6 +71,7 @@ class IPointFindRepository(Protocol):
 
 class IPointFindManyRepository(Protocol):
     company: Company
+
     uuids: Sequence[str] = []
 
 
@@ -155,13 +157,22 @@ class PointRepository(
             return await self.session.scalar(query)
 
     async def delete(self, props: IPointDeleteRepository) -> Optional[Point]:
-        query_route_point: Delete = delete(RoutePoint).where(Point.uuid == props.uuid)
+        point: Optional[Point] = await self.session.scalar(
+            select(Point).where(Point.uuid == props.uuid)
+        )
+
+        if not point:
+            raise ModelNotFound(Point, props.uuid)
+
+        query_route_point: Delete = delete(RoutePoint).where(
+            RoutePoint.point_id == point.id
+        )
 
         await self.session.execute(query_route_point)
 
-        query_route = delete(Point).where(Point.uuid == props.uuid).returning(Point)
+        await self.session.delete(point)
 
-        return await self.session.scalar(query_route)
+        return point
 
     async def find(self, props: IPointFindRepository) -> Optional[Point]:
         query: Select = select(Point).where(Point.uuid == props.uuid)
